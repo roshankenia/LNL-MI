@@ -71,7 +71,7 @@ class ResNet34(nn.Module):
             ResBlock(512, 512, downsample=False),
         )
 
-        self.gap = torch.nn.AdaptiveAvgPool2d(1)
+        self.gap = torch.nn.AdaptiveAvgPool2d(4)
         self.fc = torch.nn.Linear(512, outputs)
 
     def forward(self, input):
@@ -81,7 +81,7 @@ class ResNet34(nn.Module):
         input = self.layer3(input)
         input = self.layer4(input)
         input = self.gap(input)
-        # input = torch.flatten(input)
+        input = torch.flatten(input)
         input = self.fc(input)
 
         return input
