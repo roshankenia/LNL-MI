@@ -76,22 +76,13 @@ class ResNet34(nn.Module):
         self.fc = torch.nn.Linear(512, outputs)
 
     def forward(self, input):
-        print(input.shape)
         input = self.layer0(input)
-        print(input.shape)
         input = self.layer1(input)
-        print(input.shape)
         input = self.layer2(input)
-        print(input.shape)
         input = self.layer3(input)
-        print(input.shape)
         input = self.layer4(input)
-        print(input.shape)
         input = self.gap(input)
-        print(input.shape)
         input = torch.flatten(input, start_dim=1)
-        print(input.shape)
         input = self.fc(input)
-        print(input.shape)
 
         return input
