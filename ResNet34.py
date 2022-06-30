@@ -81,7 +81,7 @@ class ResNet34(nn.Module):
         input = self.layer3(input)
         input = self.layer4(input)
         input = self.gap(input)
-        input = torch.flatten(input)
+        # input = torch.flatten(input)
         input = self.fc(input)
 
         return input
