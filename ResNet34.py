@@ -34,7 +34,7 @@ class ResBlock(nn.Module):
 
 
 class ResNet34(nn.Module):
-    def __init__(self, in_channels, outputs=1000):
+    def __init__(self, in_channels, outputs=10):
         super().__init__()
         self.layer0 = nn.Sequential(
             nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3),
