@@ -89,7 +89,7 @@ class ResNet34(nn.Module):
         print(input.shape)
         input = self.gap(input)
         print(input.shape)
-        input = torch.flatten(input)
+        input = torch.flatten(input, start_dim=1)
         print(input.shape)
         input = self.fc(input)
         print(input.shape)
