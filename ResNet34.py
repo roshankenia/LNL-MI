@@ -5,6 +5,7 @@ import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
 
+
 class ResBlock(nn.Module):
     def __init__(self, in_channels, out_channels, downsample):
         super().__init__()
@@ -71,17 +72,26 @@ class ResNet34(nn.Module):
             ResBlock(512, 512, downsample=False),
         )
 
-        self.gap = torch.nn.AdaptiveAvgPool2d(4)
+        self.gap = torch.nn.AdaptiveAvgPool2d(1)
         self.fc = torch.nn.Linear(512, outputs)
 
     def forward(self, input):
+        print(input.shape)
         input = self.layer0(input)
+        print(input.shape)
         input = self.layer1(input)
+        print(input.shape)
         input = self.layer2(input)
+        print(input.shape)
         input = self.layer3(input)
+        print(input.shape)
         input = self.layer4(input)
+        print(input.shape)
         input = self.gap(input)
+        print(input.shape)
         input = torch.flatten(input)
+        print(input.shape)
         input = self.fc(input)
+        print(input.shape)
 
         return input
