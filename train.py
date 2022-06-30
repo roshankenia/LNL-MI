@@ -22,7 +22,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
 num_epochs = 5
-batch_size = 16
+batch_size = 32
 learning_rate = 0.001
 
 # dataset has PILImage images of range [0, 1].
