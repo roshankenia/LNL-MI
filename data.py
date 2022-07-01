@@ -23,15 +23,18 @@ for filename in filenames:
     image = Image.open('../ISBI2016_ISIC_Part3_Training_Data/'+filename)
 
     transform = transforms.Compose([
-        transforms.PILToTensor()])
+        transforms.Resize((224, 224)),
+        transforms.PILToTensor()
+    ])
 
     # Convert the PIL image to Torch tensor
     img_tensor = transform(image).to(torch.float32)/255
 
     images.append(img_tensor)
 
-
+images = torch.stack(images)
 data_tensor = torch.tensor(images, dtype=torch.float32)
+print(data_tensor.shape)
 # save data file
 torch.save(data_tensor, 'data_tensor.pt')
 
@@ -39,5 +42,6 @@ torch.save(data_tensor, 'data_tensor.pt')
 train = pd.read_csv('../ISBI2016_ISIC_Part3_Training_GroundTruth.csv')
 ground_truth_tensor = torch.tensor(
     pd.factorize(train['benign'])[0], dtype=torch.float32)
+print(ground_truth_tensor.shape)
 # save ground truth file
 torch.save(ground_truth_tensor, 'ground_truth_tensor.pt')
