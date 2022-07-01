@@ -30,9 +30,14 @@ for filename in filenames:
 
     images.append(img_tensor)
 
-print(images)
+
+data_tensor = torch.tensor(images, dtype=torch.float32)
+# save data file
+torch.save(data_tensor, 'data_tensor.pt')
 
 # get ground truth values
 train = pd.read_csv('../ISBI2016_ISIC_Part3_Training_GroundTruth.csv')
-train_tensor = torch.tensor(pd.factorize(train['benign'])[0])
-print(train_tensor)
+ground_truth_tensor = torch.tensor(
+    pd.factorize(train['benign'])[0], dtype=torch.float32)
+# save ground truth file
+torch.save(ground_truth_tensor, 'ground_truth_tensor.pt')
