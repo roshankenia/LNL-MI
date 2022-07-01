@@ -39,9 +39,10 @@ print(data_tensor.shape)
 torch.save(data_tensor, 'data_tensor.pt')
 
 # get ground truth values
-train = pd.read_csv('ISBI2016_ISIC_Part3_Training_GroundTruth.csv')
+train = pd.read_csv(
+    'ISBI2016_ISIC_Part3_Training_GroundTruth.csv', header=None)
 ground_truth_tensor = torch.tensor(
-    pd.factorize(train['benign'])[0], dtype=torch.float32)
+    pd.factorize(train[1])[0], dtype=torch.float32)
 print(ground_truth_tensor.shape)
 # save ground truth file
 torch.save(ground_truth_tensor, 'ground_truth_tensor.pt')
