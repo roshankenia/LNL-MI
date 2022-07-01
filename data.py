@@ -2,6 +2,8 @@ import os
 import torch
 import pandas as pd
 import sys
+from PIL import Image
+import torchvision.transforms as transforms
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -13,7 +15,22 @@ if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
 
 # get all filenames
 filenames = sorted(os.listdir('../ISBI2016_ISIC_Part3_Training_Data'))
-print(filenames)
+
+# convert each image to a tensor
+images = []
+for filename in filenames:
+    # Read the image
+    image = Image.open('../ISBI2016_ISIC_Part3_Training_Data/'+filename)
+
+    transform = transforms.Compose([
+        transforms.PILToTensor()])
+
+    # Convert the PIL image to Torch tensor
+    img_tensor = transform(image).to(torch.float32)/255
+
+    images.append(img_tensor)
+
+print(images)
 
 # get ground truth values
 train = pd.read_csv('../ISBI2016_ISIC_Part3_Training_GroundTruth.csv')
