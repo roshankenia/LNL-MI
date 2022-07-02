@@ -11,6 +11,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
 if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
     print('exiting')
     sys.exit()
+else:
+    print('GPU is being properly used')
 
 
 # get all filenames
