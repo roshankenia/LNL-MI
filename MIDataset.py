@@ -37,10 +37,10 @@ class MedicalData(Dataset):
         return self.n_samples
 
 
-# create dataset
-dataset = MedicalData()
+# # create dataset
+# dataset = MedicalData()
 
-# get first sample and unpack
-first_data = dataset[0]
-features, labels = first_data
-print(features, labels)
+# # get first sample and unpack
+# first_data = dataset[0]
+# features, labels = first_data
+# print(features, labels)
