@@ -53,7 +53,7 @@ classes = ('plane', 'car', 'bird', 'cat',
 
 model = ResNet34(in_channels=3, outputs=1).to(device)
 
-criterion = nn.BCELoss()
+criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 n_total_steps = len(train_loader)
