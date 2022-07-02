@@ -58,6 +58,17 @@ model = ResNet34(in_channels=3, outputs=1).to(device)
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
+
+def binary_acc(y_pred, y_test):
+    y_pred_tag = torch.round(torch.sigmoid(y_pred))
+
+    correct_results_sum = (y_pred_tag == y_test).sum().float()
+    acc = correct_results_sum/y_test.shape[0]
+    acc = torch.round(acc * 100)
+
+    return acc
+
+
 n_total_steps = len(train_loader)
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
@@ -74,6 +85,8 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+
+        print(binary_acc(outputs, labels))
 
         if (i+1) % 5 == 0:
             print(
@@ -97,6 +110,11 @@ with torch.no_grad():
         print('labels:', labels)
         print('outputs:', outputs)
         print('predicted:', predicted)
+
+        y_test_pred = torch.sigmoid(outputs)
+        y_pred_tag = torch.round(y_test_pred)
+
+        print('y_pred_tag:', y_pred_tag)
     #     n_samples += labels.size(0)
     #     n_correct += (predicted == labels).sum().item()
     #     for i in range(len(labels)):
