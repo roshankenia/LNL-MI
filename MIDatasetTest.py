@@ -17,16 +17,16 @@ else:
     print('GPU is being properly used')
 
 
-class MedicalData(Dataset):
+class MedicalDataTest(Dataset):
 
     def __init__(self):
         # Initialize data, download, etc.
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
-        self.x_data = torch.load('../data_tensor.pt')
+        self.x_data = torch.load('../data_tensor_test.pt')
         print('x shape:', self.x_data.shape)
         self.y_data = torch.load(
-            '../ground_truth_tensor.pt')  # size [n_samples, 1]
+            '../ground_truth_tensor_test.pt')  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
@@ -37,12 +37,3 @@ class MedicalData(Dataset):
     # we can call len(dataset) to return the size
     def __len__(self):
         return self.n_samples
-
-
-# # create dataset
-# dataset = MedicalData()
-
-# # get first sample and unpack
-# first_data = dataset[0]
-# features, labels = first_data
-# print(features, labels)
