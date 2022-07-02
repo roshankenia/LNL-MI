@@ -47,7 +47,7 @@ train = pd.read_csv(
     '../ISBI2016_ISIC_Part3_Training_GroundTruth.csv', header=None)
 ground_truth_tensor = torch.tensor(
     pd.factorize(train[1])[0], dtype=torch.float32)
-ground_truth_tensor = torch.stack(ground_truth_tensor)
+ground_truth_tensor = torch.unsqueeze(ground_truth_tensor, 1)
 print(ground_truth_tensor.shape)
 # save ground truth file
 torch.save(ground_truth_tensor, 'ground_truth_tensor.pt')
