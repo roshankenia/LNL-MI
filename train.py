@@ -8,7 +8,7 @@ import numpy as np
 import os
 import sys
 from ResNet34 import ResNet34
-from MI-Dataset import MedicalData
+from MIDataset import MedicalData
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
