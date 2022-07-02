@@ -24,6 +24,10 @@ for filename in filenames:
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
+        transforms.RandomHorizontalFlip(),  # simple data augmentation
+        transforms.RandomVerticalFlip(),
+        transforms.ColorJitter(
+            brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
         transforms.PILToTensor()
     ])
 
