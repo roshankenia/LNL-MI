@@ -73,7 +73,6 @@ n_total_steps = len(train_loader)
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
         # origin shape: [4, 3, 32, 32] = 4, 3, 1024
-        # input_layer: 3 input channels, 6 output channels, 5 kernel size
         images = images.to(device)
         labels = labels.to(device)
 
@@ -86,12 +85,12 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
 
-        if (i+1) % 5 == 0:
+        if (i+1) % 1 == 0:
             print(
                 f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
-            print(binary_acc(outputs, labels))
-            print(outputs)
-            print(labels)
+            # print(binary_acc(outputs, labels))
+            # print(outputs)
+            # print(labels)
 
 print('Finished Training')
 PATH = './resnet-mi.pth'
@@ -108,14 +107,14 @@ with torch.no_grad():
         outputs = model(images)
         # max returns (value ,index)
         _, predicted = torch.max(outputs, 1)
-        print('labels:', labels)
-        print('outputs:', outputs)
-        print('predicted:', predicted)
+        # print('labels:', labels)
+        # print('outputs:', outputs)
+        # print('predicted:', predicted)
 
         y_test_pred = torch.sigmoid(outputs)
         y_pred_tag = torch.round(y_test_pred)
 
-        print('y_pred_tag:', y_pred_tag)
+        # print('y_pred_tag:', y_pred_tag)
     #     n_samples += labels.size(0)
     #     n_correct += (predicted == labels).sum().item()
     #     for i in range(len(labels)):
