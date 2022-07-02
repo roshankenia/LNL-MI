@@ -23,9 +23,10 @@ class MedicalData(Dataset):
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
         self.x_data = torch.load('../data_tensor.pt')
+        print('x shape:', self.x_data.shape)
         self.y_data = torch.load(
             '../ground_truth_tensor.pt')  # size [n_samples, 1]
-
+        print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
     # support indexing such that dataset[i] can be used to get i-th sample
