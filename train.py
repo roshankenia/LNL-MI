@@ -8,7 +8,8 @@ import numpy as np
 import os
 import sys
 from ResNet34 import ResNet34
-from MIDataset import MedicalData
+from MIDatasetTrain import MedicalData
+from MIDatasetTest import MedicalDataTest
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -44,8 +45,9 @@ train_dataset = MedicalData()
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,
                                            shuffle=True)
 
-# test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size,
-#                                           shuffle=False)
+test_dataset = MedicalDataTest()
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=batch_size,
+                                          shuffle=False)
 
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
@@ -81,29 +83,32 @@ print('Finished Training')
 PATH = './resnet-mi.pth'
 torch.save(model.state_dict(), PATH)
 
-# with torch.no_grad():
-#     n_correct = 0
-#     n_samples = 0
-#     n_class_correct = [0 for i in range(10)]
-#     n_class_samples = [0 for i in range(10)]
-#     for images, labels in test_loader:
-#         images = images.to(device)
-#         labels = labels.to(device)
-#         outputs = model(images)
-#         # max returns (value ,index)
-#         _, predicted = torch.max(outputs, 1)
-#         n_samples += labels.size(0)
-#         n_correct += (predicted == labels).sum().item()
-#         for i in range(len(labels)):
-#             label = labels[i]
-#             pred = predicted[i]
-#             if (label == pred):
-#                 n_class_correct[label] += 1
-#             n_class_samples[label] += 1
+with torch.no_grad():
+    n_correct = 0
+    n_samples = 0
+    n_class_correct = [0 for i in range(10)]
+    n_class_samples = [0 for i in range(10)]
+    for images, labels in test_loader:
+        images = images.to(device)
+        labels = labels.to(device)
+        outputs = model(images)
+        # max returns (value ,index)
+        _, predicted = torch.max(outputs, 1)
+        print('labels:', labels)
+        print('outputs:', outputs)
+        print('predicted:', predicted)
+    #     n_samples += labels.size(0)
+    #     n_correct += (predicted == labels).sum().item()
+    #     for i in range(len(labels)):
+    #         label = labels[i]
+    #         pred = predicted[i]
+    #         if (label == pred):
+    #             n_class_correct[label] += 1
+    #         n_class_samples[label] += 1
 
-#     acc = 100.0 * n_correct / n_samples
-#     print(f'Accuracy of the network: {acc} %')
+    # acc = 100.0 * n_correct / n_samples
+    # print(f'Accuracy of the network: {acc} %')
 
-#     for i in range(10):
-#         acc = 100.0 * n_class_correct[i] / n_class_samples[i]
-#         print(f'Accuracy of {classes[i]}: {acc} %')
+    # for i in range(10):
+    #     acc = 100.0 * n_class_correct[i] / n_class_samples[i]
+    #     print(f'Accuracy of {classes[i]}: {acc} %')
