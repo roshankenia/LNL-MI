@@ -1,3 +1,5 @@
+from torch.nn import functional as F
+from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_breast_cancer
@@ -84,11 +86,28 @@ train_loader = torch.utils.data.DataLoader(
 # test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=batch_size,
 #                                           shuffle=False)
 
+# defining the network
+
+
+class Net(nn.Module):
+    def __init__(self, input_shape):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(input_shape, 32)
+        self.fc2 = nn.Linear(32, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        x = torch.sigmoid(self.fc3(x))
+        return x
+
+
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
-model = ResNet34(in_channels=1, outputs=1).to(device)
+model = Net(input_shape=x.shape[1]).to(device)
 
 criterion = nn.BCELoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
