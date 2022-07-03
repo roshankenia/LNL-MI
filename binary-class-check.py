@@ -30,7 +30,7 @@ else:
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
-num_epochs = 10
+num_epochs = 50
 batch_size = 64
 learning_rate = 0.01
 
@@ -163,9 +163,9 @@ with torch.no_grad():
         outputs = model(images)
         # max returns (value ,index)
         predicted = torch.round(outputs)
-        print('labels:', labels)
-        print('outputs:', outputs)
-        print('predicted:', predicted)
+        # print('labels:', labels)
+        # print('outputs:', outputs)
+        # print('predicted:', predicted)
 
         n_correct += (predicted == labels).sum().float()
         n_samples += len(labels)
