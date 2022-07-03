@@ -67,6 +67,9 @@ trainset = dataset(x, y)
 train_loader = torch.utils.data.DataLoader(
     trainset, batch_size=64, shuffle=False)
 
+test_loader = torch.utils.data.DataLoader(
+    trainset, batch_size=64, shuffle=False)
+
 # dataset has PILImage images of range [0, 1].
 # We transform them to Tensors of normalized range [-1, 1]
 # transform = transforms.Compose(
@@ -151,37 +154,34 @@ print('Finished Training')
 # PATH = './resnet-mi.pth'
 # torch.save(model.state_dict(), PATH)
 
-# with torch.no_grad():
-#     n_correct = 0
-#     n_samples = 0
-#     n_class_correct = [0 for i in range(10)]
-#     n_class_samples = [0 for i in range(10)]
-#     for images, labels in test_loader:
-#         images = images.to(device)
-#         labels = labels.to(device)
-#         outputs = model(images)
-#         # max returns (value ,index)
-#         _, predicted = torch.max(outputs, 1)
-#         # print('labels:', labels)
-#         # print('outputs:', outputs)
-#         # print('predicted:', predicted)
+with torch.no_grad():
+    n_correct = 0
+    n_samples = 0
+    n_class_correct = [0 for i in range(10)]
+    n_class_samples = [0 for i in range(10)]
+    for images, labels in test_loader:
+        images = images.to(device)
+        labels = labels.to(device)
+        outputs = model(images)
+        # max returns (value ,index)
+        _, predicted = torch.max(outputs, 1)
+        print('labels:', labels)
+        print('outputs:', outputs)
+        print('predicted:', predicted)
 
-#         y_test_pred = torch.sigmoid(outputs)
-#         y_pred_tag = torch.round(y_test_pred)
+        # print('y_pred_tag:', y_pred_tag)
+    #     n_samples += labels.size(0)
+    #     n_correct += (predicted == labels).sum().item()
+    #     for i in range(len(labels)):
+    #         label = labels[i]
+    #         pred = predicted[i]
+    #         if (label == pred):
+    #             n_class_correct[label] += 1
+    #         n_class_samples[label] += 1
 
-#         # print('y_pred_tag:', y_pred_tag)
-#     #     n_samples += labels.size(0)
-#     #     n_correct += (predicted == labels).sum().item()
-#     #     for i in range(len(labels)):
-#     #         label = labels[i]
-#     #         pred = predicted[i]
-#     #         if (label == pred):
-#     #             n_class_correct[label] += 1
-#     #         n_class_samples[label] += 1
+    # acc = 100.0 * n_correct / n_samples
+    # print(f'Accuracy of the network: {acc} %')
 
-#     # acc = 100.0 * n_correct / n_samples
-#     # print(f'Accuracy of the network: {acc} %')
-
-#     # for i in range(10):
-#     #     acc = 100.0 * n_class_correct[i] / n_class_samples[i]
-#     #     print(f'Accuracy of {classes[i]}: {acc} %')
+    # for i in range(10):
+    #     acc = 100.0 * n_class_correct[i] / n_class_samples[i]
+    #     print(f'Accuracy of {classes[i]}: {acc} %')
