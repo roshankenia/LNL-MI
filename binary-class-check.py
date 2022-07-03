@@ -164,7 +164,7 @@ with torch.no_grad():
         labels = labels.to(device)
         outputs = model(images)
         # max returns (value ,index)
-        _, predicted = torch.max(outputs, 1)
+        predicted = torch.round(torch.sigmoid(outputs))
         print('labels:', labels)
         print('outputs:', outputs)
         print('predicted:', predicted)
