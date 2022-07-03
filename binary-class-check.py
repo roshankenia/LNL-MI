@@ -157,8 +157,6 @@ print('Finished Training')
 with torch.no_grad():
     n_correct = 0
     n_samples = 0
-    n_class_correct = [0 for i in range(10)]
-    n_class_samples = [0 for i in range(10)]
     for images, labels in test_loader:
         images = images.to(device)
         labels = labels.to(device)
@@ -169,19 +167,9 @@ with torch.no_grad():
         print('outputs:', outputs)
         print('predicted:', predicted)
 
-        # print('y_pred_tag:', y_pred_tag)
-    #     n_samples += labels.size(0)
-    #     n_correct += (predicted == labels).sum().item()
-    #     for i in range(len(labels)):
-    #         label = labels[i]
-    #         pred = predicted[i]
-    #         if (label == pred):
-    #             n_class_correct[label] += 1
-    #         n_class_samples[label] += 1
+        n_correct += (predicted == labels).sum().float()
+        n_samples += len(labels)
 
-    # acc = 100.0 * n_correct / n_samples
-    # print(f'Accuracy of the network: {acc} %')
-
-    # for i in range(10):
-    #     acc = 100.0 * n_class_correct[i] / n_class_samples[i]
-    #     print(f'Accuracy of {classes[i]}: {acc} %')
+    acc = n_correct/n_samples
+    acc = torch.round(acc * 100)
+    print(f'Accuracy of the network: {acc} %')
