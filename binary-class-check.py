@@ -51,6 +51,7 @@ x = sc.fit_transform(x)
 class dataset(Dataset):
     def __init__(self, x, y):
         self.x = torch.tensor(x, dtype=torch.float32)
+        y = torch.unsqueeze(y, 1)
         self.y = torch.tensor(y, dtype=torch.float32)
         self.length = self.x.shape[0]
 
