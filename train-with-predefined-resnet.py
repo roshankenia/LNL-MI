@@ -53,7 +53,7 @@ classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
-model = torchvision.models.resnet34(pretrained=False, num_classes=1)
+model = torchvision.models.resnet34(pretrained=False, num_classes=1).to(device)
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
