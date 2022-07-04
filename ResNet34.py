@@ -84,5 +84,6 @@ class ResNet34(nn.Module):
         input = self.gap(input)
         input = torch.flatten(input, start_dim=1)
         input = self.fc(input)
+        input = torch.sigmoid(input)
 
         return input
