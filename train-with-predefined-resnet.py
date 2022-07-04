@@ -89,8 +89,8 @@ for epoch in range(num_epochs):
             print(
                 f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
             # print(binary_acc(outputs, labels))
-            # print(outputs)
-            # print(labels)
+            print(outputs)
+            print(labels)
 
 print('Finished Training')
 # PATH = './resnet-mi.pth'
