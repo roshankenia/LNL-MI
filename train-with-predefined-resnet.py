@@ -26,7 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
 num_epochs = 20
-batch_size = 512
+batch_size = 256
 learning_rate = 0.001
 
 # dataset has PILImage images of range [0, 1].
@@ -85,7 +85,7 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
 
-        if (i+1) % 1 == 0:
+        if (i+1) % 4 == 0:
             print(
                 f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
             # print(binary_acc(outputs, labels))
