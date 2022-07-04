@@ -24,7 +24,7 @@ x = 0
 for filename in filenames:
     # Read the image
     image = Image.open('../ISBI2016_ISIC_Part3_Training_Data/'+filename)
-
+    image = image/256
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         # transforms.RandomHorizontalFlip(),  # simple data augmentation
@@ -35,7 +35,7 @@ for filename in filenames:
     ])
 
     # Convert the PIL image to Torch tensor
-    img_tensor = transform(image).to(torch.float32)/255
+    img_tensor = transform(image).to(torch.float32)
 
     images.append(img_tensor)
     x += 1
