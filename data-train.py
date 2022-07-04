@@ -20,7 +20,6 @@ filenames = sorted(os.listdir('../ISBI2016_ISIC_Part3_Training_Data'))
 
 # convert each image to a tensor
 images = []
-x = 0
 for filename in filenames:
     # Read the image
     image = Image.open('../ISBI2016_ISIC_Part3_Training_Data/'+filename)
@@ -37,14 +36,11 @@ for filename in filenames:
     img_tensor = transform(image).to(torch.float32)
 
     images.append(img_tensor)
-    x += 1
-    if x == 2:
-        break
 
 images = torch.stack(images)
 data_tensor = torch.tensor(images, dtype=torch.float32)
 print(data_tensor.shape)
-print(data_tensor)
+# print(data_tensor)
 # save data file
 torch.save(data_tensor, 'data_tensor.pt')
 
