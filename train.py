@@ -85,12 +85,12 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
 
-        if (i+1) % 1 == 0:
+        if (i+1) % 10 == 0:
             print(
                 f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
             # print(binary_acc(outputs, labels))
-            # print(outputs)
-            # print(labels)
+            print(outputs)
+            print(labels)
 
 print('Finished Training')
 # PATH = './resnet-mi.pth'
