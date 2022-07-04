@@ -26,7 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
 num_epochs = 20
-batch_size = 256
+batch_size = 512
 learning_rate = 0.001
 
 # dataset has PILImage images of range [0, 1].
@@ -53,7 +53,7 @@ classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
-model = torchvision.models.resnet34(pretrained=False, num_classes=1).to(device)
+model = torchvision.models.resnet18(pretrained=False, num_classes=1).to(device)
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
