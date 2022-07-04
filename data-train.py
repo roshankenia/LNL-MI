@@ -41,6 +41,7 @@ for filename in filenames:
 images = torch.stack(images)
 data_tensor = torch.tensor(images, dtype=torch.float32)
 print(data_tensor.shape)
+print(data_tensor)
 # save data file
 torch.save(data_tensor, 'data_tensor.pt')
 
