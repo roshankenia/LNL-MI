@@ -29,7 +29,8 @@ for filename in filenames:
         # transforms.RandomVerticalFlip(),
         # transforms.ColorJitter(
         #     brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 
     # Convert the PIL image to Torch tensor
