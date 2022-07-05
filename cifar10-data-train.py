@@ -20,7 +20,6 @@ train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                              download=True)
 
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),
     # transforms.RandomHorizontalFlip(),  # simple data augmentation
     # transforms.RandomVerticalFlip(),
     # transforms.ColorJitter(
