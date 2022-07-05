@@ -40,9 +40,10 @@ class Cifar10Binary(Dataset):
                 print("End of iterator loading!")
                 break
 
-        self.x_data = torch.tensor(x)
+        self.x_data = torch.tensor(x, dtype=torch.float32)
         print('x shape:', self.x_data.shape)
-        self.y_data = torch.tensor(y)  # size [n_samples, 1]
+        self.y_data = torch.tensor(
+            y, dtype=torch.float32)  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
