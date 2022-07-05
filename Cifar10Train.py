@@ -25,7 +25,7 @@ class Cifar10Binary(Dataset):
         # Initialize data, download, etc.
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
-        train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
+        images, labels = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                      download=True)
 
         transform = transforms.Compose([
@@ -40,7 +40,7 @@ class Cifar10Binary(Dataset):
 
         x = []
         y = []
-
+        print(images)
         dataiter = iter(train_dataset)
         while True:
             try:
