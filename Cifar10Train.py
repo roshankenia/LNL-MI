@@ -17,16 +17,17 @@ else:
     print('GPU is being properly used')
 
 
-class MedicalData(Dataset):
+class Cifar10Binary(Dataset):
 
     def __init__(self):
         # Initialize data, download, etc.
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
-        self.x_data = torch.load('../data_tensor.pt')
+        train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                                     download=True)
+        self.x_data = train_dataset.x_data
         print('x shape:', self.x_data.shape)
-        self.y_data = torch.load(
-            '../ground_truth_tensor.pt')  # size [n_samples, 1]
+        self.y_data = train_dataset.y_data  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
@@ -37,3 +38,12 @@ class MedicalData(Dataset):
     # we can call len(dataset) to return the size
     def __len__(self):
         return self.n_samples
+
+
+# create dataset
+dataset = Cifar10Binary()
+
+# get first sample and unpack
+first_data = dataset[0]
+features, labels = first_data
+print(features, labels)
