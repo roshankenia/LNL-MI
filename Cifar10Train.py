@@ -5,8 +5,6 @@ import numpy as np
 import math
 import os
 import sys
-import torchvision.transforms as transforms
-
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -28,16 +26,6 @@ class Cifar10Binary(Dataset):
         train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                      download=True)
 
-        transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            # transforms.RandomHorizontalFlip(),  # simple data augmentation
-            # transforms.RandomVerticalFlip(),
-            # transforms.ColorJitter(
-            #     brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
-        ])
-
         x = []
         y = []
 
@@ -45,7 +33,8 @@ class Cifar10Binary(Dataset):
         while True:
             try:
                 images, labels = next(dataiter)
-                x.append(transform(x).to(torch.float32))
+                print(images, labels)
+                x.append(images)
                 y.append(labels)
             except StopIteration:
                 # End of loading. Break out of the while loop
