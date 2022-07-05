@@ -24,9 +24,15 @@ class MedicalData(Dataset):
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
         self.x_data = torch.load('../data_tensor.pt')
+        x1 = self.x_data.detach().clone()
+        x2 = self.x_data.detach().clone()
+        self.x_data = torch.cat((self.x_data, x1, x2), dim=0)
         print('x shape:', self.x_data.shape)
         self.y_data = torch.load(
             '../ground_truth_tensor.pt')  # size [n_samples, 1]
+        y1 = self.y_data.detach().clone()
+        y2 = self.y_data.detach().clone()
+        self.y_data = torch.cat((self.y_data, y1, y2), dim=0)
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
