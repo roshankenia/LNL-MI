@@ -32,7 +32,7 @@ class Cifar10Binary(Dataset):
         dataiter = iter(train_dataset)
         while True:
             try:
-                images, labels = dataiter.next()
+                images, labels = next(dataiter)
                 x.append(images)
                 y.append(labels)
             except StopIteration:
