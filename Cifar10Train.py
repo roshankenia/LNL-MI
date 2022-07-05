@@ -44,7 +44,7 @@ class Cifar10Binary(Dataset):
         dataiter = iter(train_dataset)
         while True:
             try:
-                images, labels = next(dataiter)
+                images, labels = dataiter.next()
                 for image in images:
                     x.append(transform(image).to(torch.float32))
                 for label in labels:
