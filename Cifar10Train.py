@@ -25,35 +25,6 @@ class Cifar10Binary(Dataset):
         # Initialize data, download, etc.
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
-        train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                                     download=True)
-
-        transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            # transforms.RandomHorizontalFlip(),  # simple data augmentation
-            # transforms.RandomVerticalFlip(),
-            # transforms.ColorJitter(
-            #     brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
-        ])
-
-        x = []
-        y = []
-
-        i = 0
-        while i < train_dataset.__len__():
-            image, label = train_dataset[i]
-            x.append(transform(image).to(torch.float32))
-            y.append(label)
-            if i % 1000 == 0:
-                print('at', i)
-            i += 1
-
-        print(x)
-        print(y)
-
-        x = torch.stack(x)
         self.x_data = torch.tensor(x, dtype=torch.float32)
         print('x shape:', self.x_data.shape)
         y = torch.stack(y)
