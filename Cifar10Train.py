@@ -26,9 +26,23 @@ class Cifar10Binary(Dataset):
         train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                      download=True)
         print(train_dataset)
-        self.x_data = train_dataset.x_data
+        x = []
+        y = []
+
+        dataiter = iter(train_dataset)
+        while True:
+            try:
+                images, labels = dataiter.next()
+                x.append(images)
+                y.append(labels)
+            except StopIteration:
+                # End of loading. Break out of the while loop
+                print("End of iterator loading!")
+                break
+
+        self.x_data = torch.tensor(x)
         print('x shape:', self.x_data.shape)
-        self.y_data = train_dataset.y_data  # size [n_samples, 1]
+        self.y_data = torch.tensor(y)  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
