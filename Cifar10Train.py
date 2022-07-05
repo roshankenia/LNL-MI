@@ -46,10 +46,17 @@ class Cifar10Binary(Dataset):
             image, label = train_dataset[i]
             x.append(transform(image).to(torch.float32))
             y.append(label)
+            if i % 1000 == 0:
+                print('at', i)
             i += 1
 
+        print(x)
+        print(y)
+
+        x = torch.stack(x)
         self.x_data = torch.tensor(x, dtype=torch.float32)
         print('x shape:', self.x_data.shape)
+        y = torch.stack(y)
         self.y_data = torch.tensor(
             y, dtype=torch.float32)  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
