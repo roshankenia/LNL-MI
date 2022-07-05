@@ -25,6 +25,7 @@ class Cifar10Binary(Dataset):
         # size [n_samples, n_features]
         train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                      download=True)
+        print(train_dataset)
         self.x_data = train_dataset.x_data
         print('x shape:', self.x_data.shape)
         self.y_data = train_dataset.y_data  # size [n_samples, 1]
