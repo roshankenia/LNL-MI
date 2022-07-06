@@ -19,17 +19,16 @@ else:
     print('GPU is being properly used')
 
 
-class Cifar10Binary(Dataset):
+class Cifar10BinaryCleanTest(Dataset):
 
     def __init__(self):
         # Initialize data, download, etc.
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
-        self.x_data = torch.tensor(x, dtype=torch.float32)
+        self.x_data = torch.load('../../cifar10_clean_data_tensor_test.pt')
         print('x shape:', self.x_data.shape)
-        y = torch.stack(y)
-        self.y_data = torch.tensor(
-            y, dtype=torch.float32)  # size [n_samples, 1]
+        self.y_data = torch.load(
+            '../../cifar10_clean_ground_truth_tensor_test.pt')  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
@@ -42,10 +41,10 @@ class Cifar10Binary(Dataset):
         return self.n_samples
 
 
-# create dataset
-dataset = Cifar10Binary()
+# # create dataset
+# dataset = Cifar10BinaryClean()
 
-# get first sample and unpack
-first_data = dataset[0]
-features, labels = first_data
-print(features, labels)
+# # get first sample and unpack
+# first_data = dataset[0]
+# features, labels = first_data
+# print(features, labels)
