@@ -26,7 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Hyper-parameters
 num_epochs = 50
 batch_size = 512
-learning_rate = 0.01
+learning_rate = 0.1
 
 # dataset has PILImage images of range [0, 1].
 # We transform them to Tensors of normalized range [-1, 1]
@@ -43,6 +43,7 @@ model = torchvision.models.resnet34(pretrained=False, num_classes=1).to(device)
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.1)
 
 n_total_steps = len(train_loader)
 for epoch in range(num_epochs):
@@ -59,6 +60,7 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        scheduler.step()
 
         if (i+1) % 10 == 0:
             print(
@@ -85,7 +87,7 @@ with torch.no_grad():
 
         if x == 0:
             print('labels:', labels[0:20])
-            print('outputs:', outputs[0:20])
+            # print('outputs:', outputs[0:20])
             print('predicted:', y_pred_tag[0:20])
             x = 1
 
