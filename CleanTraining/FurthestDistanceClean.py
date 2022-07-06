@@ -26,7 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Hyper-parameters
 num_epochs = 50
 batch_size = 512
-learning_rate = 0.1
+learning_rate = 0.01
 
 # dataset has PILImage images of range [0, 1].
 # We transform them to Tensors of normalized range [-1, 1]
