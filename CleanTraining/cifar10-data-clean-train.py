@@ -16,7 +16,7 @@ else:
     print('GPU is being properly used')
 
 
-train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
+train_dataset = torchvision.datasets.CIFAR10(root='../data', train=True,
                                              download=True)
 
 transform = transforms.Compose([
