@@ -25,10 +25,10 @@ class Cifar10BinaryClean(Dataset):
         # Initialize data, download, etc.
         # here the first column is the class label, the rest are the features
         # size [n_samples, n_features]
-        self.x_data = torch.load('../../cifar10_clean_data_tensor.pt')
+        self.x_data = torch.load('../../cifar10_clean_data_tensor_nonorm.pt')
         print('x shape:', self.x_data.shape)
         self.y_data = torch.load(
-            '../../cifar10_clean_ground_truth_tensor.pt')  # size [n_samples, 1]
+            '../../cifar10_clean_ground_truth_tensor_nonorm.pt')  # size [n_samples, 1]
         print('y shape:', self.y_data.shape)
         self.n_samples = self.x_data.shape[0]
 
