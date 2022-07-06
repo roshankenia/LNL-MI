@@ -91,7 +91,7 @@ with torch.no_grad():
             print('predicted:', y_pred_tag[0:20])
             x = 1
 
-        n_correct += (y_pred_tag == labels).sum().float()
+        n_correct += (y_pred_tag == labels).sum().float().item()
         n_samples += len(labels)
     acc = n_correct/n_samples
     acc = torch.round(acc * 100)
