@@ -24,7 +24,7 @@ else:
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
-num_epochs = 200
+num_epochs = 50
 batch_size = 512
 learning_rate = 0.01
 
@@ -39,7 +39,7 @@ test_dataset = Cifar10BinaryCleanTest()
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=batch_size,
                                           shuffle=False)
 
-model = torchvision.models.resnet34(pretrained=False, num_classes=1).to(device)
+model = torchvision.models.resnet34(pretrained=True, num_classes=1).to(device)
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
