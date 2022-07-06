@@ -86,9 +86,9 @@ with torch.no_grad():
         y_pred_tag = torch.round(y_test_pred)
 
         if x == 0:
-            print('labels:', labels[0:20])
+            # print('labels:', labels[0:20])
             # print('outputs:', outputs[0:20])
-            print('predicted:', y_pred_tag[0:20])
+            # print('predicted:', y_pred_tag[0:20])
             x = 1
 
         n_correct += (y_pred_tag == labels).sum().float()
