@@ -94,17 +94,20 @@ print('Finished Training')
 with torch.no_grad():
     n_correct = 0
     n_samples = 0
+    x = 0
     for images, labels in test_loader:
         images = images.to(device)
         labels = labels.to(device)
         outputs = model(images)
-        
-        # print('labels:', labels)
-        # print('outputs:', outputs)
-        # print('predicted:', predicted)
 
         y_test_pred = torch.sigmoid(outputs)
         y_pred_tag = torch.round(y_test_pred)
+
+        if x == 0:
+            print('labels:', labels[0:20])
+            print('outputs:', outputs[0:20])
+            print('predicted:', y_pred_tag[0:20])
+            x = 1
 
         n_correct += (y_pred_tag == labels).sum().float()
         n_samples += len(labels)
