@@ -57,3 +57,4 @@ ground_truth_tensor = torch.unsqueeze(ground_truth_tensor, 1)
 print(ground_truth_tensor.shape)
 # save ground truth file
 torch.save(ground_truth_tensor, 'cifar1000_ground_truth_tensor.pt')
+#hi
