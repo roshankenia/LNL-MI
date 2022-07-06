@@ -24,7 +24,7 @@ else:
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
-num_epochs = 50
+num_epochs = 5
 batch_size = 512
 learning_rate = 0.001
 
@@ -80,7 +80,7 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
 
-        if (i+1) % 5 == 0:
+        if (i+1) % 10 == 0:
             print(
                 f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
             # print(binary_acc(outputs, labels))
@@ -91,37 +91,24 @@ print('Finished Training')
 # PATH = './resnet-mi.pth'
 # torch.save(model.state_dict(), PATH)
 
-# with torch.no_grad():
-#     n_correct = 0
-#     n_samples = 0
-#     n_class_correct = [0 for i in range(10)]
-#     n_class_samples = [0 for i in range(10)]
-#     for images, labels in test_loader:
-#         images = images.to(device)
-#         labels = labels.to(device)
-#         outputs = model(images)
-#         # max returns (value ,index)
-#         _, predicted = torch.max(outputs, 1)
-#         # print('labels:', labels)
-#         # print('outputs:', outputs)
-#         # print('predicted:', predicted)
+with torch.no_grad():
+    n_correct = 0
+    n_samples = 0
+    for images, labels in test_loader:
+        images = images.to(device)
+        labels = labels.to(device)
+        outputs = model(images)
+        
+        # print('labels:', labels)
+        # print('outputs:', outputs)
+        # print('predicted:', predicted)
 
-#         y_test_pred = torch.sigmoid(outputs)
-#         y_pred_tag = torch.round(y_test_pred)
+        y_test_pred = torch.sigmoid(outputs)
+        y_pred_tag = torch.round(y_test_pred)
 
-#         # print('y_pred_tag:', y_pred_tag)
-#     #     n_samples += labels.size(0)
-#     #     n_correct += (predicted == labels).sum().item()
-#     #     for i in range(len(labels)):
-#     #         label = labels[i]
-#     #         pred = predicted[i]
-#     #         if (label == pred):
-#     #             n_class_correct[label] += 1
-#     #         n_class_samples[label] += 1
+        n_correct += (y_pred_tag == labels).sum().float()
+        n_samples += len(labels)
+    acc = n_correct/n_samples
+    acc = torch.round(acc * 100)
 
-#     # acc = 100.0 * n_correct / n_samples
-#     # print(f'Accuracy of the network: {acc} %')
-
-#     # for i in range(10):
-#     #     acc = 100.0 * n_class_correct[i] / n_class_samples[i]
-#     #     print(f'Accuracy of {classes[i]}: {acc} %')
+    print(f'Accuracy of the network: {acc} %')
