@@ -96,4 +96,6 @@ with torch.no_grad():
     acc = n_correct/n_samples
     acc = torch.round(acc * 100)
     print('Number correct:', n_correct.item(), 'out of:', n_samples)
+    noise_index_tensor = torch.load('cifar10_noisy_index_tensor.pt')
+    print('Number of noisy samples:', len(noise_index_tensor))
     print(f'Accuracy of the network: {acc} %')
