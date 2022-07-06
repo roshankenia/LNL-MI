@@ -39,7 +39,7 @@ test_dataset = Cifar10BinaryCleanTest()
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=batch_size,
                                           shuffle=False)
 
-model = torchvision.models.alexnet(pretrained=False, num_classes=1).to(device)
+model = torchvision.models.densenet161(pretrained=False, num_classes=1).to(device)
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
