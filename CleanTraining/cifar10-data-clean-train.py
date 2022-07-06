@@ -25,7 +25,7 @@ transform = transforms.Compose([
     # transforms.ColorJitter(
     #     brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
     transforms.ToTensor(),
-    transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+    # transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
 ])
 
 images = []
@@ -49,11 +49,11 @@ data_tensor = torch.tensor(images, dtype=torch.float32)
 print(data_tensor.shape)
 # print(data_tensor)
 # save data file
-torch.save(data_tensor, 'cifar10_clean_data_tensor.pt')
+torch.save(data_tensor, 'cifar10_clean_data_tensor_nonorm.pt')
 
 # get ground truth values
 ground_truth_tensor = torch.tensor(labels, dtype=torch.float32)
 ground_truth_tensor = torch.unsqueeze(ground_truth_tensor, 1)
 print(ground_truth_tensor.shape)
 # save ground truth file
-torch.save(ground_truth_tensor, 'cifar10_clean_ground_truth_tensor.pt')
+torch.save(ground_truth_tensor, 'cifar10_clean_ground_truth_tensor_nonorm.pt')
