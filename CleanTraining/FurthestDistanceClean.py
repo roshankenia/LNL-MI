@@ -26,20 +26,11 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Hyper-parameters
 num_epochs = 50
 batch_size = 512
-learning_rate = 0.001
+learning_rate = 0.01
 
 # dataset has PILImage images of range [0, 1].
 # We transform them to Tensors of normalized range [-1, 1]
-# transform = transforms.Compose(
-#     [transforms.ToTensor(),
-#      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-# CIFAR10: 60000 32x32 color images in 10 classes, with 6000 images per class
-# train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
-#                                              download=True, transform=transform)
-
-# test_dataset = torchvision.datasets.CIFAR10(root='./data', train=False,
-#                                             download=True, transform=transform)
 train_dataset = Cifar10BinaryClean()
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,
                                            shuffle=True)
@@ -52,17 +43,6 @@ model = torchvision.models.resnet34(pretrained=False, num_classes=1).to(device)
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-
-
-def binary_acc(y_pred, y_test):
-    y_pred_tag = torch.round(torch.sigmoid(y_pred))
-
-    correct_results_sum = (y_pred_tag == y_test).sum().float()
-    acc = correct_results_sum/y_test.shape[0]
-    acc = torch.round(acc * 100)
-
-    return acc
-
 
 n_total_steps = len(train_loader)
 for epoch in range(num_epochs):
