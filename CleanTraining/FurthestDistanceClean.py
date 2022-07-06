@@ -24,7 +24,7 @@ else:
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyper-parameters
-num_epochs = 20
+num_epochs = 50
 batch_size = 512
 learning_rate = 0.01
 
@@ -95,5 +95,5 @@ with torch.no_grad():
         n_samples += len(labels)
     acc = n_correct/n_samples
     acc = torch.round(acc * 100)
-
+    print('Number correct:', n_correct, 'out of:', n_samples)
     print(f'Accuracy of the network: {acc} %')
