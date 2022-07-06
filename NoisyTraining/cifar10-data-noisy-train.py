@@ -47,7 +47,7 @@ while i < train_dataset.__len__():
     i += 1
 
 # now flip labels with random probability
-threshold = 0.5  # represents 10% probability of incorrect label
+threshold = 0.25  # represents 10% probability of incorrect label
 flippedIndexes = []
 for j in range(len(labels)):
     # generate random float
