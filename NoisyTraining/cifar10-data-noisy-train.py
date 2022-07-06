@@ -5,6 +5,7 @@ import sys
 from PIL import Image
 import torchvision.transforms as transforms
 import torchvision
+import random
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -45,16 +46,32 @@ while i < train_dataset.__len__():
         print('at', i)
     i += 1
 
+# now flip labels with random probability
+threshold = 0.1  # represents 10% probability of incorrect label
+flippedIndexes = []
+for j in range(len(labels)):
+    # generate random float
+    flip_prob = random.random()
+    # check if need to flip
+    if flip_prob <= threshold:
+        # flip label 0 -> 1 or 1 -> 0
+        labels[j] = labels[j] * -1 + 1
+        flippedIndexes.append(j)
+
 images = torch.stack(images)
 data_tensor = torch.tensor(images, dtype=torch.float32)
 print(data_tensor.shape)
 # print(data_tensor)
 # save data file
-torch.save(data_tensor, 'cifar10_clean_data_tensor_nonorm.pt')
+torch.save(data_tensor, 'cifar10_noisy_data_tensor_nonorm.pt')
 
 # get ground truth values
 ground_truth_tensor = torch.tensor(labels, dtype=torch.float32)
 ground_truth_tensor = torch.unsqueeze(ground_truth_tensor, 1)
 print(ground_truth_tensor.shape)
 # save ground truth file
-torch.save(ground_truth_tensor, 'cifar10_clean_ground_truth_tensor_nonorm.pt')
+torch.save(ground_truth_tensor, 'cifar10_noisy_ground_truth_tensor_nonorm.pt')
+
+# save noisy indexes
+noise_index_tensor = torch.tensor(flippedIndexes, dtype=torch.float32)
+torch.save(noise_index_tensor, 'cifar10_noisy_index_tensor.pt')
