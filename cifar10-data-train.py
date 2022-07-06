@@ -49,11 +49,11 @@ data_tensor = torch.tensor(images, dtype=torch.float32)
 print(data_tensor.shape)
 # print(data_tensor)
 # save data file
-torch.save(data_tensor, 'cifar1000_data_tensor.pt')
+torch.save(data_tensor, 'cifar10_data_tensor.pt')
 
 # get ground truth values
 ground_truth_tensor = torch.tensor(labels, dtype=torch.float32)
 ground_truth_tensor = torch.unsqueeze(ground_truth_tensor, 1)
 print(ground_truth_tensor.shape)
 # save ground truth file
-torch.save(ground_truth_tensor, 'cifar1000_ground_truth_tensor.pt')
+torch.save(ground_truth_tensor, 'cifar10_ground_truth_tensor.pt')
