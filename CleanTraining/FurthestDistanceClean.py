@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import sys
-from ResNet34 import ResNet34
 from Cifar10TrainClean import Cifar10BinaryClean
 from Cifar10TestClean import Cifar10BinaryCleanTest
 
