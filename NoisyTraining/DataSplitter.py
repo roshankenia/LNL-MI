@@ -54,6 +54,7 @@ class KDataSplitter():
         i = 0
         while i < self.length:
             arrayIndex = i % self.interval
+            print(arrayIndex)
             x_arrays[arrayIndex].append(self.x[indexes[i]])
             y_arrays[arrayIndex].append(self.y[indexes[i]])
             i += 1
