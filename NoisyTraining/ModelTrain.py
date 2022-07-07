@@ -34,7 +34,7 @@ class FDModel():
         self.learning_rate = learning_rate
         self.model = torchvision.models.resnet34(
             pretrained=False, num_classes=1).to(device)
-        self.criterion = nn.BCELoss()
+        self.criterion = nn.BCEWithLogitsLoss()
         self.optimizer = torch.optim.SGD(
             self.model.parameters(), lr=learning_rate)
 
