@@ -55,15 +55,16 @@ class KDataSplitter():
         arrayIndex = 0
         while i < self.length:
             x_arrays[arrayIndex].append(self.x[indexes[i]])
-            y_arrays[arrayIndex].append(self.y[indexes[i]])
+            y_arrays[arrayIndex].append(self.y[indexes[i]].item())
             i += 1
 
             if i != 0 and i % self.interval == 0 and i + self.interval <= self.length:
                 arrayIndex += 1
 
-        print(x_arrays)
         print(y_arrays)
-        print(len(x_arrays))
+
+        for arr in x_arrays:
+            print(len(arr))
 
 
 x_data = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
