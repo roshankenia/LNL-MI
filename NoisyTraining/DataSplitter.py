@@ -65,13 +65,15 @@ class KDataSplitter():
 
         # transform to tensors
         for i in range(len(x_arrays)):
-            x_arrays[i] = torch.tensor(torch.stack(x_arrays[i]), dtype=torch.float32)
+            x_arrays[i] = torch.tensor(torch.stack(
+                x_arrays[i]), dtype=torch.float32)
             y_arrays[i] = torch.unsqueeze(torch.tensor(
                 y_arrays[i], dtype=torch.float32), 1)
 
-        print(y_arrays)
-
         for arr in x_arrays:
+            print(len(arr))
+        print()
+        for arr in y_arrays:
             print(len(arr))
 
 
