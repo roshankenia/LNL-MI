@@ -54,12 +54,20 @@ class KDataSplitter():
         i = 0
         arrayIndex = 0
         while i < self.length:
+            # add to appropriate array
             x_arrays[arrayIndex].append(self.x[indexes[i]])
             y_arrays[arrayIndex].append(self.y[indexes[i]].item())
             i += 1
 
+            # if we hit an interval we increase to add to the next array
             if i != 0 and i % self.interval == 0 and i + self.interval <= self.length:
                 arrayIndex += 1
+
+        # transform to tensors
+        for i in range(len(x_arrays)):
+            x_arrays[i] = torch.tensor(x_arrays[i], dtype=torch.float32)
+            y_arrays[i] = torch.unsqueeze(torch.tensor(
+                y_arrays[i], dtype=torch.float32), 1)
 
         print(y_arrays)
 
