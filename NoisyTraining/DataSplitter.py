@@ -29,7 +29,9 @@ class KDataSplitter():
         self.y = y
         self.k = k
         self.length = len(y)
+        print('len:', self.length)
         self.interval = int(self.length/k)
+        print('interval:', self.interval)
 
     # function to split the dataset into k subsets
     def split(self):
