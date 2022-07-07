@@ -27,7 +27,9 @@ class KDataSplitter():
     def __init__(self, x, y, k):
         # Initialize x, y, and k
         self.x = x
+        print(x.shape)
         self.y = y
+        print(y.shape)
         self.k = k
         self.length = len(y)
         self.interval = int(math.ceil(self.length/k))
