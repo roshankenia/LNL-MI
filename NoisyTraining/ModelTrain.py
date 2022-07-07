@@ -26,6 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class FDModel():
     def __init__(self, x, y, num_epochs=5, batch_size=64, learning_rate=0.001):
+        # initialize model with all data and presets for training
         train_dataset = Cifar10BinaryNoisy(x, y)
         self.train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,
                                                         shuffle=True)
@@ -38,6 +39,7 @@ class FDModel():
             self.model.parameters(), lr=learning_rate)
 
     def train(self):
+        # train model
         n_total_steps = len(self.train_loader)
         for epoch in range(self.num_epochs):
             for i, (images, labels) in enumerate(self.train_loader):
@@ -64,6 +66,7 @@ class FDModel():
         print('Finished Training')
 
     def reset(self):
+        # to reset the model we simply create a new ResNet
         self.model = ResNet34(in_channels=3, outputs=1).to(device)
         self.optimizer = torch.optim.SGD(
             self.model.parameters(), lr=learning_rate)
