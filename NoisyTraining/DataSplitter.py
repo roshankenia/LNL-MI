@@ -52,12 +52,14 @@ class KDataSplitter():
 
         # now add elements based on each interval while using random indexes
         i = 0
+        arrayIndex = 0
         while i < self.length:
-            arrayIndex = i % self.interval
-            print(arrayIndex)
             x_arrays[arrayIndex].append(self.x[indexes[i]])
             y_arrays[arrayIndex].append(self.y[indexes[i]])
             i += 1
+
+            if i != 0 and i % self.interval == 0 and i + self.interval <= self.length:
+                arrayIndex += 1
 
         print(x_arrays)
         print(y_arrays)
