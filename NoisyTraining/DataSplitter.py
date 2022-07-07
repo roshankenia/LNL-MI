@@ -10,7 +10,6 @@ import sys
 from Cifar10TrainNoisy import Cifar10BinaryNoisy
 from Cifar10TestNoisy import Cifar10BinaryNoisyTest
 import random
-import math
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -27,12 +26,10 @@ class KDataSplitter():
     def __init__(self, x, y, k):
         # Initialize x, y, and k
         self.x = x
-        print(x.shape)
         self.y = y
-        print(y.shape)
         self.k = k
         self.length = len(y)
-        self.interval = int(math.ceil(self.length/k))
+        self.interval = int(self.length/k)
 
     # function to split the dataset into k subsets
     def split(self):
@@ -44,25 +41,23 @@ class KDataSplitter():
 
         # create datasets based on each interval
 
-        # add ranges to data
-        x_tensors = []
-        y_tensors = []
+        # first make empty datasets
+        x_arrays = []
+        y_arrays = []
+        for i in range(self.k):
+            x_arrays.append([])
+            y_arrays.append([])
 
-        index = 0
-        while index < self.length:
-            # if at the end of the data we do not want to go too far
-            range_end = index + self.interval
-            if range_end > self.length:
-                range_end = self.length
-            # add data in range of interval
-            x_tensors.append(self.x[index, range_end])
-            y_tensors.append(self.y[index, range_end])
+        # now add elements based on each interval while using random indexes
+        i = 0
+        while i < self.length:
+            arrayIndex = i % self.interval
+            x_arrays[arrayIndex].append(self.x[indexes[i]])
+            y_arrays[arrayIndex].append(self.y[indexes[i]])
 
-            index = index+self.interval
-
-        print(x_tensors)
-        print(y_tensors)
-        print(len(x_tensors))
+        print(x_arrays)
+        print(y_arrays)
+        print(len(x_arrays))
 
 
 x_data = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
