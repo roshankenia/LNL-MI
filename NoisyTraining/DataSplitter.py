@@ -35,6 +35,7 @@ class KDataSplitter():
 
     # function to split the dataset into k subsets
     def split(self):
+        print(self.x)
         # create array of indexes
         indexes = list(range(0, self.length))
 
