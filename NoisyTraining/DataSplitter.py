@@ -70,11 +70,11 @@ class KDataSplitter():
             y_arrays[i] = torch.unsqueeze(torch.tensor(
                 y_arrays[i], dtype=torch.float32), 1)
 
-        for arr in x_arrays:
-            print(len(arr))
-        print()
-        for arr in y_arrays:
-            print(len(arr))
+        return x_arrays, y_arrays
+
+    def newData(self, x, y):
+        self.x = x
+        self.y = y
 
 
 # x_data = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
