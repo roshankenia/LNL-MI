@@ -33,10 +33,44 @@ class KModelTrain():
         for i in range(k):
             # create kth model
             newModel = FDModel(
-                self.x_arrays[i], self.y_arrays[i], num_epochs=50, batch_size=64, learning_rate=0.001)
+                self.x_arrays[i], self.y_arrays[i], num_epochs=5, batch_size=64, learning_rate=0.001)
             # train new model
             print('Training model', i)
             newModel.train()
 
             # add to models
             self.models.append(newModel)
+
+    def calculateUncertainty(self, x, y):
+        # for each sample we obtain the prediction probability of it being class 1 from each model
+        # we then average these together to feed to binary cross entropy
+        # we then compute our uncertainty metric
+        loss = nn.BCELoss()
+        sampleMetrics = []
+        for i in range(len(x)):
+            x_sample = x[i]
+            y_sample = y[i]
+
+            # obtain predictions from each model
+            predictions = []
+            for model in self.models:
+                predictions.append(torch.sigmoid(model.predict(x_sample)))
+
+            # calculate average probability
+            y_avg = np.average(predictions)
+
+            # compute binary cross entropy loss using this average
+            bce = loss(y_avg, y_sample)
+
+            # now we need to compute the furthest apart metric
+            distances = []
+            for prob_one in predictions:
+                for prob_two in predictions:
+                    distances.append(np.absolute((prob_one-prob_two)))
+
+            # furthest apart uncertainty is the max of these values
+            furthestUncertainty = max(distances)
+
+            sampleMetrics.append((bce, furthestUncertainty))
+
+        return sampleMetrics
