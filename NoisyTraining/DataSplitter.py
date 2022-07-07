@@ -79,5 +79,5 @@ class KDataSplitter():
 
 x_data = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
 y_data = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
-testSplit = KDataSplitter(x_data, y_data, k=4)
+testSplit = KDataSplitter(x_data, y_data, k=6)
 testSplit.split()
