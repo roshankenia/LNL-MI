@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import sys
-from ResNet34 import ResNet34
 from Cifar10Custom import Cifar10BinaryNoisy
 
 # ensure we are running on the correct gpu
