@@ -64,6 +64,7 @@ class KModelTrain():
                 y_avg = torch.mean(predictions)
                 y_avg = torch.unsqueeze(y_avg, 0)
                 print(y_avg)
+                print(y_sample)
 
                 # compute binary cross entropy loss using this average
                 bce = loss(y_avg, y_sample)
@@ -78,6 +79,7 @@ class KModelTrain():
 
                 # furthest apart uncertainty is the max of these values
                 furthestUncertainty = max(distances)
+                print('furth:', furthestUncertainty)
 
                 sampleMetrics.append((bce, furthestUncertainty))
 
