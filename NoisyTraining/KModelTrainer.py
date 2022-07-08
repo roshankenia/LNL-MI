@@ -54,7 +54,7 @@ class KModelTrain():
             # obtain predictions from each model
             predictions = []
             for model in self.models:
-                predictions.append(torch.sigmoid(model.predict([x_sample])))
+                predictions.append(torch.sigmoid(model.predict(x_sample)))
 
             # calculate average probability
             y_avg = np.average(predictions)

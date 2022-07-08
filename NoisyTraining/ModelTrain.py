@@ -66,7 +66,9 @@ class FDModel():
         print('Finished Training')
 
     def predict(self, x_sample):
-        return self.model.eval(x_sample)
+        self.model.eval()
+        with torch.no_grad():
+            return self.model(x_sample)
 
     def reset(self):
         # to reset the model we simply create a new ResNet
