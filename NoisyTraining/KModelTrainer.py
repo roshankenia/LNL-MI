@@ -9,8 +9,6 @@ import os
 import sys
 from DataSplitter import KDataSplitter
 from ModelTrain import FDModel
-from collections import defaultdict
-
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -80,10 +78,7 @@ class KModelTrain():
                     for prob_two in predictions:
                         distances.append(np.absolute((prob_one-prob_two)))
 
-                temp = defaultdict(list)
-                for idx, ele in enumerate(predictions):
-                    temp[ele].append(idx)
-                res = max(temp[ele][-1]-temp[ele][0] for ele in temp)
+                res = max(predictions) - min(predictions)
 
                 # furthest apart uncertainty is the max of these values
                 furthestUncertainty = max(distances)
