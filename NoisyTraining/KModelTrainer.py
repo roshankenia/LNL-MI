@@ -61,10 +61,10 @@ class KModelTrain():
                 predictions = torch.tensor(predictions)
                 # calculate average probability
                 y_avg = torch.mean(predictions)
-                print(y_avg)
+                print(y_avg.item())
 
                 # compute binary cross entropy loss using this average
-                bce = loss(y_avg, y_sample)
+                bce = loss(y_avg.item(), y_sample)
 
                 # now we need to compute the furthest apart metric
                 distances = []
