@@ -71,20 +71,9 @@ class KModelTrain():
 
             # print('bce:', bce)
 
-            # now we need to compute the furthest apart metric
-            distances = []
-            for prob_one in predictions:
-                for prob_two in predictions:
-                    distances.append(np.absolute((prob_one-prob_two)))
-
-            res = max(predictions) - min(predictions)
-
-            # furthest apart uncertainty is the max of these values
-            furthestUncertainty = max(distances)
+            # furthest apart uncertainty is the difference between the maximum prediction and the minimum prediction
+            furthestUncertainty = max(predictions) - min(predictions)
             # print('furth:', furthestUncertainty, res)
-
-            if furthestUncertainty.item() != res.item():
-                print('NON EQUAL FOUND:', furthestUncertainty, res)
 
             bces.append(bce.item())
             furthest.append(furthestUncertainty.item())
