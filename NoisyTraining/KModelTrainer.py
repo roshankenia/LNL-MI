@@ -53,36 +53,33 @@ class KModelTrain():
             modelPredictions.append(torch.sigmoid(
                 model.predict(x)))
         print(modelPredictions)
-        # for i in range(len(x)):
-        #     # x_sample = x[i]
-        #     # y_sample = y[i]
+        for i in range(len(x)):
+            y_sample = y[i]
 
-        #     # # obtain predictions from each model
-        #     # predictions = []
-        #     # for model in self.models:
-        #     #     predictions.append(.item())
+            # obtain predictions from each model
+            predictions = []
+            for j in range(len(modelPredictions)):
+                predictions.append(modelPredictions[j][i].item())
+            predictions = torch.tensor(predictions)
+            # calculate average probability
+            y_avg = torch.mean(predictions)
+            y_avg = torch.unsqueeze(y_avg, 0)
+            # print(y_avg)
+            # print(y_sample)
 
-        #     # print(predictions)
-        #     predictions = torch.tensor(predictions)
-        #     # calculate average probability
-        #     y_avg = torch.mean(predictions)
-        #     y_avg = torch.unsqueeze(y_avg, 0)
-        #     # print(y_avg)
-        #     # print(y_sample)
+            # compute binary cross entropy loss using this average
+            bce = loss(y_avg, y_sample)
 
-        #     # compute binary cross entropy loss using this average
-        #     bce = loss(y_avg, y_sample)
+            # print('bce:', bce)
 
-        #     # print('bce:', bce)
+            # furthest apart uncertainty is the difference between the maximum prediction and the minimum prediction
+            furthestUncertainty = max(predictions) - min(predictions)
+            # print('furth:', furthestUncertainty, res)
 
-        #     # furthest apart uncertainty is the difference between the maximum prediction and the minimum prediction
-        #     furthestUncertainty = max(predictions) - min(predictions)
-        #     # print('furth:', furthestUncertainty, res)
+            bces.append(bce.item())
+            furthest.append(furthestUncertainty.item())
 
-        #     bces.append(bce.item())
-        #     furthest.append(furthestUncertainty.item())
+            if i % 1000 == 0:
+                print(i, 'samples done')
 
-        #     if i % 1000 == 0:
-        #         print(i, 'samples done')
-
-        # return bces, furthest
+        return bces, furthest
