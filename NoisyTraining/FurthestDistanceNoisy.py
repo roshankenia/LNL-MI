@@ -35,13 +35,10 @@ bces, furthest = model_trainer.calculateUncertainty(x_tensor, y_tensor)
 
 # obtain noisy indexes so we can plot them
 noise_indexes = torch.load('cifar10_noisy_index_tensor.pt')
-
+print(noise_indexes)
 noisy_data = np.zeros(len(y_tensor))
 for index in noise_indexes:
-    print(index)
-    print(index.item())
-    print(noisy_data)
-    noisy_data[index.item()] = 1
+    noisy_data[int(index.item())] = 1
 
 # make plot of bce and furthest uncertainty
 print('Making plot')
