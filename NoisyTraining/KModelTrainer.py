@@ -9,6 +9,8 @@ import os
 import sys
 from DataSplitter import KDataSplitter
 from ModelTrain import FDModel
+from collections import defaultdict
+
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -49,42 +51,48 @@ class KModelTrain():
         bces = []
         furthest = []
         for i in range(len(x)):
-            x_sample = x[i]
-            y_sample = y[i]
+            if i <= 2:
+                x_sample = x[i]
+                y_sample = y[i]
 
-            # obtain predictions from each model
-            predictions = []
-            for model in self.models:
-                predictions.append(torch.sigmoid(
-                    model.predict(x_sample)).item())
+                # obtain predictions from each model
+                predictions = []
+                for model in self.models:
+                    predictions.append(torch.sigmoid(
+                        model.predict(x_sample)).item())
 
-            # print(predictions)
-            predictions = torch.tensor(predictions)
-            # calculate average probability
-            y_avg = torch.mean(predictions)
-            y_avg = torch.unsqueeze(y_avg, 0)
-            # print(y_avg)
-            # print(y_sample)
+                # print(predictions)
+                predictions = torch.tensor(predictions)
+                # calculate average probability
+                y_avg = torch.mean(predictions)
+                y_avg = torch.unsqueeze(y_avg, 0)
+                # print(y_avg)
+                # print(y_sample)
 
-            # compute binary cross entropy loss using this average
-            bce = loss(y_avg, y_sample)
+                # compute binary cross entropy loss using this average
+                bce = loss(y_avg, y_sample)
 
-            # print('bce:', bce)
+                # print('bce:', bce)
 
-            # now we need to compute the furthest apart metric
-            distances = []
-            for prob_one in predictions:
-                for prob_two in predictions:
-                    distances.append(np.absolute((prob_one-prob_two)))
+                # now we need to compute the furthest apart metric
+                distances = []
+                for prob_one in predictions:
+                    for prob_two in predictions:
+                        distances.append(np.absolute((prob_one-prob_two)))
 
-            # furthest apart uncertainty is the max of these values
-            furthestUncertainty = max(distances)
-            # print('furth:', furthestUncertainty)
+                temp = defaultdict(list)
+                for idx, ele in enumerate(predictions):
+                    temp[ele].append(idx)
+                res = max(temp[ele][-1]-temp[ele][0] for ele in temp)
 
-            bces.append(bce.item())
-            furthest.append(furthestUncertainty.item())
+                # furthest apart uncertainty is the max of these values
+                furthestUncertainty = max(distances)
+                print('furth:', furthestUncertainty, res)
 
-            if i % 1000 == 0:
-                print(i, 'samples done')
+                bces.append(bce.item())
+                furthest.append(furthestUncertainty.item())
+
+                if i % 1000 == 0:
+                    print(i, 'samples done')
 
         return bces, furthest
