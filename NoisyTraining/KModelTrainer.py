@@ -33,7 +33,7 @@ class KModelTrain():
         for i in range(k):
             # create kth model
             newModel = FDModel(
-                self.x_arrays[i], self.y_arrays[i], num_epochs=5, batch_size=64, learning_rate=0.001)
+                self.x_arrays[i], self.y_arrays[i], num_epochs=50, batch_size=64, learning_rate=0.01)
             # train new model
             print('Training model', i)
             newModel.train()
@@ -63,9 +63,9 @@ class KModelTrain():
             # calculate average probability
             y_avg = torch.mean(predictions)
             y_avg = torch.unsqueeze(y_avg, 0)
-            if i == 1:
-                print(y_avg)
-                print(y_sample)
+
+            # print(y_avg)
+            # print(y_sample)
 
             # compute binary cross entropy loss using this average
             bce = loss(y_avg, y_sample)
@@ -79,7 +79,7 @@ class KModelTrain():
             bces.append(bce.item())
             furthest.append(furthestUncertainty.item())
 
-            if i % 1000 == 0:
-                print(i, 'samples done')
+            # if i % 1000 == 0:
+            #     print(i, 'samples done')
 
         return bces, furthest
