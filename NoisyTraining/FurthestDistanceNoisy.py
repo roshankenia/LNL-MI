@@ -5,6 +5,8 @@ import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 import os
 import sys
 from KModelTrainer import KModelTrain
@@ -27,8 +29,26 @@ y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
 # make our K Model Trainer where k represents number of models
 model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
 
-# compute metrics for each sample
-sampleMetrics = model_trainer.calculateUncertainty(x_tensor, y_tensor)
+# compute metrics for all samples
+bces, furthest = model_trainer.calculateUncertainty(x_tensor, y_tensor)
+
+# obtain noisy indexes so we can plot them
+noise_indexes = torch.load('cifar10_noisy_index_tensor.pt')
+
+noisy_data = np.zeros(len(y_tensor))
+for index in noise_indexes:
+    noisy_data[index] = 1
+
+# make plot of bce and furthest uncertainty
+result_df = pd.DataFrame(
+    {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='BCE', y='Furthest Uncertainty',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('BCE vs Furthest Uncertainty')
+ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
+plt.savefig('bce-vs-furth.png')
+plt.close()
 
 
 # # Device configuration
