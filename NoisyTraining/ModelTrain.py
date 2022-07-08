@@ -66,7 +66,7 @@ class FDModel():
         print('Finished Training')
 
     def predict(self, x_sample):
-        return self.model(x_sample)
+        return self.model.eval(x_sample)
 
     def reset(self):
         # to reset the model we simply create a new ResNet
