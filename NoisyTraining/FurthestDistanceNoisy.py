@@ -38,6 +38,9 @@ noise_indexes = torch.load('cifar10_noisy_index_tensor.pt')
 
 noisy_data = np.zeros(len(y_tensor))
 for index in noise_indexes:
+    print(index)
+    print(index.item())
+    print(noisy_data)
     noisy_data[index.item()] = 1
 
 # make plot of bce and furthest uncertainty
