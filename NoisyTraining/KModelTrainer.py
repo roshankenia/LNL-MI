@@ -52,7 +52,6 @@ class KModelTrain():
         for model in self.models:
             modelPredictions.append(torch.sigmoid(
                 model.predict(x)))
-        print(modelPredictions)
         for i in range(len(x)):
             y_sample = y[i]
 
@@ -64,8 +63,9 @@ class KModelTrain():
             # calculate average probability
             y_avg = torch.mean(predictions)
             y_avg = torch.unsqueeze(y_avg, 0)
-            # print(y_avg)
-            # print(y_sample)
+            if i == 1:
+                print(y_avg)
+                print(y_sample)
 
             # compute binary cross entropy loss using this average
             bce = loss(y_avg, y_sample)
