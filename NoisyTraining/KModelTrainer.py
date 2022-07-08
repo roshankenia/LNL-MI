@@ -84,4 +84,7 @@ class KModelTrain():
             bces.append(bce.item())
             furthest.append(furthestUncertainty.item())
 
+            if i % 1000 == 0:
+                print(i, 'samples done')
+
         return bces, furthest

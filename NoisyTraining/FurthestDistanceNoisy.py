@@ -30,6 +30,7 @@ y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
 model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
 
 # compute metrics for all samples
+print('Calculating Uncertainties')
 bces, furthest = model_trainer.calculateUncertainty(x_tensor, y_tensor)
 
 # obtain noisy indexes so we can plot them
@@ -40,6 +41,7 @@ for index in noise_indexes:
     noisy_data[index] = 1
 
 # make plot of bce and furthest uncertainty
+print('Making plot')
 result_df = pd.DataFrame(
     {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
 fig, ax = plt.subplots(figsize=(10, 10))
