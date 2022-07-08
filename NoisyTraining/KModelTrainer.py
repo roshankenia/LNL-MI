@@ -48,29 +48,33 @@ class KModelTrain():
         loss = nn.BCELoss()
         sampleMetrics = []
         for i in range(len(x)):
-            x_sample = x[i]
-            y_sample = y[i]
+            if i <= 2:
+                x_sample = x[i]
+                y_sample = y[i]
 
-            # obtain predictions from each model
-            predictions = []
-            for model in self.models:
-                predictions.append(torch.sigmoid(model.predict(x_sample)))
+                # obtain predictions from each model
+                predictions = []
+                for model in self.models:
+                    predictions.append(torch.sigmoid(model.predict(x_sample)))
+                    
+                print(predictions)
 
-            # calculate average probability
-            y_avg = np.average(predictions)
+                # calculate average probability
+                y_avg = torch.mean(predictions)
+                print(y_avg)
 
-            # compute binary cross entropy loss using this average
-            bce = loss(y_avg, y_sample)
+                # compute binary cross entropy loss using this average
+                bce = loss(y_avg, y_sample)
 
-            # now we need to compute the furthest apart metric
-            distances = []
-            for prob_one in predictions:
-                for prob_two in predictions:
-                    distances.append(np.absolute((prob_one-prob_two)))
+                # now we need to compute the furthest apart metric
+                distances = []
+                for prob_one in predictions:
+                    for prob_two in predictions:
+                        distances.append(np.absolute((prob_one-prob_two)))
 
-            # furthest apart uncertainty is the max of these values
-            furthestUncertainty = max(distances)
+                # furthest apart uncertainty is the max of these values
+                furthestUncertainty = max(distances)
 
-            sampleMetrics.append((bce, furthestUncertainty))
+                sampleMetrics.append((bce, furthestUncertainty))
 
         return sampleMetrics
