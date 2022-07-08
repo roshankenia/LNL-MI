@@ -31,9 +31,16 @@ class KModelTrain():
         # set up models
         self.models = []
         for i in range(k):
+            nextIndex = i+1
+            if nextIndex == k:
+                nextIndex = 0
+            x_data = torch.cat(
+                (self.x_arrays[i], self.x_arrays[nextIndex]), dim=0)
+            y_data = torch.cat(
+                (self.x_arrays[i], self.x_arrays[nextIndex]), dim=0)
             # create kth model
             newModel = FDModel(
-                self.x_arrays[i], self.y_arrays[i], num_epochs=50, batch_size=64, learning_rate=0.01)
+                x_data, y_data, num_epochs=50, batch_size=64, learning_rate=0.01)
             # train new model
             print('Training model', i)
             newModel.train()
