@@ -67,7 +67,7 @@ class FDModel():
 
     def predict(self, x_sample):
         x_sample = x_sample.to(device)
-        x_sample = torch.unsqueeze(x_sample, 0)
+        # x_sample = torch.unsqueeze(x_sample, 0)
         print(x_sample.shape)
         self.model.eval()
         with torch.no_grad():
