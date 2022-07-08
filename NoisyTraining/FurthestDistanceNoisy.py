@@ -27,7 +27,7 @@ x_tensor = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
 y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
 
 # make our K Model Trainer where k represents number of models
-model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
+model_trainer = KModelTrain(x_tensor, y_tensor, k=4)
 
 # compute metrics for all samples
 print('Calculating Uncertainties')
@@ -48,7 +48,7 @@ fig, ax = plt.subplots(figsize=(10, 10))
 sns.scatterplot(x='BCE', y='Furthest Uncertainty',
                 hue='label', data=result_df, ax=ax, s=10)
 plt.title('BCE vs Furthest Uncertainty')
-ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
 plt.savefig('bce-vs-furth.png')
 plt.close()
 
