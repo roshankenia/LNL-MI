@@ -49,7 +49,37 @@ sns.scatterplot(x='BCE', y='Furthest Uncertainty',
                 hue='label', data=result_df, ax=ax, s=10)
 plt.title('BCE vs Furthest Uncertainty')
 ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-plt.savefig('bce-vs-furth.png')
+plt.savefig('bce-vs-furth-before.png')
+plt.close()
+
+print('Flipping uncertain samples')
+# now flip samples that are uncertain
+new_x = x_tensor.clone().detach()
+new_y = y_tensor.clone().detach()
+for i in range(len(x_tensor)):
+    # if the BCE and uncertainty is above the thresholds we relabel
+    if bces[i] > 1 and furthest[i] > 0.8:
+        new_y[i] = -1 * new_y[i] + 1
+
+# train a new classifier
+
+# make our K Model Trainer where k represents number of models
+model_trainer = KModelTrain(new_x, new_y, k=2)
+
+# compute metrics for all samples
+print('Calculating Uncertainties')
+bces, furthest = model_trainer.calculateUncertainty(new_x, new_y)
+
+# make plot of bce and furthest uncertainty
+print('Making plot')
+result_df = pd.DataFrame(
+    {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='BCE', y='Furthest Uncertainty',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('BCE vs Furthest Uncertainty')
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+plt.savefig('bce-vs-furth-after.png')
 plt.close()
 
 
