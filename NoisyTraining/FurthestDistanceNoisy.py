@@ -27,7 +27,7 @@ x_tensor = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
 y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
 
 # make our K Model Trainer where k represents number of models
-model_trainer = KModelTrain(x_tensor, y_tensor, k=4)
+model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
 
 # compute metrics for all samples
 print('Calculating Uncertainties')
