@@ -33,7 +33,7 @@ class FDModel():
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.model = torchvision.models.resnet34(
-            pretrained=True, num_classes=1)
+            pretrained=False, num_classes=1)
         # self.model.fc = torch.nn.Linear(
         #     in_features=self.model.fc.in_features, out_features=1, bias=(self.model.fc.bias is not None))
         self.model.to(device)
