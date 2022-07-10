@@ -34,9 +34,9 @@ for index in noise_indexes:
     noisy_data[int(index.item())] = 1
 
 
-for i in range(20):
+for i in range(4):
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=4)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
@@ -65,7 +65,7 @@ for i in range(20):
     for i in range(len(x_tensor)):
         # if the BCE and uncertainty is above the thresholds we relabel
         # print(bces[i], furthest[i])
-        if bces[i] > 2 or furthest[i] > 0.9:
+        if bces[i] > 0.8 and furthest[i] > 0.8:
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
             # chek if correct relabel
