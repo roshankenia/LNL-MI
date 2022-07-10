@@ -26,13 +26,6 @@ x_tensor = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
 # size [n_samples, 1]
 y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
 
-# make our K Model Trainer where k represents number of models
-model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
-
-# compute metrics for all samples
-print('Calculating Uncertainties')
-bces, furthest = model_trainer.calculateUncertainty(x_tensor, y_tensor)
-
 # obtain noisy indexes so we can plot them
 noise_indexes = torch.load('cifar10_noisy_index_tensor.pt')
 print(noise_indexes)
@@ -40,61 +33,54 @@ noisy_data = np.zeros(len(y_tensor))
 for index in noise_indexes:
     noisy_data[int(index.item())] = 1
 
-# make plot of bce and furthest uncertainty
-print('Making plot')
-result_df = pd.DataFrame(
-    {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
-fig, ax = plt.subplots(figsize=(10, 10))
-sns.scatterplot(x='BCE', y='Furthest Uncertainty',
-                hue='label', data=result_df, ax=ax, s=10)
-plt.title('BCE vs Furthest Uncertainty')
-ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-plt.savefig('bce-vs-furth-before.png')
-plt.close()
 
-print('Flipping uncertain samples')
-# now flip samples that are uncertain
-new_x = x_tensor.clone().detach()
-new_y = y_tensor.clone().detach()
-totalRelabel = 0
-correctRelabel = 0
-incorrectRelabel = 0
-for i in range(len(x_tensor)):
-    # if the BCE and uncertainty is above the thresholds we relabel
-    print(bces[i], furthest[i])
-    if bces[i] > .8 and furthest[i] > 0.8:
-        new_y[i] = -1 * new_y[i] + 1
-        totalRelabel += 1
-        # chek if correct relabel
-        if noisy_data[i] == 1:
-            correctRelabel += 1
-            noisy_data[i] = 0
-        else:
-            incorrectRelabel += 1
-            noisy_data[i] = 1
-print(
-    f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
-# train a new classifier
+for i in range(4):
+    # make our K Model Trainer where k represents number of models
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=2)
 
-# make our K Model Trainer where k represents number of models
-model_trainer = KModelTrain(new_x, new_y, k=2)
+    # compute metrics for all samples
+    print('Calculating Uncertainties')
+    bces, furthest = model_trainer.calculateUncertainty(x_tensor, y_tensor)
 
-# compute metrics for all samples
-print('Calculating Uncertainties')
-bces, furthest = model_trainer.calculateUncertainty(new_x, new_y)
+    # make plot of bce and furthest uncertainty
+    print('Making plot')
+    result_df = pd.DataFrame(
+        {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
+    fig, ax = plt.subplots(figsize=(10, 10))
+    sns.scatterplot(x='BCE', y='Furthest Uncertainty',
+                    hue='label', data=result_df, ax=ax, s=10)
+    plt.title('BCE vs Furthest Uncertainty')
+    ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+    picName = 'bce-vs-furth-'+i+'.png'
+    plt.savefig(picName)
+    plt.close()
 
-# make plot of bce and furthest uncertainty
-print('Making plot')
-result_df = pd.DataFrame(
-    {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
-fig, ax = plt.subplots(figsize=(10, 10))
-sns.scatterplot(x='BCE', y='Furthest Uncertainty',
-                hue='label', data=result_df, ax=ax, s=10)
-plt.title('BCE vs Furthest Uncertainty')
-ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-plt.savefig('bce-vs-furth-after.png')
-plt.close()
+    print('Flipping uncertain samples')
+    # now flip samples that are uncertain
+    new_x = x_tensor.clone().detach()
+    new_y = y_tensor.clone().detach()
+    totalRelabel = 0
+    correctRelabel = 0
+    incorrectRelabel = 0
+    for i in range(len(x_tensor)):
+        # if the BCE and uncertainty is above the thresholds we relabel
+        print(bces[i], furthest[i])
+        if bces[i] > .8 and furthest[i] > 0.8:
+            new_y[i] = -1 * new_y[i] + 1
+            totalRelabel += 1
+            # chek if correct relabel
+            if noisy_data[i] == 1:
+                correctRelabel += 1
+                noisy_data[i] = 0
+            else:
+                incorrectRelabel += 1
+                noisy_data[i] = 1
+    print(
+        f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
 
+    # set tensors to new data
+    x_tensor = new_x
+    y_tensor = new_y
 
 # # Device configuration
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
