@@ -56,11 +56,21 @@ print('Flipping uncertain samples')
 # now flip samples that are uncertain
 new_x = x_tensor.clone().detach()
 new_y = y_tensor.clone().detach()
+totalRelabel = 0
+correctRelabel = 0
+incorrectRelabel = 0
 for i in range(len(x_tensor)):
     # if the BCE and uncertainty is above the thresholds we relabel
     if bces[i] > 1 and furthest[i] > 0.8:
         new_y[i] = -1 * new_y[i] + 1
-
+        totalRelabel += 1
+        # chek if correct relabel
+        if noisy_data[i] == 1:
+            correctRelabel += 1
+        else:
+            incorrectRelabel += 1
+print(
+    f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
 # train a new classifier
 
 # make our K Model Trainer where k represents number of models
