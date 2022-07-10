@@ -51,7 +51,7 @@ for i in range(4):
                     hue='label', data=result_df, ax=ax, s=10)
     plt.title('BCE vs Furthest Uncertainty')
     ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-    picName = 'bce-vs-furth-'+i+'.png'
+    picName = 'bce-vs-furth-'+str(i)+'.png'
     plt.savefig(picName)
     plt.close()
 
