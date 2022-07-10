@@ -59,7 +59,7 @@ class FDModel():
                 loss.backward()
                 self.optimizer.step()
 
-                if (i+1) % 20 == 0:
+                if (i+1) % 79 == 0:
                     print(
                         f'Epoch [{epoch+1}/{self.num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
                     # print(binary_acc(outputs, labels))
