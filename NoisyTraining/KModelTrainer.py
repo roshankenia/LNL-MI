@@ -45,7 +45,7 @@ class KModelTrain():
             # without concatenating
             # create kth model
             newModel = FDModel(
-                x_arrays[i], y_arrays[i], num_epochs=5, batch_size=64, learning_rate=0.01)
+                x_arrays[i], y_arrays[i], num_epochs=50, batch_size=64, learning_rate=0.01)
             # train new model
             print('Training model', i)
             newModel.train()
