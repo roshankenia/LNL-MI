@@ -68,8 +68,10 @@ for i in range(len(x_tensor)):
         # chek if correct relabel
         if noisy_data[i] == 1:
             correctRelabel += 1
+            noisy_data[i] = 0
         else:
             incorrectRelabel += 1
+            noisy_data[i] = 1
 print(
     f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
 # train a new classifier
