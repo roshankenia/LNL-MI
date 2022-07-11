@@ -22,7 +22,7 @@ else:
 
 class KModelTrain():
 
-    def __init__(self, x, y, k):
+    def __init__(self, x, y, k, num_epochs=25):
         self.data_splitter = KDataSplitter(x, y, k)
         x_arrays, y_arrays = self.data_splitter.split()
 
@@ -45,7 +45,7 @@ class KModelTrain():
             # without concatenating
             # create kth model
             newModel = FDModel(
-                x_arrays[i], y_arrays[i], num_epochs=25, batch_size=128, learning_rate=0.01)
+                x_arrays[i], y_arrays[i], num_epochs=num_epochs, batch_size=128, learning_rate=0.01)
             # train new model
             print('Training model', (i+1))
             newModel.train()

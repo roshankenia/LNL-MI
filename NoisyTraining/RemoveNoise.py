@@ -94,10 +94,23 @@ for i in range(5):
             keep_x.append(x_tensor[i])
             keep_y.append(y_tensor[i].item())
             cleanColor.append(noisy_data[i])
+
+    # find out number of noisy in our two sets
+    totalBadInNoisy = 0
+    for noise in noisyColor:
+        if noise == 1:
+            totalBadInNoisy += 1
+
+    totalBadInClean = 0
+    for noise in cleanColor:
+        if noise == 1:
+            totalBadInClean += 1
     print(
         f'Total removed: {removedCount}, Correctly removed: {correctNoise}, Incorrectly removed: {incorrectNoise}')
     print(
-        f'Total in kept set: {len(keep_x)}, Total in noisy set: {len(noisy_x)}')
+        f'Total in kept set: {len(keep_x)}, Number noisy: {totalBadInClean}, Incorrectly removed: {len(keep_x)-totalBadInClean}')
+    print(
+        f'Total in removed set: {len(noisy_x)}, Number noisy: {totalBadInNoisy}, Incorrectly removed: {len(noisy_x)-totalBadInNoisy}')
 
     # set tensors to new data
     x_tensor = torch.tensor(torch.stack(
@@ -107,12 +120,63 @@ for i in range(5):
 
     noisy_data = cleanColor
 
+# now we want to correct the samples from the noisy set
 
-# store end time
-end = time.time()
-timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
-# total time taken
-print(f"Total runtime of the program is {timeTaken}")
+# to start we create and train on our current clean set
+model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
+
+# now obtain BCE and furthest distance for the noisy data
+x_tensor_noisy = torch.tensor(torch.stack(
+    noisy_x), dtype=torch.float32)
+y_tensor_noisy = torch.unsqueeze(torch.tensor(
+    noisy_y, dtype=torch.float32), 1)
+
+# compute metrics for all samples
+print('Calculating Noisy Uncertainties')
+bces, furthest, pred = model_trainer.calculateUncertainty(
+    x_tensor_noisy, y_tensor_noisy)
+
+# make plot of bce and furthest uncertainty
+print('Making noisy plot')
+result_df = pd.DataFrame(
+    {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisyColor})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='BCE', y='Furthest Uncertainty',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('BCE vs Furthest Uncertainty')
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+picName = 'noisy-ensemble-bce-vs-furth.png'
+plt.savefig(picName)
+plt.close()
+
+
+# lets also try with one model
+model_trainer = KModelTrain(x_tensor, y_tensor, k=1, num_epochs=50)
+
+# now obtain BCE and furthest distance for the noisy data
+x_tensor_noisy = torch.tensor(torch.stack(
+    noisy_x), dtype=torch.float32)
+y_tensor_noisy = torch.unsqueeze(torch.tensor(
+    noisy_y, dtype=torch.float32), 1)
+
+# compute metrics for all samples
+print('Calculating Noisy Uncertainties')
+bces, furthest, pred = model_trainer.calculateUncertainty(
+    x_tensor_noisy, y_tensor_noisy)
+
+# make plot of bce and furthest uncertainty
+print('Making noisy plot')
+result_df = pd.DataFrame(
+    {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisyColor})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='BCE', y='Furthest Uncertainty',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('BCE vs Furthest Uncertainty')
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+picName = 'noisy-single-bce-vs-furth.png'
+plt.savefig(picName)
+plt.close()
+
 
 # # Device configuration
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -193,3 +257,8 @@ print(f"Total runtime of the program is {timeTaken}")
 #     noise_index_tensor = torch.load('cifar10_noisy_index_tensor.pt')
 #     print('Number of noisy samples:', len(noise_index_tensor))
 #     print(f'Accuracy of the network: {acc} %')
+# store end time
+end = time.time()
+timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
+# total time taken
+print(f"Total runtime of the program is {timeTaken}")
