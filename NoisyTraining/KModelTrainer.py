@@ -60,6 +60,7 @@ class KModelTrain():
         loss = nn.BCELoss()
         bces = []
         furthest = []
+        pred = []
         modelPredictions = []
         for model in self.models:
             modelPredictions.append(torch.sigmoid(
@@ -90,8 +91,9 @@ class KModelTrain():
 
             bces.append(bce.item())
             furthest.append(furthestUncertainty.item())
+            pred.append(torch.sigmoid(y_avg).item())
 
             # if i % 1000 == 0:
             #     print(i, 'samples done')
 
-        return bces, furthest
+        return bces, furthest, pred
