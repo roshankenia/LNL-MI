@@ -10,6 +10,7 @@ import seaborn as sns
 import os
 import sys
 from KModelTrainer import KModelTrain
+import time
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -20,8 +21,10 @@ if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
 else:
     print('GPU is being properly used')
 
-# obtain data tensors
+# store starting time
+begin = time.time()
 
+# obtain data tensors
 x_tensor = torch.load('cifar10_noisy_data_tensor_nonorm.pt')
 # size [n_samples, 1]
 y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
@@ -34,7 +37,7 @@ for index in noise_indexes:
     noisy_data[int(index.item())] = 1
 
 
-for i in range(20):
+for i in range(10):
     # make our K Model Trainer where k represents number of models
     model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
 
@@ -65,7 +68,7 @@ for i in range(20):
     for i in range(len(x_tensor)):
         # if the BCE and uncertainty is above the thresholds we relabel
         # print(bces[i], furthest[i])
-        if bces[i] > 0.8 and furthest[i] > 0.8:
+        if bces[i] > 1.25 and furthest[i] > 0.8:
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
             # chek if correct relabel
@@ -81,6 +84,13 @@ for i in range(20):
     # set tensors to new data
     x_tensor = new_x
     y_tensor = new_y
+
+
+# store end time
+end = time.time()
+timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
+# total time taken
+print(f"Total runtime of the program is {timeTaken}")
 
 # # Device configuration
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
