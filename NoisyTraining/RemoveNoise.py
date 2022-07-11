@@ -36,8 +36,15 @@ noisy_data = np.zeros(len(y_tensor))
 for index in noise_indexes:
     noisy_data[int(index.item())] = 1
 
+# these will hold the noisy samples
+noisy_x = []
+noisy_y = []
 
-for i in range(1):
+# this will let us know whether the sample was noisy or not
+cleanColor = []
+noisyColor = []
+
+for i in range(5):
     # make our K Model Trainer where k represents number of models
     model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
 
@@ -47,7 +54,7 @@ for i in range(1):
         x_tensor, y_tensor)
 
     # make plot of bce and furthest uncertainty
-    print('Making plot')
+    print('Making clean plot')
     result_df = pd.DataFrame(
         {'BCE': bces, 'Furthest Uncertainty': furthest, 'label': noisy_data})
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -55,36 +62,50 @@ for i in range(1):
                     hue='label', data=result_df, ax=ax, s=10)
     plt.title('BCE vs Furthest Uncertainty')
     ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-    picName = 'bce-vs-furth-'+str(i)+'.png'
+    picName = 'rem-bce-vs-furth-'+str(i)+'.png'
     plt.savefig(picName)
     plt.close()
 
     print('Flipping uncertain samples')
     # now flip samples that are uncertain
-    new_x = x_tensor.clone().detach()
-    new_y = y_tensor.clone().detach()
-    totalRelabel = 0
-    correctRelabel = 0
-    incorrectRelabel = 0
+    keep_x = []
+    keep_y = []
+
+    removedCount = 0
+    correctNoise = 0
+    incorrectNoise = 0
+
     for i in range(len(x_tensor)):
-        # if the BCE and uncertainty is above the thresholds we relabel
+        # if the BCE and uncertainty is above the thresholds we remove the sample
         # print(bces[i], furthest[i])
         if bces[i] > 1.25:
-            new_y[i] = -1 * new_y[i] + 1
-            totalRelabel += 1
-            # chek if correct relabel
+            noisy_x.append(x_tensor[i])
+            noisy_y.append(y_tensor[i].item())
+            noisyColor.append(noisy_data[i])
+
+            removedCount += 1
+            # check if we removed noisy or clean data
             if noisy_data[i] == 1:
-                correctRelabel += 1
-                noisy_data[i] = 0
+                correctNoise += 1
             else:
-                incorrectRelabel += 1
-                noisy_data[i] = 1
+                incorrectNoise += 1
+        # if not above threshold we keep
+        else:
+            keep_x.append(x_tensor[i])
+            keep_y.append(y_tensor[i].item())
+            cleanColor.append(noisy_data[i])
     print(
-        f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
+        f'Total removed: {removedCount}, Correctly removed: {correctNoise}, Incorrectly removed: {incorrectNoise}')
+    print(
+        f'Total in kept set: {len(keep_x)}, Total in noisy set: {len(noisy_x)}')
 
     # set tensors to new data
-    x_tensor = new_x
-    y_tensor = new_y
+    x_tensor = torch.tensor(torch.stack(
+        keep_x), dtype=torch.float32)
+    y_tensor = torch.unsqueeze(torch.tensor(
+        keep_y, dtype=torch.float32), 1)
+
+    noisy_data = cleanColor
 
 
 # store end time
