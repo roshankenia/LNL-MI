@@ -62,7 +62,7 @@ for i in range(5):
     # count number of noisy samples remaining
     noisyCount = 0
     for noise in noisy_data:
-        if noise == 1:
+        if noise % 2 == 1:
             noisyCount += 1
     print(f'There are {noisyCount} noisy samples left.')
 
@@ -87,7 +87,7 @@ for i in range(5):
         if bces[i] > 1.25 and furthest[i] > 0.8:
             totalRelabel2 += 1
             # chek if correct relabel
-            if noisy_data[i] == 1:
+            if noisy_data[i] % 2 == 1:
                 correctRelabel2 += 1
             else:
                 incorrectRelabel2 += 1
@@ -95,7 +95,7 @@ for i in range(5):
         if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
             totalRelabel3 += 1
             # chek if correct relabel
-            if noisy_data[i] == 1:
+            if noisy_data[i] % 2 == 1:
                 correctRelabel3 += 1
             else:
                 incorrectRelabel3 += 1
@@ -104,12 +104,12 @@ for i in range(5):
             totalRelabel1 += 1
             new_y[i] = -1 * new_y[i] + 1
             # chek if correct relabel
-            if noisy_data[i] == 1:
+            if noisy_data[i] % 2 == 1:
                 correctRelabel1 += 1
-                noisy_data[i] = 0
+                noisy_data[i] = 2
             else:
                 incorrectRelabel1 += 1
-                noisy_data[i] = 1
+                noisy_data[i] = 3
     print(
         f'Total Relabeled using BCE: {totalRelabel1}, Correctly Relabeled: {correctRelabel1}, Incorrectly Relabeled: {incorrectRelabel1}')
     print(
@@ -125,7 +125,7 @@ for i in range(5):
 # count number of noisy samples remaining
 noisyCount = 0
 for noise in noisy_data:
-    if noise == 1:
+    if noise % 2 == 1:
         noisyCount += 1
 print(f'There are {noisyCount} noisy samples left after completing iteration.')
 
