@@ -39,7 +39,7 @@ for index in noise_indexes:
 
 for i in range(5):
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=10)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
