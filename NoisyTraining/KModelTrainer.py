@@ -47,7 +47,7 @@ class KModelTrain():
             newModel = FDModel(
                 x_arrays[i], y_arrays[i], num_epochs=25, batch_size=128, learning_rate=0.01)
             # train new model
-            print('Training model', i)
+            print('Training model', (i+1))
             newModel.train()
 
             # add to models

@@ -37,7 +37,7 @@ for index in noise_indexes:
     noisy_data[int(index.item())] = 1
 
 
-for i in range(1):
+for i in range(5):
     # make our K Model Trainer where k represents number of models
     model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
 
@@ -87,11 +87,14 @@ for i in range(1):
 
         if bces[i] > 1.25:
             totalRelabel1 += 1
+            new_y[i] = -1 * new_y[i] + 1
             # chek if correct relabel
             if noisy_data[i] == 1:
                 correctRelabel1 += 1
+                noisy_data[i] = 0
             else:
                 incorrectRelabel1 += 1
+                noisy_data[i] = 1
 
         if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
             totalRelabel3 += 1
