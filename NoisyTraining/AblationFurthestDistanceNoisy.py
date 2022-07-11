@@ -59,6 +59,13 @@ for i in range(5):
     plt.savefig(picName)
     plt.close()
 
+    # count number of noisy samples remaining
+    noisyCount = 0
+    for noise in noisy_data:
+        if noise == 1:
+            noisyCount += 1
+    print(f'There are {noisyCount} noisy samples left.')
+
     print('Flipping uncertain samples')
     # now flip samples that are uncertain
     new_x = x_tensor.clone().detach()
@@ -114,6 +121,13 @@ for i in range(5):
     x_tensor = new_x
     y_tensor = new_y
 
+
+# count number of noisy samples remaining
+noisyCount = 0
+for noise in noisy_data:
+    if noise == 1:
+        noisyCount += 1
+print(f'There are {noisyCount} noisy samples left after completing iteration.')
 
 # store end time
 end = time.time()
