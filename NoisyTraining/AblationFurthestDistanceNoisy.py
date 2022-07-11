@@ -37,7 +37,7 @@ for index in noise_indexes:
     noisy_data[int(index.item())] = 1
 
 
-for i in range(20):
+for i in range(5):
     # make our K Model Trainer where k represents number of models
     model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
 
