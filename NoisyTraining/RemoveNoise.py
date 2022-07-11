@@ -41,7 +41,6 @@ noisy_x = []
 noisy_y = []
 
 # this will let us know whether the sample was noisy or not
-cleanColor = []
 noisyColor = []
 
 for i in range(5):
@@ -70,6 +69,7 @@ for i in range(5):
     # now flip samples that are uncertain
     keep_x = []
     keep_y = []
+    cleanColor = []
 
     removedCount = 0
     correctNoise = 0
