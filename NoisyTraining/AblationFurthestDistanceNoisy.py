@@ -85,6 +85,14 @@ for i in range(5):
             else:
                 incorrectRelabel2 += 1
 
+        if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
+            totalRelabel3 += 1
+            # chek if correct relabel
+            if noisy_data[i] == 1:
+                correctRelabel3 += 1
+            else:
+                incorrectRelabel3 += 1
+
         if bces[i] > 1.25:
             totalRelabel1 += 1
             new_y[i] = -1 * new_y[i] + 1
@@ -95,14 +103,6 @@ for i in range(5):
             else:
                 incorrectRelabel1 += 1
                 noisy_data[i] = 1
-
-        if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
-            totalRelabel3 += 1
-            # chek if correct relabel
-            if noisy_data[i] == 1:
-                correctRelabel3 += 1
-            else:
-                incorrectRelabel3 += 1
     print(
         f'Total Relabeled using BCE: {totalRelabel1}, Correctly Relabeled: {correctRelabel1}, Incorrectly Relabeled: {incorrectRelabel1}')
     print(
