@@ -120,6 +120,12 @@ for i in range(5):
 
     noisy_data = cleanColor
 
+
+# load test set
+x_test = torch.load('../../cifar10_clean_data_tensor_test_nonorm.pt')
+y_test = torch.load(
+    '../../cifar10_clean_ground_truth_tensor_test_nonorm.pt')
+
 # now we want to correct the samples from the noisy set
 
 # to start we create and train on our current clean set
@@ -149,6 +155,23 @@ picName = 'noisy-ensemble-bce-vs-furth.png'
 plt.savefig(picName)
 plt.close()
 
+# compute metrics for all test samples
+print('Calculating Test Uncertainties')
+bces, furthest, pred = model_trainer.calculateUncertainty(
+    x_test, y_test)
+
+# calculate test accuracy
+correctCount = 0
+totalCount = 0
+for i in range(len(pred)):
+    if pred[i] == y_test[i].item():
+        correctCount += 1
+    totalCount += 1
+acc = correctCount/totalCount
+acc = torch.round(acc * 100)
+print('Number correct:', correctCount, 'out of:', totalCount)
+print(f'Accuracy of the network: {acc} %')
+
 
 # lets also try with one model
 model_trainer = KModelTrain(x_tensor, y_tensor, k=1, num_epochs=50)
@@ -176,6 +199,23 @@ ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
 picName = 'noisy-single-bce-vs-furth.png'
 plt.savefig(picName)
 plt.close()
+
+# compute metrics for all test samples
+print('Calculating Test Uncertainties')
+bces, furthest, pred = model_trainer.calculateUncertainty(
+    x_test, y_test)
+
+# calculate test accuracy
+correctCount = 0
+totalCount = 0
+for i in range(len(pred)):
+    if pred[i] == y_test[i].item():
+        correctCount += 1
+    totalCount += 1
+acc = correctCount/totalCount
+acc = torch.round(acc * 100)
+print('Number correct:', correctCount, 'out of:', totalCount)
+print(f'Accuracy of the network: {acc} %')
 
 
 # # Device configuration
