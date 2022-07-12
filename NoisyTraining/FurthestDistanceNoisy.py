@@ -69,7 +69,8 @@ for i in range(1):
     for i in range(len(x_tensor)):
         # if the BCE and uncertainty is above the thresholds we relabel
         # print(bces[i], furthest[i])
-        if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
+        # if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
+        if furthest[i] > 0.9:
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
             # chek if correct relabel
