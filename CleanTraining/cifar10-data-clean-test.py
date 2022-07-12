@@ -34,12 +34,22 @@ labels = []
 i = 0
 while i < train_dataset.__len__():
     image, label = train_dataset[i]
+    # deer
     if label == 4:
         images.append(transform(image).to(torch.float32))
-        labels.append(0)
+        labels.append(1)
+    # horse
     elif label == 7:
         images.append(transform(image).to(torch.float32))
         labels.append(1)
+    # automobile
+    elif label == 1:
+        images.append(transform(image).to(torch.float32))
+        labels.append(0)
+    # truck
+    elif label == 9:
+        images.append(transform(image).to(torch.float32))
+        labels.append(0)
     if i % 1000 == 0:
         print('at', i)
     i += 1
@@ -56,4 +66,5 @@ ground_truth_tensor = torch.tensor(labels, dtype=torch.float32)
 ground_truth_tensor = torch.unsqueeze(ground_truth_tensor, 1)
 print(ground_truth_tensor.shape)
 # save ground truth file
-torch.save(ground_truth_tensor, 'cifar10_clean_ground_truth_tensor_test_nonorm.pt')
+torch.save(ground_truth_tensor,
+           'cifar10_clean_ground_truth_tensor_test_nonorm.pt')
