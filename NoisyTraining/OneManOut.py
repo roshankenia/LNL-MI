@@ -130,8 +130,8 @@ while True:
     ite += 1
     iteration.append(ite)
 
-    if correctRelabel < 50:
-        break
+    # if correctRelabel < 50:
+    #     break
 
 print('Plotting total relabels')
 result_df = pd.DataFrame(
