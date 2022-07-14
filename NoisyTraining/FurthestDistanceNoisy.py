@@ -66,9 +66,9 @@ for i in range(10):
     totalRelabel = 0
     correctRelabel = 0
     incorrectRelabel = 0
-    n = 0
-    noiseRel = 0
-    cleanRel = 0
+    # n = 0
+    # noiseRel = 0
+    # cleanRel = 0
     for i in range(len(x_tensor)):
         # if the BCE and uncertainty is above the thresholds we relabel
         # print(bces[i], furthest[i])
@@ -108,8 +108,8 @@ for i in range(10):
                     noisy_data[i] = 1
     print(
         f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
-    print('NoiseRel:', noiseRel)
-    print('CleanRel:', cleanRel)
+    # print('NoiseRel:', noiseRel)
+    # print('CleanRel:', cleanRel)
 
     # set tensors to new data
     x_tensor = new_x
