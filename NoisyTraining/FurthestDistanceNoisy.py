@@ -67,6 +67,8 @@ for i in range(5):
     correctRelabel = 0
     incorrectRelabel = 0
     n = 0
+    noiseRel = 0
+    cleanRel = 0
     for i in range(len(x_tensor)):
         # if the BCE and uncertainty is above the thresholds we relabel
         # print(bces[i], furthest[i])
@@ -79,8 +81,6 @@ for i in range(5):
                 numOver9 += 1
             elif singlePred < 0.1:
                 numUnder1 += 1
-        noiseRel = 0
-        cleanRel = 1
         if numOver9 == 7 or numUnder1 == 7:
             if noisy_data[i] == 1:
                 noiseRel += 1
@@ -94,8 +94,6 @@ for i in range(5):
                     ensemblePred[i]), bces[i], furthest[i])
                 # print('Number over .9:', numOver9,
                 #       'Num under .1:', numUnder1)
-        print('NoiseRel:', noiseRel)
-        print('CleanRel:', cleanRel)
         if bces[i] > 1.25:
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
@@ -108,6 +106,8 @@ for i in range(5):
                 noisy_data[i] = 1
     print(
         f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
+    print('NoiseRel:', noiseRel)
+    print('CleanRel:', cleanRel)
 
     # set tensors to new data
     x_tensor = new_x
