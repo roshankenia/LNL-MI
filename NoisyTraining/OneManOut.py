@@ -54,10 +54,10 @@ ite = 0
 c = 0
 while True:
     c += 1
-    if c == 2:
+    if c == 3:
         break
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=2)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=2, num_epochs=2)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
