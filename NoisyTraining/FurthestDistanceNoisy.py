@@ -43,7 +43,7 @@ for i in range(5):
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
-    bces, furthest, pred = model_trainer.calculateUncertainty(
+    bces, furthest, pred, ensemblePred = model_trainer.calculateUncertainty(
         x_tensor, y_tensor)
 
     # make plot of bce and furthest uncertainty
@@ -66,11 +66,18 @@ for i in range(5):
     totalRelabel = 0
     correctRelabel = 0
     incorrectRelabel = 0
+    n = 0
     for i in range(len(x_tensor)):
         # if the BCE and uncertainty is above the thresholds we relabel
         # print(bces[i], furthest[i])
         # if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
-        if furthest[i] > 0.9:
+        if bces[i] > 1.25:
+            if n < 50:
+                if noisy_data[i] == 1:
+                    print('Noisy', ensemblePred[i], bces[i], furthest[i])
+                else:
+                    print('Clean', ensemblePred[i], bces[i], furthest[i])
+                n += 1
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
             # chek if correct relabel
