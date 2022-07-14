@@ -39,7 +39,7 @@ for index in noise_indexes:
 
 for i in range(5):
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=4, num_epochs=50)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=8)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
@@ -74,12 +74,23 @@ for i in range(5):
         # by raising bce threshold to 2 we only select the samples we are confident are noisy
         if bces[i] > 1.25:
             if n < 50:
+                numOver9 = 0
+                numUnder1 = 0
+                for singlePred in ensemblePred[i]:
+                    if singlePred > 0.9:
+                        numOver9 += 1
+                    elif singlePred < 0.1:
+                        numUnder1 += 1
                 if noisy_data[i] == 1:
                     print('Noisy', torch.round(
                         ensemblePred[i]), bces[i], furthest[i])
+                    print('Number over .9:', numOver9,
+                          'Num under .1:', numUnder1)
                 else:
                     print('Clean', torch.round(
                         ensemblePred[i]), bces[i], furthest[i])
+                    print('Number over .9:', numOver9,
+                          'Num under .1:', numUnder1)
                 n += 1
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
