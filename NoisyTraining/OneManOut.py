@@ -33,13 +33,33 @@ y_tensor = torch.load('cifar10_noisy_ground_truth_tensor_nonorm.pt')
 noise_indexes = torch.load('cifar10_noisy_index_tensor.pt')
 print(noise_indexes)
 noisy_data = np.zeros(len(y_tensor))
+noiseCount = 0
 for index in noise_indexes:
     noisy_data[int(index.item())] = 1
+    noiseCount += 1
+
+totalRelabelArray = []
+correctRelabelArray = []
+incorrectRelabelArray = []
+
+cleanCount = len(noisy_data)-noiseCount
+
+totalCleanArray = [cleanCount]
+totalNoiseArray = [noiseCount]
+
+iteration = [0]
+ite = 0
 
 
-for i in range(10):
+c = 0
+while True:
+    c += 1
+    if c == 2:
+        break
+    ite += 1
+    iteration.append(ite)
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=25)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=2)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
@@ -89,11 +109,87 @@ for i in range(10):
                     noisy_data[i] = 1
     print(
         f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
+    totalRelabelArray.append(totalRelabel)
+    correctRelabelArray.append(correctRelabel)
+    incorrectRelabelArray.append(incorrectRelabel)
+
+    # count up number of noisy and clean remaining
+    noiseCount = 0
+    cleanCount = 0
+    for noise in noisy_data:
+        if noise == 0:
+            cleanCount += 1
+        else:
+            noiseCount += 1
+
+    totalNoiseArray.append(noiseCount)
+    totalCleanArray.append(cleanCount)
 
     # set tensors to new data
     x_tensor = new_x
     y_tensor = new_y
 
+    if correctRelabel < 50:
+        break
+
+print('Plotting total relabels')
+result_df = pd.DataFrame(
+    {'Iteration': iteration[1:], 'Total Relabeled': totalRelabelArray})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.lineplot(x='Iteration', y='Total Relabeled', data=result_df, ax=ax)
+plt.title('Total Relabels per Iteration')
+picName = 'totalRelabels.png'
+plt.savefig(picName)
+plt.close()
+
+print('Plotting correct relabels')
+result_df = pd.DataFrame(
+    {'Iteration': iteration[1:], 'Total Correct': correctRelabelArray})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.lineplot(x='Iteration', y='Total Correct', data=result_df, ax=ax)
+plt.title('Total Correct per Iteration')
+picName = 'totalCorrect.png'
+plt.savefig(picName)
+plt.close()
+
+
+print('Plotting incorrect relabels')
+result_df = pd.DataFrame(
+    {'Iteration': iteration[1:], 'Total Incorrect': incorrectRelabelArray})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.lineplot(x='Iteration', y='Total Incorrect', data=result_df, ax=ax)
+plt.title('Total Incorrect per Iteration')
+picName = 'totalIncorrect.png'
+plt.savefig(picName)
+plt.close()
+
+
+print('Plotting clean')
+result_df = pd.DataFrame(
+    {'Iteration': iteration, 'Total Clean': totalCleanArray})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.lineplot(x='Iteration', y='Total Clean', data=result_df, ax=ax)
+plt.title('Total Clean per Iteration')
+picName = 'totalClean.png'
+plt.savefig(picName)
+plt.close()
+
+print('Plotting noisy')
+result_df = pd.DataFrame(
+    {'Iteration': iteration, 'Total Noisy': totalNoiseArray})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.lineplot(x='Iteration', y='Total Noisy', data=result_df, ax=ax)
+plt.title('Total Noisy per Iteration')
+picName = 'totalNoisy.png'
+plt.savefig(picName)
+plt.close()
+
+# save data
+torch.save(x_tensor, 'x_tensor.pt')
+torch.save(y_tensor, 'y_tensor.pt')
+# save noisy indexes
+noisy_indexes = torch.tensor(noisy_data, dtype=torch.float32)
+torch.save(noisy_indexes, 'moise_tensor.pt')
 
 # store end time
 end = time.time()
