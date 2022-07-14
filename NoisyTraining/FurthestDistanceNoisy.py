@@ -81,30 +81,31 @@ for i in range(5):
                 numOver9 += 1
             elif singlePred < 0.1:
                 numUnder1 += 1
+        # if bces[i] > 1.25:
+        #     if numOver9 == 7 or numUnder1 == 7:
+        #         if noisy_data[i] == 1:
+        #             noiseRel += 1
+        #             # print('Noisy', torch.round(
+        #             #     ensemblePred[i]), bces[i], furthest[i])
+        #             # print('Number over .9:', numOver9,
+        #             #       'Num under .1:', numUnder1)
+        #         else:
+        #             cleanRel += 1
+        #             print('Clean', ensemblePred[i], '\n', torch.round(
+        #                 ensemblePred[i]), bces[i], furthest[i])
+        #             # print('Number over .9:', numOver9,
+        #             #       'Num under .1:', numUnder1)
         if bces[i] > 1.25:
             if numOver9 == 7 or numUnder1 == 7:
+                new_y[i] = -1 * new_y[i] + 1
+                totalRelabel += 1
+                # chek if correct relabel
                 if noisy_data[i] == 1:
-                    noiseRel += 1
-                    # print('Noisy', torch.round(
-                    #     ensemblePred[i]), bces[i], furthest[i])
-                    # print('Number over .9:', numOver9,
-                    #       'Num under .1:', numUnder1)
+                    correctRelabel += 1
+                    noisy_data[i] = 0
                 else:
-                    cleanRel += 1
-                    print('Clean', ensemblePred[i], '\n', torch.round(
-                        ensemblePred[i]), bces[i], furthest[i])
-                    # print('Number over .9:', numOver9,
-                    #       'Num under .1:', numUnder1)
-        if bces[i] > 1.25:
-            new_y[i] = -1 * new_y[i] + 1
-            totalRelabel += 1
-            # chek if correct relabel
-            if noisy_data[i] == 1:
-                correctRelabel += 1
-                noisy_data[i] = 0
-            else:
-                incorrectRelabel += 1
-                noisy_data[i] = 1
+                    incorrectRelabel += 1
+                    noisy_data[i] = 1
     print(
         f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
     print('NoiseRel:', noiseRel)
