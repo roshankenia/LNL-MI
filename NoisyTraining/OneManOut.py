@@ -56,8 +56,6 @@ while True:
     c += 1
     if c == 2:
         break
-    ite += 1
-    iteration.append(ite)
     # make our K Model Trainer where k represents number of models
     model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=2)
 
@@ -75,7 +73,7 @@ while True:
                     hue='label', data=result_df, ax=ax, s=10)
     plt.title('BCE vs Furthest Uncertainty')
     ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-    picName = 'bce-vs-furth-'+str(i)+'.png'
+    picName = 'bce-vs-furth-'+str(ite)+'.png'
     plt.savefig(picName)
     plt.close()
 
@@ -128,6 +126,9 @@ while True:
     # set tensors to new data
     x_tensor = new_x
     y_tensor = new_y
+
+    ite += 1
+    iteration.append(ite)
 
     if correctRelabel < 50:
         break
