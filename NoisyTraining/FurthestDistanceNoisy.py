@@ -72,26 +72,31 @@ for i in range(5):
         # print(bces[i], furthest[i])
         # if pred[i] != y_tensor[i].item() and bces[i] > 1.25 and furthest[i] > 0.8:
         # by raising bce threshold to 2 we only select the samples we are confident are noisy
+        numOver9 = 0
+        numUnder1 = 0
+        for singlePred in ensemblePred[i]:
+            if singlePred > 0.9:
+                numOver9 += 1
+            elif singlePred < 0.1:
+                numUnder1 += 1
+        noiseRel = 0
+        cleanRel = 1
+        if numOver9 == 7 or numUnder1 == 7:
+            if noisy_data[i] == 1:
+                noiseRel += 1
+                # print('Noisy', torch.round(
+                #     ensemblePred[i]), bces[i], furthest[i])
+                # print('Number over .9:', numOver9,
+                #       'Num under .1:', numUnder1)
+            else:
+                cleanRel += 1
+                print('Clean', ensemblePred[i], '\n', torch.round(
+                    ensemblePred[i]), bces[i], furthest[i])
+                # print('Number over .9:', numOver9,
+                #       'Num under .1:', numUnder1)
+        print('NoiseRel:', noiseRel)
+        print('CleanRel:', cleanRel)
         if bces[i] > 1.25:
-            if n < 50:
-                numOver9 = 0
-                numUnder1 = 0
-                for singlePred in ensemblePred[i]:
-                    if singlePred > 0.9:
-                        numOver9 += 1
-                    elif singlePred < 0.1:
-                        numUnder1 += 1
-                if noisy_data[i] == 1:
-                    print('Noisy', torch.round(
-                        ensemblePred[i]), bces[i], furthest[i])
-                    print('Number over .9:', numOver9,
-                          'Num under .1:', numUnder1)
-                else:
-                    print('Clean', torch.round(
-                        ensemblePred[i]), bces[i], furthest[i])
-                    print('Number over .9:', numOver9,
-                          'Num under .1:', numUnder1)
-                n += 1
             new_y[i] = -1 * new_y[i] + 1
             totalRelabel += 1
             # chek if correct relabel
