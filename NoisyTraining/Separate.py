@@ -84,7 +84,7 @@ for iter in range(1):
     iterationData.append([prediction, entropy, peakValue])
 
     # train another model on other half
-    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=50)
+    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=1)
     second_model.train()
     print('Calculating for second model')
     # predict on all of data and note entropy and peak value
