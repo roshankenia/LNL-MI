@@ -48,48 +48,119 @@ print('There are', len(noise_tensor),
       'samples in total, and', noise_count, 'are noisy')
 
 # we know want to split the hard samples from the noisy samples
+iterationData = []
+loss = nn.BCELoss()
 
+for iter in range(5):
+    print('Iteration:', iter)
+    # split data
+    data_splitter = KDataSplitter(x_tensor, y_tensor, k=2)
+    x_tensors, y_tensors = data_splitter.split()
+    # train one model on half the data
+    first_model = FDModel(x_tensors[0], y_tensors[0], num_epochs=50)
+    first_model.train()
+    print('Calculating for first model')
+    # predict on all of data and note entropy and peak value
+    entropy = []
+    peakValue = []
+    # prediction
+    prediction = first_model.predict(x_tensor)
+    for i in range(len(x_tensor)):
+        y_sample = y_tensor[i]
 
-# split data
-data_splitter = KDataSplitter(x_tensor, y_tensor, k=2)
-x_tensors, y_tensors = data_splitter.split()
-# train one model on half the data
-first_model = FDModel(x_tensor, y_tensor, num_epochs=50)
-first_model.train()
+        # obtain predictions from each model
+        y_pred = prediction[i]
 
+        # print(y_avg)
+        # print(y_sample)
+        # compute binary cross entropy loss using this average
+        bce = loss(y_pred, y_sample)
+        # print('bce:', bce)
+        # compute peak value
+        peak = y_pred.item()/(1-y_pred.item())
+        # print('furth:', furthestUncertainty, res)
+        entropy.append(bce.item())
+        peakValue.append(peak)
+    iterationData.append([prediction, entropy, peakValue])
 
-test_dataset = Cifar10BinaryCleanTest()
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=128,
-                                          shuffle=False)
+    # train another model on other half
+    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=50)
+    second_model.train()
+    print('Calculating for second model')
+    # predict on all of data and note entropy and peak value
+    entropy = []
+    peakValue = []
+    # prediction
+    prediction = second_model.predict(x_tensor)
+    for i in range(len(x_tensor)):
+        y_sample = y_tensor[i]
 
-with torch.no_grad():
-    n_correct = 0
-    n_samples = 0
-    x = 0
-    for images, labels in test_loader:
-        images = images.to(device)
-        labels = labels.to(device)
-        outputs = first_model.predict(images)
+        # obtain predictions from each model
+        y_pred = prediction[i]
 
-        y_test_pred = torch.sigmoid(outputs)
-        y_pred_tag = torch.round(y_test_pred)
+        # print(y_avg)
+        # print(y_sample)
+        # compute binary cross entropy loss using this average
+        bce = loss(y_pred, y_sample)
+        # print('bce:', bce)
+        # compute peak value
+        peak = y_pred.item()/(1-y_pred.item())
+        # print('furth:', furthestUncertainty, res)
+        entropy.append(bce.item())
+        peakValue.append(peak)
+    iterationData.append([prediction, entropy, peakValue])
 
-        if x == 0:
-            print('labels:', labels[0:20])
-            # print('outputs:', outputs[0:20])
-            print('predicted:', y_pred_tag[0:20])
-            x = 1
+# calculate variance in prediction, entropy, and peak value
+sampleData = []
+print('Calculating std for all samples')
+for j in range(len(x_tensor)):
+    entropyVals = []
+    peakVals = []
+    predictionVals = []
+    # obtain data
+    for iter in range(10):
+        predictionVals.append(iterationData[iter][0][j].item())
+        entropyVals.append(iterationData[iter][1][j])
+        peakVals.append(iterationData[iter][2][j])
+    # calculate stds
+    predictionVar = np.std(predictionVals)
+    entropyVar = np.std(entropyVals)
+    peakVar = np.std(peakVals)
 
-        n_correct += (y_pred_tag == labels).sum().float()
-        n_samples += len(labels)
-    acc = n_correct/n_samples
-    acc = torch.round(acc * 100)
-    print('Number correct:', n_correct, 'out of:', n_samples)
-    print(f'Accuracy of the network: {acc} %')
+    sampleData.append([predictionVar, entropyVar, peakVar])
 
-
+print(sampleData)
 # store end time
 end = time.time()
 timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
 # total time taken
 print(f"Total runtime of the program is {timeTaken}")
+
+# test_dataset = Cifar10BinaryCleanTest()
+# test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=128,
+#                                           shuffle=False)
+
+# with torch.no_grad():
+#     n_correct = 0
+#     n_samples = 0
+#     x = 0
+#     for images, labels in test_loader:
+#         images = images.to(device)
+#         labels = labels.to(device)
+#         outputs = first_model.predict(images)
+
+#         y_test_pred = torch.sigmoid(outputs)
+#         y_pred_tag = torch.round(y_test_pred)
+
+#         if x == 0:
+#             print('labels:', labels[0:20])
+#             # print('outputs:', outputs[0:20])
+#             print('predicted:', y_pred_tag[0:20])
+#             x = 1
+
+#         n_correct += (y_pred_tag == labels).sum().float()
+#         n_samples += len(labels)
+#     acc = n_correct/n_samples
+#     acc = torch.round(acc * 100)
+#     print('Number correct:', n_correct, 'out of:', n_samples)
+#     print(f'Accuracy of the network: {acc} %')
