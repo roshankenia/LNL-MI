@@ -168,7 +168,6 @@ for i in range(len(pred)):
         correctCount += 1
     totalCount += 1
 acc = correctCount/totalCount
-acc = torch.round(acc * 100)
 print('Number correct:', correctCount, 'out of:', totalCount)
 print(f'Accuracy of the network: {acc} %')
 
@@ -213,7 +212,6 @@ for i in range(len(pred)):
         correctCount += 1
     totalCount += 1
 acc = correctCount/totalCount
-acc = torch.round(acc * 100)
 print('Number correct:', correctCount, 'out of:', totalCount)
 print(f'Accuracy of the network: {acc} %')
 
