@@ -77,7 +77,11 @@ for iter in range(5):
         bce = loss(y_pred, y_sample)
         # print('bce:', bce)
         # compute peak value
-        peak = y_pred.item()/(1-y_pred.item())
+        peak = None
+        if 1-y_pred.item() == 0:
+            peak = 100
+        else:
+            peak = y_pred.item()/(1-y_pred.item())
         # print('furth:', furthestUncertainty, res)
         entropy.append(bce.item())
         peakValue.append(peak)
@@ -104,7 +108,11 @@ for iter in range(5):
         bce = loss(y_pred, y_sample)
         # print('bce:', bce)
         # compute peak value
-        peak = y_pred.item()/(1-y_pred.item())
+        peak = None
+        if 1-y_pred.item() == 0:
+            peak = 100
+        else:
+            peak = y_pred.item()/(1-y_pred.item())
         # print('furth:', furthestUncertainty, res)
         entropy.append(bce.item())
         peakValue.append(peak)
