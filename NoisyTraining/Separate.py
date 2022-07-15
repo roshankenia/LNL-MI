@@ -96,7 +96,7 @@ for iter in range(1):
         y_sample = y_tensor[i]
 
         # obtain predictions from each model
-        y_pred = prediction[i]
+        y_pred = torch.sigmoid(prediction[i])
 
         # print(y_avg)
         # print(y_sample)
