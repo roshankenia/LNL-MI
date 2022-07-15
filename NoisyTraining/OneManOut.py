@@ -52,7 +52,7 @@ ite = 0
 
 while True:
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=50)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=100)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
@@ -181,11 +181,11 @@ plt.savefig(picName)
 plt.close()
 
 # save data
-torch.save(x_tensor, 'x_tensor.pt')
-torch.save(y_tensor, 'y_tensor.pt')
+torch.save(x_tensor, 'x_tensor_1.pt')
+torch.save(y_tensor, 'y_tensor_2.pt')
 # save noisy indexes
 noisy_indexes = torch.tensor(noisy_data, dtype=torch.float32)
-torch.save(noisy_indexes, 'moise_tensor.pt')
+torch.save(noisy_indexes, 'noise_tensor_2.pt')
 
 # store end time
 end = time.time()
