@@ -69,10 +69,10 @@ for iter in range(1):
         y_sample = y_tensor[i]
 
         # obtain predictions from each model
-        y_pred = prediction[i]
+        y_pred = torch.sigmoid(prediction[i])
 
-        print(y_pred)
-        print(y_sample)
+        # print(y_pred)
+        # print(y_sample)
         # compute binary cross entropy loss using this average
         bce = loss(y_pred, y_sample)
         # print('bce:', bce)
