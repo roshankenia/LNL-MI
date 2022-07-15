@@ -71,8 +71,8 @@ for iter in range(1):
         # obtain predictions from each model
         y_pred = prediction[i]
 
-        # print(y_avg)
-        # print(y_sample)
+        print(y_pred)
+        print(y_sample)
         # compute binary cross entropy loss using this average
         bce = loss(y_pred, y_sample)
         # print('bce:', bce)
