@@ -31,9 +31,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 begin = time.time()
 
 # obtain data tensors
-x_tensor = torch.load('x_tensor.pt')
+x_tensor = torch.load('x_tensor.pt').to(device)
 # size [n_samples, 1]
-y_tensor = torch.load('y_tensor.pt')
+y_tensor = torch.load('y_tensor.pt').to(device)
 
 # obtain noisy indexes so we can plot them
 noise_tensor = torch.load('moise_tensor.pt')
@@ -66,7 +66,7 @@ for iter in range(1):
     # prediction
     prediction = first_model.predict(x_tensor)
     for i in range(len(x_tensor)):
-        y_sample = y_tensor[i].to(device)
+        y_sample = y_tensor[i]
 
         # obtain predictions from each model
         y_pred = prediction[i]
@@ -93,7 +93,7 @@ for iter in range(1):
     # prediction
     prediction = second_model.predict(x_tensor)
     for i in range(len(x_tensor)):
-        y_sample = y_tensor[i].to(device)
+        y_sample = y_tensor[i]
 
         # obtain predictions from each model
         y_pred = prediction[i]
