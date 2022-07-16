@@ -14,6 +14,7 @@ from DataSplitter import KDataSplitter
 from ModelTrain import FDModel
 from Cifar10TestClean import Cifar10BinaryCleanTest
 import time
+from sklearn.manifold import TSNE
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -51,7 +52,7 @@ print('There are', len(noise_tensor),
 iterationData = []
 loss = nn.BCELoss()
 
-for iter in range(5):
+for iter in range(2):
     print('Iteration:', iter)
     # split data
     data_splitter = KDataSplitter(x_tensor, y_tensor, k=2)
@@ -129,7 +130,7 @@ for j in range(len(x_tensor)):
     peakVals = []
     predictionVals = []
     # obtain data
-    for iter in range(10):
+    for iter in range(4):
         predictionVals.append(iterationData[iter][0][j].item())
         entropyVals.append(iterationData[iter][1][j])
         peakVals.append(iterationData[iter][2][j])
@@ -185,6 +186,26 @@ picName = 'stdPeakvsPred.png'
 plt.savefig(picName)
 plt.close()
 
+
+# use tSNE to map data
+# We want to get TSNE embedding with 2 dimensions
+n_components = 2
+tsne = TSNE(n_components)
+tsne_result = tsne.fit_transform(sampleData)
+# Two dimensions for each of our images
+tsne_result_df = pd.DataFrame(
+    {'tSNE Feature 1': tsne_result[:, 0], 'tSNE Feature 2': tsne_result[:, 1], 'label': noise_tensor})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='tSNE Feature 1', y='tSNE Feature 2',
+                hue='label', data=tsne_result_df, ax=ax, s=10)
+lim = (tsne_result.min()-5, tsne_result.max()+5)
+plt.title('Data of Samples Reduced')
+ax.set_xlim(lim)
+ax.set_ylim(lim)
+ax.set_aspect('equal')
+ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
+plt.savefig('tSNE-Results.png')
+plt.close()
 
 # store end time
 end = time.time()
