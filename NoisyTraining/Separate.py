@@ -51,13 +51,13 @@ print('There are', len(noise_tensor),
 iterationData = []
 loss = nn.BCELoss()
 
-for iter in range(2):
+for iter in range(5):
     print('Iteration:', iter)
     # split data
     data_splitter = KDataSplitter(x_tensor, y_tensor, k=2)
     x_tensors, y_tensors = data_splitter.split()
     # train one model on half the data
-    first_model = FDModel(x_tensors[0], y_tensors[0], num_epochs=50)
+    first_model = FDModel(x_tensors[0], y_tensors[0], num_epochs=25)
     first_model.train()
     print('Calculating for first model')
     # predict on all of data and note entropy and peak value
@@ -88,7 +88,7 @@ for iter in range(2):
     iterationData.append([prediction, entropy, peakValue])
 
     # train another model on other half
-    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=50)
+    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=25)
     second_model.train()
     print('Calculating for second model')
     # predict on all of data and note entropy and peak value
@@ -129,7 +129,7 @@ for j in range(len(x_tensor)):
     peakVals = []
     predictionVals = []
     # obtain data
-    for iter in range(4):
+    for iter in range(10):
         predictionVals.append(iterationData[iter][0][j].item())
         entropyVals.append(iterationData[iter][1][j])
         peakVals.append(iterationData[iter][2][j])
