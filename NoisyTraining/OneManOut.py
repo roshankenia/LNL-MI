@@ -37,6 +37,8 @@ noiseCount = 0
 for index in noise_indexes:
     noisy_data[int(index.item())] = 1
     noiseCount += 1
+# we want to keep track of what is flipping as well
+flip_data = noisy_data.copy()
 
 totalRelabelArray = []
 correctRelabelArray = []
@@ -50,9 +52,11 @@ totalNoiseArray = [noiseCount]
 iteration = [0]
 ite = 0
 
+numberFlip = np.zeros(len(y_tensor))
+
 while True:
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=100)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=50)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
@@ -100,12 +104,34 @@ while True:
                 else:
                     incorrectRelabel += 1
                     noisy_data[i] = 1
+
+                numberFlip[i] += 1
     print(
         f'Total Relabeled: {totalRelabel}, Correctly Relabeled: {correctRelabel}, Incorrectly Relabeled: {incorrectRelabel}')
     totalRelabelArray.append(totalRelabel)
     correctRelabelArray.append(correctRelabel)
     incorrectRelabelArray.append(incorrectRelabel)
-
+    # find how many flipped
+    noisyManyFlips = 0
+    cleanManyFlips = 0
+    newNoisyManyFlips = 0
+    newCleanManyFlips = 0
+    for n in range(len(flip_data)):
+        if numberFlip[n] == (ite+1):
+            # check original label
+            if flip_data[n] == 0:
+                cleanManyFlips += 1
+            else:
+                noisyManyFlips += 1
+            # check new label
+            if noisy_data[n] == 0:
+                newNoisyManyFlips += 1
+            else:
+                newCleanManyFlips += 1
+    print(
+        f'Original clean label flipped {ite} times: {cleanManyFlips}, noisy label: {noisyManyFlips}')
+    print(
+        f'New clean label flipped {ite} times: {newCleanManyFlips}, noisy label: {newNoisyManyFlips}')
     # count up number of noisy and clean remaining
     noiseCount = 0
     cleanCount = 0
