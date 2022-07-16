@@ -51,7 +51,7 @@ print('There are', len(noise_tensor),
 iterationData = []
 loss = nn.BCELoss()
 
-for iter in range(5):
+for iter in range(2):
     print('Iteration:', iter)
     # split data
     data_splitter = KDataSplitter(x_tensor, y_tensor, k=2)
@@ -64,12 +64,12 @@ for iter in range(5):
     entropy = []
     peakValue = []
     # prediction
-    prediction = first_model.predict(x_tensor)
+    prediction = torch.sigmoid(first_model.predict(x_tensor))
     for i in range(len(x_tensor)):
         y_sample = y_tensor[i]
 
         # obtain predictions from each model
-        y_pred = torch.sigmoid(prediction[i])
+        y_pred = prediction[i]
 
         # print(y_pred)
         # print(y_sample)
@@ -95,12 +95,12 @@ for iter in range(5):
     entropy = []
     peakValue = []
     # prediction
-    prediction = second_model.predict(x_tensor)
+    prediction = torch.sigmoid(second_model.predict(x_tensor))
     for i in range(len(x_tensor)):
         y_sample = y_tensor[i]
 
         # obtain predictions from each model
-        y_pred = torch.sigmoid(prediction[i])
+        y_pred = prediction[i]
 
         # print(y_avg)
         # print(y_sample)
@@ -120,13 +120,16 @@ for iter in range(5):
 
 # calculate variance in prediction, entropy, and peak value
 sampleData = []
+predictionVars = []
+entropyVars = []
+peakVars = []
 print('Calculating std for all samples')
 for j in range(len(x_tensor)):
     entropyVals = []
     peakVals = []
     predictionVals = []
     # obtain data
-    for iter in range(10):
+    for iter in range(4):
         predictionVals.append(iterationData[iter][0][j].item())
         entropyVals.append(iterationData[iter][1][j])
         peakVals.append(iterationData[iter][2][j])
@@ -136,8 +139,53 @@ for j in range(len(x_tensor)):
     peakVar = np.std(peakVals)
 
     sampleData.append([predictionVar, entropyVar, peakVar])
+    predictionVars.append(predictionVar)
+    entropyVars.append(entropyVar)
+    peakVars.append(peakVar)
 
 print(sampleData)
+
+
+# make plot of entropy and peak val
+print('Making entropy and peak val plot')
+result_df = pd.DataFrame(
+    {'Standard Deviation in Entropy': entropyVars, 'Standard Deviation in Peak Value': peakVars, 'label': noise_tensor})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='Standard Deviation in Entropy', y='Standard Deviation in Peak Value',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('STD in Entropy vs Peak Value')
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+picName = 'stdEntvsPeak.png'
+plt.savefig(picName)
+plt.close()
+
+# make plot of entropy and prediction
+print('Making entropy and prediction plot')
+result_df = pd.DataFrame(
+    {'Standard Deviation in Entropy': entropyVars, 'Standard Deviation in Prediction': predictionVars, 'label': noise_tensor})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='Standard Deviation in Entropy', y='Standard Deviation in Prediction',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('STD in Entropy vs Prediction')
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+picName = 'stdEntvsPred.png'
+plt.savefig(picName)
+plt.close()
+
+# make plot of peak val and prediction
+print('Making peak val and prediction plot')
+result_df = pd.DataFrame(
+    {'Standard Deviation in Peak Value': peakVars, 'Standard Deviation in Prediction': predictionVars, 'label': noise_tensor})
+fig, ax = plt.subplots(figsize=(10, 10))
+sns.scatterplot(x='Standard Deviation in Peak Value', y='Standard Deviation in Prediction',
+                hue='label', data=result_df, ax=ax, s=10)
+plt.title('STD in Peak Value vs Prediction')
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+picName = 'stdPeakvsPred.png'
+plt.savefig(picName)
+plt.close()
+
+
 # store end time
 end = time.time()
 timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
