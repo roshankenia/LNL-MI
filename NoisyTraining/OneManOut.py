@@ -56,7 +56,7 @@ numberFlip = np.zeros(len(y_tensor))
 
 while True:
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=200)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=1)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
@@ -112,25 +112,25 @@ while True:
     correctRelabelArray.append(correctRelabel)
     incorrectRelabelArray.append(incorrectRelabel)
     # find how many flipped
-    # noisyManyFlips = np.zeros(ite+2)
-    # cleanManyFlips = np.zeros(ite+2)
-    # newNoisyManyFlips = np.zeros(ite+2)
-    # newCleanManyFlips = np.zeros(ite+2)
-    # for n in range(len(flip_data)):
-    #     # check original label
-    #     if flip_data[n] == 0:
-    #         cleanManyFlips[numberFlip[n]] += 1
-    #     else:
-    #         noisyManyFlips[numberFlip[n]] += 1
-    #     # check new label
-    #     if noisy_data[n] == 0:
-    #         newNoisyManyFlips[numberFlip[n]] += 1
-    #     else:
-    #         newCleanManyFlips[numberFlip[n]] += 1
-    # print(
-    #     f'Original clean label flipped for {ite} iterations: {cleanManyFlips}, noisy label: {noisyManyFlips}')
-    # print(
-    #     f'New clean label flipped for {ite} iterations: {newCleanManyFlips}, noisy label: {newNoisyManyFlips}')
+    noisyManyFlips = np.zeros(ite+2)
+    cleanManyFlips = np.zeros(ite+2)
+    newNoisyManyFlips = np.zeros(ite+2)
+    newCleanManyFlips = np.zeros(ite+2)
+    for n in range(len(flip_data)):
+        # check original label
+        if flip_data[n] == 0:
+            cleanManyFlips[int(numberFlip[n])] += 1
+        else:
+            noisyManyFlips[int(numberFlip[n])] += 1
+        # check new label
+        if noisy_data[n] == 0:
+            newNoisyManyFlips[int(numberFlip[n])] += 1
+        else:
+            newCleanManyFlips[int(numberFlip[n])] += 1
+    print(
+        f'Original clean label flipped for {ite} iterations: {cleanManyFlips}, noisy label: {noisyManyFlips}')
+    print(
+        f'New clean label flipped for {ite} iterations: {newCleanManyFlips}, noisy label: {newNoisyManyFlips}')
     # count up number of noisy and clean remaining
     noiseCount = 0
     cleanCount = 0
