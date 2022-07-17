@@ -56,7 +56,7 @@ numberFlip = np.zeros(len(y_tensor))
 
 while True:
     # make our K Model Trainer where k represents number of models
-    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=1)
+    model_trainer = KModelTrain(x_tensor, y_tensor, k=8, num_epochs=25)
 
     # compute metrics for all samples
     print('Calculating Uncertainties')
