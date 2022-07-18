@@ -27,8 +27,8 @@ else:
 def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembleOptimizers, epochs, train_len, batch_size):
     train_total = 0
     train_correct = 0
-    ensembleTotals = []
-    ensembleCorrects = []
+    ensembleTotals = np.zeros(len(ensembleModels))
+    ensembleCorrects = np.zeros(len(ensembleModels))
 
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
