@@ -21,7 +21,7 @@ if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
 else:
     print('GPU is being properly used')
 
-
+#hi
 class CIFAR10(data.Dataset):
     """`CIFAR10 <https://www.cs.toronto.edu/~kriz/cifar.html>`_ Dataset.
 
