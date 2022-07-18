@@ -58,7 +58,7 @@ for iter in range(2):
     data_splitter = KDataSplitter(x_tensor, y_tensor, k=2)
     x_tensors, y_tensors = data_splitter.split()
     # train one model on half the data
-    first_model = FDModel(x_tensors[0], y_tensors[0], num_epochs=25)
+    first_model = FDModel(x_tensors[0], y_tensors[0], num_epochs=50)
     first_model.train()
     print('Calculating for first model')
     # predict on all of data and note entropy and peak value
@@ -89,7 +89,7 @@ for iter in range(2):
     iterationData.append([prediction, entropy, peakValue])
 
     # train another model on other half
-    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=25)
+    second_model = FDModel(x_tensors[1], y_tensors[1], num_epochs=50)
     second_model.train()
     print('Calculating for second model')
     # predict on all of data and note entropy and peak value

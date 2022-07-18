@@ -24,7 +24,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class FDModel():
-    def __init__(self, x, y, num_epochs=5, batch_size=64, learning_rate=0.1):
+    def __init__(self, x, y, num_epochs=5, batch_size=64, learning_rate=0.01):
         # initialize model with all data and presets for training
         train_dataset = Cifar10BinaryNoisy(x, y)
         self.train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,
@@ -51,7 +51,7 @@ class FDModel():
                 labels = labels.to(device)
 
                 # Forward pass
-                outputs = torch.sigmoid(self.model(images))
+                outputs = self.model(images)
                 loss = self.criterion(outputs, labels)
 
                 # Backward and optimize
