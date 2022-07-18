@@ -53,9 +53,7 @@ for epoch in range(num_epochs):
         labels = labels.to(device)
 
         # Forward pass
-        outputs = model(images)
-        print(outputs)
-        print(torch.sigmoid(outputs))
+        outputs = torch.sigmoid(model(images))
         loss = criterion(outputs, labels)
 
         # Backward and optimize
