@@ -51,7 +51,7 @@ class FDModel():
                 labels = labels.to(device)
 
                 # Forward pass
-                outputs = self.model(images)
+                outputs = torch.sigmoid(self.model(images))
                 loss = self.criterion(outputs, labels)
 
                 # Backward and optimize
