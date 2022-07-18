@@ -1,0 +1,93 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
+import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import os
+import sys
+import time
+import argparse
+from data.cifar import CIFAR10, CIFAR100
+
+# ensure we are running on the correct gpu
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
+if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
+    print('exiting')
+    sys.exit()
+else:
+    print('GPU is being properly used')
+
+# store starting time
+begin = time.time()
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--lr', type=float, default=0.001)
+parser.add_argument('--result_dir', type=str,
+                    help='dir to save result txt files', default='results/')
+parser.add_argument('--noise_rate', type=float,
+                    help='corruption rate, should be less than 1', default=0.2)
+parser.add_argument('--forget_rate', type=float,
+                    help='forget rate', default=None)
+parser.add_argument('--noise_type', type=str,
+                    help='[pairflip, symmetric]', default='pairflip')
+parser.add_argument('--num_gradual', type=int, default=10,
+                    help='how many epochs for linear drop rate, can be 5, 10, 15. This parameter is equal to Tk for R(T) in Co-teaching paper.')
+parser.add_argument('--exponent', type=float, default=1,
+                    help='exponent of the forget rate, can be 0.5, 1, 2. This parameter is equal to c in Tc for R(T) in Co-teaching paper.')
+parser.add_argument('--top_bn', action='store_true')
+parser.add_argument('--dataset', type=str,
+                    help='mnist, cifar10, or cifar100', default='mnist')
+parser.add_argument('--n_epoch', type=int, default=200)
+parser.add_argument('--seed', type=int, default=1)
+parser.add_argument('--print_freq', type=int, default=50)
+parser.add_argument('--num_workers', type=int, default=4,
+                    help='how many subprocesses to use for data loading')
+parser.add_argument('--num_iter_per_epoch', type=int, default=400)
+parser.add_argument('--epoch_decay_start', type=int, default=80)
+
+args = parser.parse_args()
+
+# Seed
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
+
+# Hyper Parameters
+batch_size = 128
+learning_rate = args.lr
+
+
+# obtain data
+input_channel = 3
+num_classes = 10
+args.top_bn = False
+args.epoch_decay_start = 80
+args.n_epoch = 200
+train_dataset = CIFAR10(root='./data/',
+                        download=True,
+                        train=True,
+                        transform=transforms.ToTensor(),
+                        noise_type=args.noise_type,
+                        noise_rate=args.noise_rate
+                        )
+
+test_dataset = CIFAR10(root='./data/',
+                            download=True,
+                            train=False,
+                            transform=transforms.ToTensor(),
+                            noise_type=args.noise_type,
+                            noise_rate=args.noise_rate
+                       )
+
+print(train_dataset)
+
+
+# store end time
+end = time.time()
+timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
+# total time taken
+print(f"Total runtime of the program is {timeTaken}")
