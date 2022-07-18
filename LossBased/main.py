@@ -31,18 +31,18 @@ parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--result_dir', type=str,
                     help='dir to save result txt files', default='results/')
 parser.add_argument('--noise_rate', type=float,
-                    help='corruption rate, should be less than 1', default=0.2)
+                    help='corruption rate, should be less than 1', default=0.5)
 parser.add_argument('--forget_rate', type=float,
                     help='forget rate', default=None)
 parser.add_argument('--noise_type', type=str,
-                    help='[pairflip, symmetric]', default='pairflip')
+                    help='[pairflip, symmetric]', default='symmetric')
 parser.add_argument('--num_gradual', type=int, default=10,
                     help='how many epochs for linear drop rate, can be 5, 10, 15. This parameter is equal to Tk for R(T) in Co-teaching paper.')
 parser.add_argument('--exponent', type=float, default=1,
                     help='exponent of the forget rate, can be 0.5, 1, 2. This parameter is equal to c in Tc for R(T) in Co-teaching paper.')
 parser.add_argument('--top_bn', action='store_true')
 parser.add_argument('--dataset', type=str,
-                    help='mnist, cifar10, or cifar100', default='mnist')
+                    help='mnist, cifar10, or cifar100', default='cifar10')
 parser.add_argument('--n_epoch', type=int, default=1)
 parser.add_argument('--seed', type=int, default=1)
 parser.add_argument('--print_freq', type=int, default=50)
