@@ -12,6 +12,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
+from train import train
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -42,7 +43,7 @@ parser.add_argument('--exponent', type=float, default=1,
 parser.add_argument('--top_bn', action='store_true')
 parser.add_argument('--dataset', type=str,
                     help='mnist, cifar10, or cifar100', default='mnist')
-parser.add_argument('--n_epoch', type=int, default=200)
+parser.add_argument('--n_epoch', type=int, default=1)
 parser.add_argument('--seed', type=int, default=1)
 parser.add_argument('--print_freq', type=int, default=50)
 parser.add_argument('--num_workers', type=int, default=4,
@@ -83,7 +84,46 @@ test_dataset = CIFAR10(root='./data/',
                             noise_rate=args.noise_rate
                        )
 
-print(train_dataset)
+# Data Loader (Input Pipeline)
+print('loading dataset...')
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+                                           batch_size=batch_size,
+                                           num_workers=args.num_workers,
+                                           drop_last=True,
+                                           shuffle=True)
+
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                          batch_size=batch_size,
+                                          num_workers=args.num_workers,
+                                          drop_last=True,
+                                          shuffle=False)
+# Define models
+print('building model...')
+# create our full model
+fullModel = torchvision.models.resnet34(pretrained=False, num_classes=10)
+fullModel.cuda()
+fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
+
+ensembleModels = []
+ensembleOptimizers = []
+for k in range(8):
+    # create ensemble model
+    ensembleModel = torchvision.models.resnet34(
+        pretrained=False, num_classes=10)
+    ensembleModel.cuda()
+    # create optimizer
+    ensembleOptimizer = torch.optim.Adam(
+        ensembleModel.parameters(), lr=learning_rate)
+    # add to arrays
+    ensembleModels.append(ensembleModel)
+    ensembleOptimizers.append(ensembleOptimizer)
+
+
+# training
+for epoch in range(1, args.n_epoch):
+    # train models
+    train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels,
+          ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
 
 
 # store end time
