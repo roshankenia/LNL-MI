@@ -41,13 +41,19 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # Forward + Backward + Optimize
         logits1 = fullModel(images)
         prec1, _ = accuracy(logits1, labels, topk=(1, 5))
-        # if i == 0:
-        #     print(logits1)
-        #     print(labels)
         train_total += 1
         train_correct += prec1
         # calculate full loss
         loss_1 = F.cross_entropy(logits1, labels)
+
+        loss_2 = nn.CrossEntropyLoss()
+        nnLoss = loss_2(logits1, labels)
+
+        if i == 0:
+            print(logits1, '\n')
+            print(labels, '\n')
+            print(loss_1, '\n')
+            print(nnLoss, '\n')
 
         # # do train for each ensemble model
         # ensembleLosses = []
