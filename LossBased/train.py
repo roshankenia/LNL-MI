@@ -47,8 +47,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         train_total += 1
         train_correct += prec1
         # calculate full loss
-        loss_1 = torch.mean(
-            torch.sum(F.cross_entropy(logits1, labels, reduce=False)))
+        loss_1 = torch.sum(F.cross_entropy(
+            logits1, labels, reduce=False))/len(labels)
 
         # do train for each ensemble model
         ensembleLosses = []
@@ -61,8 +61,9 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             ensembleCorrects[k] += prec
             ensemblePrec.append(prec)
             # calculate loss for ensemble model
-            loss = torch.mean(
-                torch.sum(F.cross_entropy(logits, labels, reduce=False)))
+            loss = torch.sum(F.cross_entropy(
+                logits, labels, reduce=False))/len(labels)
+
             ensembleLosses.append(loss)
 
         fullOptimizer.zero_grad()
