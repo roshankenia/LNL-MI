@@ -134,7 +134,6 @@ def multiclass_noisify(y, P, random_state=0):
         new_y[idx] = np.where(flipped == 1)[0]
 
     return new_y
-#hi
 
 # noisify_pairflip call the function "multiclass_noisify"
 def noisify_pairflip(y_train, noise, random_state=None, nb_classes=10):

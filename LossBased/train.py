@@ -46,8 +46,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # calculate full loss
         loss_1 = F.cross_entropy(logits1, labels)
 
-        loss_2 = nn.CrossEntropyLoss()
-        nnLoss = loss_2(logits1, labels)
+        # loss_2 = nn.CrossEntropyLoss()
+        # nnLoss = loss_2(logits1, labels)
 
         if i == 0:
             print(logits1, '\n')
