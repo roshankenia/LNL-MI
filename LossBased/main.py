@@ -13,6 +13,7 @@ import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
 from train import train
+from model import CNN
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -100,7 +101,10 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 # Define models
 print('building model...')
 # create our full model
-fullModel = torchvision.models.resnet34(pretrained=False, num_classes=10)
+# fullModel = torchvision.models.resnet34(pretrained=False, num_classes=10)
+# fullModel.cuda()
+
+fullModel = CNN(input_channel=3, n_outputs=10)
 fullModel.cuda()
 fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
 
