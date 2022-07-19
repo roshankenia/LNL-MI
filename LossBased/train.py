@@ -41,9 +41,9 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # Forward + Backward + Optimize
         logits1 = fullModel(images)
         prec1, _ = accuracy(logits1, labels, topk=(1, 5))
-        if i == 0:
-            print(logits1)
-            print(labels)
+        # if i == 0:
+        #     print(logits1)
+        #     print(labels)
         train_total += 1
         train_correct += prec1
         # calculate full loss
