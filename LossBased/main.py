@@ -98,6 +98,24 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                           num_workers=args.num_workers,
                                           drop_last=True,
                                           shuffle=False)
+
+# Adjust learning rate and betas for Adam Optimizer
+mom1 = 0.9
+mom2 = 0.1
+alpha_plan = [learning_rate] * args.n_epoch
+beta1_plan = [mom1] * args.n_epoch
+for i in range(args.epoch_decay_start, args.n_epoch):
+    alpha_plan[i] = float(args.n_epoch - i) / \
+        (args.n_epoch - args.epoch_decay_start) * learning_rate
+    beta1_plan[i] = mom2
+
+
+def adjust_learning_rate(optimizer, epoch):
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = alpha_plan[epoch]
+        param_group['betas'] = (beta1_plan[epoch], 0.999)  # Only change beta1
+
+
 # Define models
 print('building model...')
 # create our full model
@@ -125,6 +143,8 @@ for k in range(8):
 
 # training
 for epoch in range(1, args.n_epoch):
+    # adjust learning rate
+    adjust_learning_rate(fullOptimizer, epoch)
     # train models
     train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels,
           ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
