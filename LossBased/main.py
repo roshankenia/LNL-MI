@@ -27,7 +27,7 @@ else:
 begin = time.time()
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--lr', type=float, default=0.001)
+parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--result_dir', type=str,
                     help='dir to save result txt files', default='results/')
 parser.add_argument('--noise_rate', type=float,
