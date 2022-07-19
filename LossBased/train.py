@@ -49,38 +49,38 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # calculate full loss
         loss_1 = F.cross_entropy(logits1, labels)
 
-        # do train for each ensemble model
-        ensembleLosses = []
-        ensemblePrec = []
-        for k in range(len(ensembleModels)):
-            ensembleModel = ensembleModels[k]
-            logits = ensembleModel(images)
-            prec, _ = accuracy(logits, labels, topk=(1, 5))
-            ensembleTotals[k] += 1
-            ensembleCorrects[k] += prec
-            ensemblePrec.append(prec)
-            # calculate loss for ensemble model
-            loss = F.cross_entropy(logits, labels)
+        # # do train for each ensemble model
+        # ensembleLosses = []
+        # ensemblePrec = []
+        # for k in range(len(ensembleModels)):
+        #     ensembleModel = ensembleModels[k]
+        #     logits = ensembleModel(images)
+        #     prec, _ = accuracy(logits, labels, topk=(1, 5))
+        #     ensembleTotals[k] += 1
+        #     ensembleCorrects[k] += prec
+        #     ensemblePrec.append(prec)
+        #     # calculate loss for ensemble model
+        #     loss = F.cross_entropy(logits, labels)
 
-            ensembleLosses.append(loss)
+        #     ensembleLosses.append(loss)
 
         fullOptimizer.zero_grad()
         loss_1.backward()
         fullOptimizer.step()
 
-        # now do step for ensemble models
-        for k in range(len(ensembleOptimizers)):
-            ensembleOptimizers[k].zero_grad()
-            ensembleLosses[k].backward()
-            ensembleOptimizers[k].step()
+        # # now do step for ensemble models
+        # for k in range(len(ensembleOptimizers)):
+        #     ensembleOptimizers[k].zero_grad()
+        #     ensembleLosses[k].backward()
+        #     ensembleOptimizers[k].step()
 
         if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
                   % (epoch+1, epochs, i+1, train_len//batch_size))
             print(f'Full model Accuracy:{prec1}, loss:{loss_1.data.item()}')
-            for k in range(len(ensemblePrec)):
-                print(
-                    f'Model {k} Accuracy:{ensemblePrec[k]}, loss: {ensembleLosses[k].data.item()}')
+            # for k in range(len(ensemblePrec)):
+            #     print(
+            #         f'Model {k} Accuracy:{ensemblePrec[k]}, loss: {ensembleLosses[k].data.item()}')
 
     train_acc1 = float(train_correct)/float(train_total)
     return train_acc1
