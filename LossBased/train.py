@@ -13,6 +13,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
+from loss import loss_co_ensemble_teaching
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -43,18 +44,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         prec1, _ = accuracy(logits1, labels, topk=(1, 5))
         train_total += 1
         train_correct += prec1
-        # calculate full loss
-        loss_1 = F.cross_entropy(logits1, labels)/len(labels)
 
-        # if i == 0:
-        #     print(images[0])
-        #     print(logits1, '\n')
-        #     print(labels, '\n')
-        #     print(loss_1, '\n')
-        #     # print(torch.sum(loss_1))
-        # print(torch.sum(loss_1)/len(labels))
-
-        # # do train for each ensemble model
+        # do train for each ensemble model
         ensemblePreds = []
         ensembleLosses = []
         ensemblePrec = []
@@ -70,28 +61,30 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
 
             ensembleLosses.append(loss)
             ensemblePreds.append(logits.unsqueeze(0))
-
+        # put all predictions into one tensor
         ensemblePreds = torch.cat(ensemblePreds)
-        print(ensemblePreds.shape)
-        break
+
+        # find loss for full model
+        fullLoss = loss_co_ensemble_teaching(logits1, ensemblePreds, labels)
 
         fullOptimizer.zero_grad()
-        loss_1.backward()
+        fullLoss.backward()
         fullOptimizer.step()
 
         # # now do step for ensemble models
-        # for k in range(len(ensembleOptimizers)):
-        #     ensembleOptimizers[k].zero_grad()
-        #     ensembleLosses[k].backward()
-        #     ensembleOptimizers[k].step()
+        for k in range(len(ensembleOptimizers)):
+            ensembleOptimizers[k].zero_grad()
+            ensembleLosses[k].backward()
+            ensembleOptimizers[k].step()
 
         if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
                   % (epoch+1, epochs, i+1, train_len//batch_size))
-            print(f'Full model Accuracy:{prec1}, loss:{loss_1.data.item()}')
-            # for k in range(len(ensemblePrec)):
-            #     print(
-            #         f'Model {k} Accuracy:{ensemblePrec[k]}, loss: {ensembleLosses[k].data.item()}')
+            print(
+                f'\tFull model Accuracy:{prec1}, loss:{fullLoss.data.item()}')
+            for k in range(len(ensemblePrec)):
+                print(
+                    f'\tModel {k} Accuracy:{ensemblePrec[k]}, loss: {ensembleLosses[k].data.item()}')
 
     train_acc1 = float(train_correct)/float(train_total)
     return train_acc1
