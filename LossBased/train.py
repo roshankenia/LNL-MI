@@ -32,7 +32,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
 
     for i, (images, labels, indexes) in enumerate(train_loader):
         print(len(labels))
-        break
+        pass
         ind = indexes.cpu().numpy().transpose()
         # if i > args.num_iter_per_epoch:
         #     break
