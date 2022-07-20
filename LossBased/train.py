@@ -49,13 +49,13 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # loss_2 = nn.CrossEntropyLoss()
         # nnLoss = loss_2(logits1, labels)
 
-        if i == 0:
-            print(images[0])
-            print(logits1, '\n')
-            print(labels, '\n')
-            print(loss_1, '\n')
-            # print(torch.sum(loss_1))
-            # print(torch.sum(loss_1)/len(labels))
+        # if i == 0:
+        #     print(images[0])
+        #     print(logits1, '\n')
+        #     print(labels, '\n')
+        #     print(loss_1, '\n')
+        #     # print(torch.sum(loss_1))
+        # print(torch.sum(loss_1)/len(labels))
 
         # # do train for each ensemble model
         # ensembleLosses = []
@@ -68,7 +68,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         #     ensembleCorrects[k] += prec
         #     ensemblePrec.append(prec)
         #     # calculate loss for ensemble model
-        #     loss = F.cross_entropy(logits, labels)
+        #     loss = F.cross_entropy(logits, labels)/len(labels)
 
         #     ensembleLosses.append(loss)
 
