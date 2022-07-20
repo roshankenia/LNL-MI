@@ -31,6 +31,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
     ensembleCorrects = np.zeros(len(ensembleModels))
 
     for i, (images, labels, indexes) in enumerate(train_loader):
+        print(len(labels))
+        break
         ind = indexes.cpu().numpy().transpose()
         # if i > args.num_iter_per_epoch:
         #     break
@@ -45,9 +47,6 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         train_correct += prec1
         # calculate full loss
         loss_1 = F.cross_entropy(logits1, labels)/len(labels)
-
-        # loss_2 = nn.CrossEntropyLoss()
-        # nnLoss = loss_2(logits1, labels)
 
         # if i == 0:
         #     print(images[0])
