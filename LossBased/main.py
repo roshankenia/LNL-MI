@@ -119,11 +119,11 @@ def adjust_learning_rate(optimizer, epoch):
 # Define models
 print('building model...')
 # create our full model
-# fullModel = torchvision.models.resnet34(pretrained=False, num_classes=10)
-# fullModel.cuda()
-
-fullModel = CNN(input_channel=3, n_outputs=10)
+fullModel = torchvision.models.resnet34(pretrained=False, num_classes=10)
 fullModel.cuda()
+
+# fullModel = CNN(input_channel=3, n_outputs=10)
+# fullModel.cuda()
 fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
 
 ensembleModels = []
