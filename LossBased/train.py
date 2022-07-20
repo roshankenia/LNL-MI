@@ -69,9 +69,9 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             loss = F.cross_entropy(logits, labels)/len(labels)
 
             ensembleLosses.append(loss)
-            ensemblePreds.append(logits)
+            ensemblePreds.append([logits])
 
-        ensemblePreds = torch.cat(ensemblePreds, -1)
+        ensemblePreds = torch.cat(ensemblePreds)
         print(ensemblePreds.shape)
         break
 
