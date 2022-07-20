@@ -145,7 +145,7 @@ fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
 
 ensembleModels = []
 ensembleOptimizers = []
-for k in range(8):
+for k in range(1):
     # create ensemble model
     ensembleModel = torchvision.models.resnet34(
         pretrained=False, num_classes=10)

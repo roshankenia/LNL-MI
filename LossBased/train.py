@@ -70,13 +70,12 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         fullOptimizer.zero_grad()
         fullLoss.backward()
         fullOptimizer.step()
-        fullOptimizer.zero_grad()
+
         # # now do step for ensemble models
         for k in range(len(ensembleOptimizers)):
             ensembleOptimizers[k].zero_grad()
             ensembleLosses[k].backward()
             ensembleOptimizers[k].step()
-            ensembleOptimizers[k].zero_grad()
 
         if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
