@@ -71,8 +71,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             ensembleLosses.append(loss)
             ensemblePreds.append(logits)
 
-        ensemblePreds = torch.tensor(ensemblePreds)
-        print(ensemblePreds).shape
+        ensemblePreds = torch.cat(ensemblePreds)
+        print(ensemblePreds.shape)
         break
 
         fullOptimizer.zero_grad()
