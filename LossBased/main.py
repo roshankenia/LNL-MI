@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from torch.autograd import Variable
 import os
 import sys
 import time
@@ -116,6 +117,22 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['betas'] = (beta1_plan[epoch], 0.999)  # Only change beta1
 
 
+def evaluate(test_loader, model):
+    model.eval()    # Change model to 'eval' mode.
+    correct1 = 0
+    total1 = 0
+    for images, labels, _ in test_loader:
+        images = Variable(images).cuda()
+        logits1 = model(images)
+        outputs1 = F.softmax(logits1, dim=1)
+        _, pred1 = torch.max(outputs1.data, 1)
+        total1 += labels.size(0)
+        correct1 += (pred1.cpu() == labels).sum()
+
+    acc1 = 100*float(correct1)/float(total1)
+    return acc1
+
+
 # Define models
 print('building model...')
 # create our full model
@@ -143,11 +160,18 @@ for k in range(8):
 
 # training
 for epoch in range(1, args.n_epoch):
+    fullModel.train()
     # adjust learning rate
     adjust_learning_rate(fullOptimizer, epoch)
     # train models
     train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels,
           ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
+
+    # evaluate model
+    acc1 = evaluate(test_loader, fullModel)
+
+    print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %%' %
+          (epoch+1, args.n_epoch, len(test_dataset), acc1))
 
 
 # store end time
