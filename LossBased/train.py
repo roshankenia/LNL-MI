@@ -59,6 +59,10 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             # calculate loss for ensemble model
             loss = F.cross_entropy(logits, labels)/len(labels)
 
+            ensembleOptimizers[k].zero_grad()
+            loss.backward()
+            ensembleOptimizers[k].step()
+
             ensembleLosses.append(loss)
             ensemblePreds.append(logits.unsqueeze(0))
         # put all predictions into one tensor
@@ -71,11 +75,11 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         fullLoss.backward()
         fullOptimizer.step()
 
-        # # now do step for ensemble models
-        for k in range(len(ensembleOptimizers)):
-            ensembleOptimizers[k].zero_grad()
-            ensembleLosses[k].backward()
-            ensembleOptimizers[k].step()
+        # # # now do step for ensemble models
+        # for k in range(len(ensembleOptimizers)):
+        #     ensembleOptimizers[k].zero_grad()
+        #     ensembleLosses[k].backward()
+        #     ensembleOptimizers[k].step()
 
         if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
