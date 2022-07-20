@@ -54,6 +54,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             print(logits1, '\n')
             print(labels, '\n')
             print(loss_1, '\n')
+            print(torch.sum(loss_1))
+            print(torch.sum(loss_1)/len(loss_1))
 
         # # do train for each ensemble model
         # ensembleLosses = []
