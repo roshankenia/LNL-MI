@@ -64,18 +64,18 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # put all predictions into one tensor
         ensemblePreds = torch.cat(ensemblePreds)
 
+        # # now do step for ensemble models
+        for k in range(len(ensembleOptimizers)):
+            ensembleOptimizers[k].zero_grad()
+            ensembleLosses[k].backward()
+            ensembleOptimizers[k].step()
+
         # find loss for full model
         fullLoss = loss_co_ensemble_teaching(logits1, ensemblePreds, labels)
 
         fullOptimizer.zero_grad()
         fullLoss.backward()
         fullOptimizer.step()
-
-        # # now do step for ensemble models
-        for k in range(len(ensembleOptimizers)):
-            ensembleOptimizers[k].zero_grad()
-            ensembleLosses[k].backward()
-            ensembleOptimizers[k].step()
 
         if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
