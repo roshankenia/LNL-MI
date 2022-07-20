@@ -57,19 +57,25 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         # print(torch.sum(loss_1)/len(labels))
 
         # # do train for each ensemble model
-        # ensembleLosses = []
-        # ensemblePrec = []
-        # for k in range(len(ensembleModels)):
-        #     ensembleModel = ensembleModels[k]
-        #     logits = ensembleModel(images)
-        #     prec, _ = accuracy(logits, labels, topk=(1, 5))
-        #     ensembleTotals[k] += 1
-        #     ensembleCorrects[k] += prec
-        #     ensemblePrec.append(prec)
-        #     # calculate loss for ensemble model
-        #     loss = F.cross_entropy(logits, labels)/len(labels)
+        ensemblePreds = []
+        ensembleLosses = []
+        ensemblePrec = []
+        for k in range(len(ensembleModels)):
+            ensembleModel = ensembleModels[k]
+            logits = ensembleModel(images)
+            prec, _ = accuracy(logits, labels, topk=(1, 5))
+            ensembleTotals[k] += 1
+            ensembleCorrects[k] += prec
+            ensemblePrec.append(prec)
+            # calculate loss for ensemble model
+            loss = F.cross_entropy(logits, labels)/len(labels)
 
-        #     ensembleLosses.append(loss)
+            ensembleLosses.append(loss)
+            ensemblePreds.append(logits)
+
+        ensemblePreds = torch.tensor(ensemblePreds)
+        print(ensemblePreds).shape
+        break
 
         fullOptimizer.zero_grad()
         loss_1.backward()
