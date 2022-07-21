@@ -40,7 +40,9 @@ def avg_loss(y_1, t):
     sort_index_loss = torch.argsort(loss.data)
 
     # find number of samples to use
-    num_use = torch.nonzero(loss < loss.median()).shape[0]
+    num_use = torch.nonzero(loss < loss.mean()).shape[0]
+
+    print(f'Using {num_use} out of {len(t)}')
 
     # use indexes underneath this threshold
     clean_index = sort_index_loss[:num_use]
