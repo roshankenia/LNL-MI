@@ -29,6 +29,8 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss):
 
     # calculate loss using low loss predictions
     pred_loss = F.cross_entropy(lowest_loss_preds, t, reduction='none')
+    print(fullLoss)
+    print(torch.sum(fullLoss))
 
     totalLoss = 0.5 * torch.sum(fullLoss) + 0.5 * torch.sum(pred_loss)
 
