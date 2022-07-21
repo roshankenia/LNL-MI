@@ -69,7 +69,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             logits1, ensemblePredsCopy, labels)
 
         fullOptimizer.zero_grad()
-        fullLoss.backward()
+        fullLoss.backward(retain_graph=True)
         fullOptimizer.step()
 
         # # now do step for ensemble models
