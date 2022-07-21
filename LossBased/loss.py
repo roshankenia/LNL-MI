@@ -21,16 +21,16 @@ else:
 
 def low_loss_over_epochs_labels(y_1, t, lowest_loss):
     # calculate loss for full
-    fullLoss = F.cross_entropy(y_1, t)
+    fullLoss = F.cross_entropy(y_1, t, reduction='none')
 
     # update our lowest losses
     lowest_loss_preds = lowest_loss.update(
         fullLoss.detach().data.cpu(), y_1.detach().data.cpu()).cuda()
 
     # calculate loss using low loss predictions
-    pred_loss = F.cross_entropy(lowest_loss_preds, t)
+    pred_loss = F.cross_entropy(lowest_loss_preds, t, reduction='none')
 
-    totalLoss = 0.5 * fullLoss + 0.5 * pred_loss
+    totalLoss = 0.5 * torch.sum(fullLoss) + 0.5 * torch.sum(pred_loss)
 
     return totalLoss/len(t)
 
