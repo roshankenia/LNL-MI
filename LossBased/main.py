@@ -14,7 +14,7 @@ import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
 from train import train
-
+from utils.labels import LowLossLabels
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
@@ -158,6 +158,8 @@ fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
 
 
 # training
+# create our low loss labels class
+lowest_losses = LowLossLabels()
 for epoch in range(1, args.n_epoch):
     fullModel.train()
     # adjust learning rate
@@ -167,7 +169,7 @@ for epoch in range(1, args.n_epoch):
     #       ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
 
     train(train_loader, epoch, fullModel, fullOptimizer,
-          args.n_epoch, len(train_dataset), batch_size)
+          args.n_epoch, len(train_dataset), batch_size, lowest_losses)
 
     # evaluate model
     acc1 = evaluate(test_loader, fullModel)

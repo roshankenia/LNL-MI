@@ -5,6 +5,7 @@ from torch.autograd import Variable
 import numpy as np
 import os
 import sys
+from utils.labels import LowLossLabels
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -16,6 +17,22 @@ else:
     print('GPU is being properly used')
 
 # Loss functions
+
+
+def low_loss_over_epochs_labels(y_1, t, lowest_loss):
+    # calculate loss for full
+    fullLoss = F.cross_entropy(y_1, t)
+
+    # update our lowest losses
+    lowest_loss_preds = lowest_loss.update(
+        fullLoss.detach().data.cpu(), y_1.detach().data.cpu())
+
+    # calculate loss using low loss predictions
+    pred_loss = F.cross_entropy(lowest_loss_preds, t)
+
+    totalLoss = 0.5 * fullLoss + 0.5 * pred_loss
+
+    return totalLoss/len(t)
 
 
 def loss_co_ensemble_teaching(y_1, ensemble_y, t):
@@ -42,7 +59,7 @@ def avg_loss(y_1, t):
     # find number of samples to use
     num_use = torch.nonzero(loss < loss.mean()).shape[0]
 
-    print(f'Using {num_use} out of {len(t)}')
+    # print(f'Using {num_use} out of {len(t)}')
 
     # use indexes underneath this threshold
     clean_index = sort_index_loss[:num_use]
