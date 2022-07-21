@@ -63,9 +63,10 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             ensemblePreds.append(logits.unsqueeze(0))
         # put all predictions into one tensor
         ensemblePreds = torch.cat(ensemblePreds)
-
+        ensemblePredsCopy = ensemblePreds.copy()
         # find loss for full model
-        fullLoss = loss_co_ensemble_teaching(logits1, ensemblePreds, labels)
+        fullLoss = loss_co_ensemble_teaching(
+            logits1, ensemblePredsCopy, labels)
 
         fullOptimizer.zero_grad()
         fullLoss.backward()
@@ -73,7 +74,6 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
 
         # # now do step for ensemble models
         for k in range(len(ensembleOptimizers)):
-            print(k)
             ensembleOptimizers[k].zero_grad()
             ensembleLosses[k].backward()
             ensembleOptimizers[k].step()
