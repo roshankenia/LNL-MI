@@ -30,3 +30,32 @@ def loss_co_ensemble_teaching(y_1, ensemble_y, t):
     totalLoss = 0.5 * fullLoss + 0.5 * ensembleLoss
 
     return totalLoss/len(t)
+
+
+def avg_loss(y_1, t):
+    # calculate loss on all samples
+    loss = F.cross_entropy(y_1, t, reduction='none')
+
+    # find indexes to sort loss
+    sort_index_loss = torch.argsort(loss.data)
+
+    # find number of samples to use
+    num_use = torch.nonzero(loss < loss.mean()).shape[0]
+
+    # use indexes underneath this threshold
+    clean_index = sort_index_loss[:num_use]
+
+    # obtain clean logits and labels
+    clean_logits = y_1[clean_index]
+    clean_labels = t[clean_index]
+
+    # clean loss calculation
+    clean_loss = F.cross_entropy(clean_logits, clean_labels)
+
+    return clean_loss/len(clean_labels)
+
+
+def cross_entropy_loss(logits, labels):
+    # calculate cross entropy loss
+    ce_loss = F.cross_entropy(logits, labels)
+    return ce_loss/len(labels)

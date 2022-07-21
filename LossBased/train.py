@@ -13,7 +13,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
-from loss import loss_co_ensemble_teaching
+from loss import loss_co_ensemble_teaching, avg_loss, cross_entropy_loss
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -25,11 +25,9 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembleOptimizers, epochs, train_len, batch_size):
+def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size):
     train_total = 0
     train_correct = 0
-    ensembleTotals = np.zeros(len(ensembleModels))
-    ensembleCorrects = np.zeros(len(ensembleModels))
 
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
@@ -45,50 +43,90 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
         train_total += 1
         train_correct += prec1
 
-        # do train for each ensemble model
-        ensemblePreds = []
-        ensembleLosses = []
-        ensemblePrec = []
-        for k in range(len(ensembleModels)):
-            ensembleModel = ensembleModels[k]
-            logits = ensembleModel(images)
-            prec, _ = accuracy(logits, labels, topk=(1, 5))
-            ensembleTotals[k] += 1
-            ensembleCorrects[k] += prec
-            ensemblePrec.append(prec)
-            # calculate loss for ensemble model
-            loss = F.cross_entropy(logits, labels)/len(labels)
-
-            ensembleLosses.append(loss)
-            ensemblePreds.append(logits.unsqueeze(0))
-        # put all predictions into one tensor
-        ensemblePreds = torch.cat(ensemblePreds)
-        ensemblePredsCopy = ensemblePreds.clone()
         # find loss for full model
-        fullLoss = loss_co_ensemble_teaching(
-            logits1, ensemblePredsCopy, labels)
+        fullLoss = None
+        if epoch < 5:
+            fullLoss = cross_entropy_loss(logits1, labels)
+        else:
+            fullLoss = avg_loss(logits1, labels)
 
         fullOptimizer.zero_grad()
-        fullLoss.backward(retain_graph=True)
+        fullLoss.backward()
         fullOptimizer.step()
-
-        # # now do step for ensemble models
-        for k in range(len(ensembleOptimizers)):
-            ensembleOptimizers[k].zero_grad()
-            ensembleLosses[k].backward()
-            ensembleOptimizers[k].step()
 
         if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
                   % (epoch+1, epochs, i+1, train_len//batch_size))
             print(
                 f'\tFull model Accuracy:{prec1}, loss:{fullLoss.data.item()}')
-            for k in range(len(ensemblePrec)):
-                print(
-                    f'\tModel {k} Accuracy:{ensemblePrec[k]}, loss: {ensembleLosses[k].data.item()}')
 
     train_acc1 = float(train_correct)/float(train_total)
     return train_acc1
+
+# def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembleOptimizers, epochs, train_len, batch_size):
+#     train_total = 0
+#     train_correct = 0
+#     ensembleTotals = np.zeros(len(ensembleModels))
+#     ensembleCorrects = np.zeros(len(ensembleModels))
+
+#     for i, (images, labels, indexes) in enumerate(train_loader):
+#         ind = indexes.cpu().numpy().transpose()
+#         # if i > args.num_iter_per_epoch:
+#         #     break
+
+#         images = Variable(images).cuda()
+#         labels = Variable(labels).cuda()
+
+#         # Forward + Backward + Optimize
+#         logits1 = fullModel(images)
+#         prec1, _ = accuracy(logits1, labels, topk=(1, 5))
+#         train_total += 1
+#         train_correct += prec1
+
+#         # do train for each ensemble model
+#         ensemblePreds = []
+#         ensembleLosses = []
+#         ensemblePrec = []
+#         for k in range(len(ensembleModels)):
+#             ensembleModel = ensembleModels[k]
+#             logits = ensembleModel(images)
+#             prec, _ = accuracy(logits, labels, topk=(1, 5))
+#             ensembleTotals[k] += 1
+#             ensembleCorrects[k] += prec
+#             ensemblePrec.append(prec)
+#             # calculate loss for ensemble model
+#             loss = F.cross_entropy(logits, labels)/len(labels)
+
+#             ensembleLosses.append(loss)
+#             ensemblePreds.append(logits.unsqueeze(0))
+#         # put all predictions into one tensor
+#         ensemblePreds = torch.cat(ensemblePreds)
+#         ensemblePredsCopy = ensemblePreds.clone()
+#         # find loss for full model
+#         fullLoss = loss_co_ensemble_teaching(
+#             logits1, ensemblePredsCopy, labels)
+
+#         fullOptimizer.zero_grad()
+#         fullLoss.backward(retain_graph=True)
+#         fullOptimizer.step()
+
+#         # # now do step for ensemble models
+#         for k in range(len(ensembleOptimizers)):
+#             ensembleOptimizers[k].zero_grad()
+#             ensembleLosses[k].backward()
+#             ensembleOptimizers[k].step()
+
+#         if (i+1) % 50 == 0:
+#             print('Epoch [%d/%d], Iter [%d/%d]'
+#                   % (epoch+1, epochs, i+1, train_len//batch_size))
+#             print(
+#                 f'\tFull model Accuracy:{prec1}, loss:{fullLoss.data.item()}')
+#             for k in range(len(ensemblePrec)):
+#                 print(
+#                     f'\tModel {k} Accuracy:{ensemblePrec[k]}, loss: {ensembleLosses[k].data.item()}')
+
+#     train_acc1 = float(train_correct)/float(train_total)
+#     return train_acc1
 
 
 def accuracy(logit, target, topk=(1,)):
