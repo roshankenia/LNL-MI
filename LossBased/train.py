@@ -63,7 +63,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembl
             ensemblePreds.append(logits.unsqueeze(0))
         # put all predictions into one tensor
         ensemblePreds = torch.cat(ensemblePreds)
-        ensemblePredsCopy = ensemblePreds.copy()
+        ensemblePredsCopy = ensemblePreds.clone()
         # find loss for full model
         fullLoss = loss_co_ensemble_teaching(
             logits1, ensemblePredsCopy, labels)
