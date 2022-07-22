@@ -1,3 +1,4 @@
+from re import I
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -18,21 +19,22 @@ else:
 
 class LowLossLabels():
 
-    def __init__(self):
+    def __init__(self, num_samples):
         # intialize our data arrays
-        self.preds = []
-        self.losses = []
+        self.labels = torch.Tensor([-1 for i in range(num_samples)]).long()
+        self.losses = torch.Tensor([-1 for i in range(num_samples)])
 
-    def update(self, losses, preds):
-        # initial update
-        if len(self.preds) == 0:
-            self.preds = preds
-            self.losses = losses
-        else:
-            # update preds if losses are smaller
-            for i in range(len(preds)):
-                if losses[i] < self.losses[i]:
-                    self.preds[i] = preds[i]
-                    self.losses[i] = losses[i]
-
-        return self.preds
+    def update(self, indices, losses, preds):
+        for i in range(len(indices)):
+            index = indices[i]
+            loss = losses[i]
+            label = torch.argmax(preds[i])
+            # initial update
+            if self.labels[index] == -1:
+                self.labels[index] = label
+                self.losses[index] = loss
+            else:
+                # update labels if losses are smaller
+                if loss < self.labels[index]:
+                    self.labels[index] = label
+                    self.losses[index] = loss

@@ -19,17 +19,38 @@ else:
 # Loss functions
 
 
-def low_loss_over_epochs_labels(y_1, t, lowest_loss):
+def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     # calculate loss for full
     fullLoss = F.cross_entropy(y_1, t, reduction='none')
 
     # update our lowest losses
-    lowest_loss_preds = lowest_loss.update(
-        fullLoss.data.cpu(), y_1.data.cpu()).cuda()
+    lowest_loss.update(indices, fullLoss.data.cpu(), y_1.data.cpu()).cuda()
 
-    # calculate loss using low loss predictions
-    totalLoss = 0.25 * F.cross_entropy(y_1, t) + \
-        0.75 * F.cross_entropy(lowest_loss_preds, t)
+    # find indexes to sort loss
+    sort_index_loss = torch.argsort(fullLoss.data)
+
+    # find number of samples to use
+    num_use = torch.nonzero(fullLoss < fullLoss.mean()).shape[0]
+
+    # use indexes underneath this threshold and the rest are noisy
+    clean_index = sort_index_loss[:num_use]
+    noisy_index = sort_index_loss[num_use:]
+
+    # obtain clean logits and labels
+    clean_logits = y_1[clean_index]
+    clean_labels = t[clean_index]
+
+    # obtain noisy logits and labels
+    noisy_logits = y_1[noisy_index]
+    noisy_labels = lowest_loss.labels[noisy_index]
+
+    # clean loss calculation
+    clean_loss = F.cross_entropy(clean_logits, clean_labels)
+
+    # noisy loss calc
+    noisy_loss = F.cross_entropy(noisy_logits, noisy_labels)
+
+    totalLoss = clean_loss + noisy_loss
 
     return totalLoss/len(t)
 
