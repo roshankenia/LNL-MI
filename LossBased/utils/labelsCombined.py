@@ -22,7 +22,7 @@ class EpochLabels():
         # intialize our data arrays
         self.preds = []
 
-    def update(self, losses, preds):
+    def update(self, preds):
         # initial update
         if len(self.preds) == 0:
             self.preds = preds
