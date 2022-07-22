@@ -44,6 +44,12 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     noisy_logits = y_1[noisy_index]
     noisy_labels = lowest_loss.labels[noisy_index].to(clean_labels.device)
 
+    print(clean_logits)
+    print(clean_labels)
+
+    print(noisy_logits)
+    print(noisy_labels)
+
     # clean loss calculation
     clean_loss = F.cross_entropy(clean_logits, clean_labels)
 
