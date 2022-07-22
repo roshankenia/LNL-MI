@@ -36,7 +36,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss):
 
 def loss_over_epochs(y_1, t, epochLabels):
     # update our lowest losses
-    preds = epochLabels.update(y_1.detach().data.cpu()).cuda()
+    preds = epochLabels.update(y_1.data.cpu()).cuda()
 
     # calculate loss using low loss predictions
     totalLoss = F.cross_entropy(preds, t)
