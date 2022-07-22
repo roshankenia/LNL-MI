@@ -30,6 +30,5 @@ class EpochLabels():
             # update preds in ratio
             for i in range(len(preds)):
                 self.preds[i] = 0.75 * self.preds[i] + 0.25 * preds[i]
-                print(self.preds[i])
 
         return self.preds
