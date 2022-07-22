@@ -45,9 +45,9 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         train_correct += prec1
 
         # calculate loss
-        # fullLoss = low_loss_over_epochs_labels(logits1, labels, epochLabels)
+        fullLoss = low_loss_over_epochs_labels(logits1, labels, epochLabels)
 
-        fullLoss = loss_over_epochs(logits1, labels, epochLabels)
+        # fullLoss = loss_over_epochs(logits1, labels, epochLabels)
 
         # # find loss for full model
         # fullLoss = None
