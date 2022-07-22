@@ -28,8 +28,8 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss):
         fullLoss.data.cpu(), y_1.data.cpu()).cuda()
 
     # calculate loss using low loss predictions
-    totalLoss = 0.5 * F.cross_entropy(y_1, t) + \
-        0.5 * F.cross_entropy(lowest_loss_preds, t)
+    totalLoss = 0.25 * F.cross_entropy(y_1, t) + \
+        0.75 * F.cross_entropy(lowest_loss_preds, t)
 
     return totalLoss/len(t)
 
