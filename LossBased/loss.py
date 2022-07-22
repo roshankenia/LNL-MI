@@ -34,6 +34,16 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss):
     return totalLoss/len(t)
 
 
+def loss_over_epochs(y_1, t, epochLabels):
+    # update our lowest losses
+    preds = epochLabels.update(y_1.data.cpu()).cuda()
+
+    # calculate loss using low loss predictions
+    totalLoss = F.cross_entropy(preds, t)
+
+    return totalLoss/len(t)
+
+
 def loss_co_ensemble_teaching(y_1, ensemble_y, t):
     # calculate loss for full
     fullLoss = F.cross_entropy(y_1, t)

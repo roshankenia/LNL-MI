@@ -13,7 +13,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
-from loss import loss_co_ensemble_teaching, avg_loss, cross_entropy_loss, low_loss_over_epochs_labels
+from loss import loss_co_ensemble_teaching, avg_loss, cross_entropy_loss, low_loss_over_epochs_labels, loss_over_epochs
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -25,7 +25,7 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size, lowest_losses):
+def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size, epochLabels):
     train_total = 0
     train_correct = 0
 
@@ -44,7 +44,9 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         train_correct += prec1
 
         # calculate loss
-        fullLoss = low_loss_over_epochs_labels(logits1, labels, lowest_losses)
+        # fullLoss = low_loss_over_epochs_labels(logits1, labels, epochLabels)
+
+        fullLoss = loss_over_epochs(logits1, labels, epochLabels)
 
         # # find loss for full model
         # fullLoss = None
