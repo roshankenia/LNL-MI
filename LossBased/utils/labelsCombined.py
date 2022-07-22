@@ -20,11 +20,11 @@ class EpochLabels():
 
     def __init__(self):
         # intialize our data arrays
-        self.preds = []
+        self.preds = None
 
     def update(self, preds):
         # initial update
-        if len(self.preds) == 0:
+        if self.preds is None:
             self.preds = preds
         else:
             # update preds in ratio
