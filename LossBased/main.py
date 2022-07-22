@@ -28,7 +28,7 @@ else:
 begin = time.time()
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--lr', type=float, default=0.1)
+parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--result_dir', type=str,
                     help='dir to save result txt files', default='results/')
 parser.add_argument('--noise_rate', type=float,
@@ -113,6 +113,7 @@ for i in range(args.epoch_decay_start, args.n_epoch):
 def adjust_learning_rate(optimizer, epoch):
     for param_group in optimizer.param_groups:
         param_group['lr'] = alpha_plan[epoch]
+        print('Learning rate:', alpha_plan[epoch])
         param_group['betas'] = (beta1_plan[epoch], 0.999)  # Only change beta1
 
 
