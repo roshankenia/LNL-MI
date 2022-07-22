@@ -24,7 +24,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     fullLoss = F.cross_entropy(y_1, t, reduction='none')
 
     # update our lowest losses
-    lowest_loss.update(indices, fullLoss.data.cpu(), y_1.data.cpu()).cuda()
+    lowest_loss.update(indices, fullLoss.data.cpu(), y_1.data.cpu())
 
     # find indexes to sort loss
     sort_index_loss = torch.argsort(fullLoss.data)

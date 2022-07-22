@@ -31,7 +31,6 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
 
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
-        print(ind)
         # if i > args.num_iter_per_epoch:
         #     break
 
@@ -45,7 +44,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         train_correct += prec1
 
         # calculate loss
-        fullLoss = low_loss_over_epochs_labels(logits1, labels, epochLabels, indexes)
+        fullLoss = low_loss_over_epochs_labels(
+            logits1, labels, epochLabels, ind)
 
         # fullLoss = loss_over_epochs(logits1, labels, epochLabels)
 
