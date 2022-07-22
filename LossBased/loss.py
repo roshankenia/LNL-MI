@@ -46,7 +46,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     noisy_labels = lowest_loss.labels[noisy_indices].to(clean_labels.device)
 
     # make array if 0-d
-    if noisy_labels.size(dim=0) == 0:
+    if noisy_labels.dim() == 0:
         noisy_labels = noisy_labels.unsqueeze()
     # print('1\n', clean_logits)
     # print('2\n', clean_labels)
