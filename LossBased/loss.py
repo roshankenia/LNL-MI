@@ -42,7 +42,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
 
     # obtain noisy logits and labels
     noisy_logits = y_1[noisy_index]
-    noisy_indices = indices[noisy_index]
+    noisy_indices = indices[noisy_index.data.cpu()]
     noisy_labels = lowest_loss.labels[noisy_indices].to(clean_labels.device)
 
     print(clean_logits)
