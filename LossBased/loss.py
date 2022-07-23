@@ -60,9 +60,9 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, noise_or_not):
 
     # calculate how much noise in each
     purity_ratio_clean = np.sum(
-        noise_or_not[indices[clean_index]])/float(len(clean_labels))
+        noise_or_not[indices[clean_index.data.cpu()]])/float(len(clean_labels))
     purity_ratio_noisy = np.sum(
-        noise_or_not[indices[noisy_index]])/float(len(noisy_labels))
+        noise_or_not[indices[noisy_index.data.cpu()]])/float(len(noisy_labels))
 
     return totalLoss/len(t), purity_ratio_clean, purity_ratio_noisy, len(clean_labels), len(noisy_labels), relabelCount
 
