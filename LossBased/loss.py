@@ -125,6 +125,7 @@ def cross_entropy_loss_update(logits, labels, lowest_loss, indices):
     ce_loss = F.cross_entropy(logits, labels)
 
     # update our lowest losses
-    lowest_loss.update(indices, ce_loss.data.cpu(), logits.data.cpu())
+    lowest_loss.update(indices, F.cross_entropy(
+        logits, labels, reduction='none').data.cpu(), logits.data.cpu())
 
     return ce_loss/len(labels)
