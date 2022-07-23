@@ -160,6 +160,7 @@ fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
 
 
 # training
+noise_or_not = train_dataset.noise_or_not
 # create our low loss labels class
 epochLabels = LowLossLabels(len(train_dataset))
 # epochLabels = EpochLabels()
@@ -172,7 +173,7 @@ for epoch in range(1, args.n_epoch):
     #       ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
 
     train(train_loader, epoch, fullModel, fullOptimizer,
-          args.n_epoch, len(train_dataset), batch_size, epochLabels)
+          args.n_epoch, len(train_dataset), batch_size, epochLabels, noise_or_not)
 
     # evaluate model
     acc1 = evaluate(test_loader, fullModel)

@@ -25,10 +25,10 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size, epochLabels):
+def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size, epochLabels, noise_or_not):
     train_total = 0
     train_correct = 0
-
+    totalRelabelCount = 0
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
         # if i > args.num_iter_per_epoch:
@@ -43,15 +43,20 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         train_total += 1
         train_correct += prec1
 
+        purity_ratio_clean = 0
+        purity_ratio_noisy = 0
+        num_clean = 0
+        num_noisy = 0
+
         # calculate loss
         fullLoss = None
         if epoch < 5:
             fullLoss = cross_entropy_loss_update(
                 logits1, labels, epochLabels, ind)
         else:
-            fullLoss = low_loss_over_epochs_labels(
-                logits1, labels, epochLabels, ind)
-
+            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = low_loss_over_epochs_labels(
+                logits1, labels, epochLabels, ind, noise_or_not)
+            totalRelabelCount += relabelCount
         # fullLoss = loss_over_epochs(logits1, labels, epochLabels)
 
         # # find loss for full model
@@ -65,12 +70,15 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         fullLoss.backward()
         fullOptimizer.step()
 
-        if (i+1) % 50 == 0:
+        if (i+1) % 100 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
                   % (epoch+1, epochs, i+1, train_len//batch_size))
             print(
-                f'\tFull model Accuracy:{prec1}, loss:{fullLoss.data.item()}')
-
+                f'\tFull model Accuracy:{prec1.data.item()}, loss:{fullLoss.data.item()}')
+            print(f'\tNumber clean:{num_clean}, Number noisy:{num_noisy}')
+            print(
+                f'\tClean purity ratio:{purity_ratio_clean.data.item()}, Noisy purity ratio:{purity_ratio_noisy.data.item()}')
+    print(f'Total Relabeled:{totalRelabelCount}')
     train_acc1 = float(train_correct)/float(train_total)
     return train_acc1
 

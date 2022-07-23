@@ -25,6 +25,7 @@ class LowLossLabels():
         self.losses = torch.Tensor([-1 for i in range(num_samples)])
 
     def update(self, indices, losses, preds):
+        relabelCount = 0
         for i in range(len(indices)):
             index = indices[i]
             loss = losses[i]
@@ -36,5 +37,8 @@ class LowLossLabels():
             else:
                 # update labels if losses are smaller
                 if loss < self.losses[index]:
-                    self.labels[index] = label
-                    self.losses[index] = loss
+                    if self.labels[index] != label:
+                        relabelCount += 1
+                self.labels[index] = label
+                self.losses[index] = loss
+        return relabelCount
