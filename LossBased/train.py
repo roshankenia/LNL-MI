@@ -43,8 +43,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         train_total += 1
         train_correct += prec1
 
-        purity_ratio_clean = torch.Tensor(0)
-        purity_ratio_noisy = torch.Tensor(0)
+        purity_ratio_clean = torch.Tensor([0])
+        purity_ratio_noisy = torch.Tensor([0])
         num_clean = 0
         num_noisy = 0
 
