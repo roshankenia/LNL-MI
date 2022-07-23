@@ -35,6 +35,6 @@ class LowLossLabels():
                 self.losses[index] = loss
             else:
                 # update labels if losses are smaller
-                if loss < self.labels[index]:
+                if loss < self.losses[index]:
                     self.labels[index] = label
                     self.losses[index] = loss
