@@ -43,8 +43,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         train_total += 1
         train_correct += prec1
 
-        purity_ratio_clean = torch.Tensor([0])
-        purity_ratio_noisy = torch.Tensor([0])
+        purity_ratio_clean = 0
+        purity_ratio_noisy = 0
         num_clean = 0
         num_noisy = 0
 
@@ -77,7 +77,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
                 f'\tFull model Accuracy:{prec1.data.item()}, loss:{fullLoss.data.item()}')
             print(f'\tNumber clean:{num_clean}, Number noisy:{num_noisy}')
             print(
-                f'\tClean purity ratio:{purity_ratio_clean.data.item()}, Noisy purity ratio:{purity_ratio_noisy.data.item()}')
+                f'\tClean purity ratio:{purity_ratio_clean}, Noisy purity ratio:{purity_ratio_noisy}')
     print(f'Total Relabeled:{totalRelabelCount}')
     train_acc1 = float(train_correct)/float(train_total)
     return train_acc1
