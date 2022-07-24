@@ -13,7 +13,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
-from loss import cross_entropy_loss, low_loss_over_epochs_labels, cross_entropy_loss_update
+from loss import cross_entropy_loss, low_loss_over_epochs_labels, cross_entropy_loss_update, no_split
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -57,8 +57,11 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
             fullLoss, relabelCount = cross_entropy_loss_update(
                 logits1, labels, epochLabels, ind)
         else:
-            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = low_loss_over_epochs_labels(
+            # fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = low_loss_over_epochs_labels(
+            #     logits1, labels, epochLabels, ind)
+            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = no_split(
                 logits1, labels, epochLabels, ind)
+
         totalRelabelCount += relabelCount[0]
         totalCorrectRelabelCount += relabelCount[1]
         totalIncorrectRelabelCount += relabelCount[2]

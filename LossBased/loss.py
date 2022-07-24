@@ -21,18 +21,17 @@ else:
 
 def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     # calculate loss for full
-    fullLoss = F.cross_entropy(y_1, t, reduction='none')
+    entropyLoss = F.cross_entropy(y_1, t, reduction='none')
 
     # update our lowest losses
     relabelCount = lowest_loss.update(
-        indices, fullLoss.data.cpu(), y_1.data.cpu())
+        indices, entropyLoss.data.cpu(), y_1.data.cpu())
 
     # find indexes to sort loss
-    sort_index_loss = torch.argsort(fullLoss.data)
+    sort_index_loss = torch.argsort(entropyLoss.data)
 
     # find number of samples to use
-    # num_use = torch.nonzero(fullLoss < 0.25*fullLoss.mean()).shape[0]
-    num_use = 20
+    num_use = torch.nonzero(entropyLoss < 0.25*entropyLoss.mean()).shape[0]
 
     # use indexes underneath this threshold and the rest are noisy
     clean_index = sort_index_loss[:num_use]
@@ -64,6 +63,29 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
         lowest_loss.noise_or_not[indices[noisy_index.data.cpu()]])/float(len(noisy_labels))
 
     return totalLoss/len(t), purity_ratio_clean, purity_ratio_noisy, len(clean_labels), len(noisy_labels), relabelCount
+
+
+def no_split(y_1, t, lowest_loss, indices):
+    # calculate loss for full
+    entropyLoss = F.cross_entropy(y_1, t, reduction='none')
+
+    # update our lowest losses
+    relabelCount = lowest_loss.update(
+        indices, entropyLoss.data.cpu(), y_1.data.cpu())
+
+    # obtain noisy logits and labels
+    logits_final = y_1
+    labels_final = lowest_loss.labels[indices].to(y_1.device)
+
+    # total loss calculation
+    totalLoss = F.cross_entropy(logits_final, labels_final)
+
+    # calculate how much noise in each
+    purity_ratio_clean = np.sum(
+        lowest_loss.noise_or_not[indices])/float(len(labels_final))
+    purity_ratio_noisy = 0
+
+    return totalLoss/len(t), purity_ratio_clean, purity_ratio_noisy, 0, 0, relabelCount
 
 
 def cross_entropy_loss(logits, labels):
