@@ -47,10 +47,10 @@ class LowLossLabels():
                         # check if relabel will be correct or not
                         if label == self.true_train_labels[index]:
                             correctRelabelCount += 1
-                            self.noise_or_not[index] = 0
+                            self.noise_or_not[index] = 1
                         else:
                             incorrectRelabelCount += 1
-                            self.noise_or_not[index] = 1
+                            self.noise_or_not[index] = 0
                 self.labels[index] = label
                 self.losses[index] = loss
         return (relabelCount, correctRelabelCount, incorrectRelabelCount)
