@@ -19,12 +19,14 @@ else:
 
 class LowLossLabels():
 
-    def __init__(self, num_samples):
+    def __init__(self, num_samples, true_train_labels):
         # intialize our data arrays
         self.labels = torch.Tensor([-1 for i in range(num_samples)]).long()
         self.losses = torch.Tensor([-1 for i in range(num_samples)])
+        self.true_train_labels = true_train_labels
+        print(true_train_labels)
 
-    def update(self, indices, losses, preds):
+    def update(self, indices, losses, preds, noise_or_not):
         relabelCount = 0
         for i in range(len(indices)):
             index = indices[i]
