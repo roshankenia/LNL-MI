@@ -24,8 +24,8 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, noise_or_not):
     fullLoss = F.cross_entropy(y_1, t, reduction='none')
 
     # update our lowest losses
-    relabelCount = lowest_loss.update(
-        indices, fullLoss.data.cpu(), y_1.data.cpu())
+    relabelCount, noise_or_not = lowest_loss.update(
+        indices, fullLoss.data.cpu(), y_1.data.cpu(), noise_or_not)
 
     # find indexes to sort loss
     sort_index_loss = torch.argsort(fullLoss.data)
@@ -50,13 +50,11 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, noise_or_not):
     if noisy_labels.dim() == 0:
         noisy_labels = noisy_labels.unsqueeze(dim=0)
 
-    # clean loss calculation
-    clean_loss = F.cross_entropy(clean_logits, clean_labels)
+    logits_final = torch.cat((clean_logits, noisy_logits), dim=0)
+    labels_final = torch.cat((clean_labels, noisy_labels), dim=0)
 
-    # noisy loss calc
-    noisy_loss = F.cross_entropy(noisy_logits, noisy_labels)
-
-    totalLoss = clean_loss + noisy_loss
+    # total loss calculation
+    totalLoss = F.cross_entropy(logits_final, labels_final)
 
     # calculate how much noise in each
     purity_ratio_clean = np.sum(
@@ -64,7 +62,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, noise_or_not):
     purity_ratio_noisy = np.sum(
         noise_or_not[indices[noisy_index.data.cpu()]])/float(len(noisy_labels))
 
-    return totalLoss/len(t), purity_ratio_clean, purity_ratio_noisy, len(clean_labels), len(noisy_labels), relabelCount
+    return totalLoss/len(t), purity_ratio_clean, purity_ratio_noisy, len(clean_labels), len(noisy_labels), relabelCount, noise_or_not
 
 
 def loss_over_epochs(y_1, t, epochLabels):

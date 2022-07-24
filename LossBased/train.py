@@ -29,6 +29,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
     train_total = 0
     train_correct = 0
     totalRelabelCount = 0
+    totalCorrectRelabelCount = 0
+    totalIncorrectRelabelCount = 0
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
         # if i > args.num_iter_per_epoch:
@@ -54,9 +56,12 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
             fullLoss = cross_entropy_loss_update(
                 logits1, labels, epochLabels, ind)
         else:
-            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = low_loss_over_epochs_labels(
+            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount, noise_or_not = low_loss_over_epochs_labels(
                 logits1, labels, epochLabels, ind, noise_or_not)
-            totalRelabelCount += relabelCount
+            totalRelabelCount += relabelCount[0]
+            totalCorrectRelabelCount += relabelCount[1]
+            totalIncorrectRelabelCount += relabelCount[2]
+
         # fullLoss = loss_over_epochs(logits1, labels, epochLabels)
 
         # # find loss for full model
@@ -78,9 +83,10 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
             print(f'\tNumber clean:{num_clean}, Number noisy:{num_noisy}')
             print(
                 f'\tClean purity ratio:{purity_ratio_clean}, Noisy purity ratio:{purity_ratio_noisy}')
-    print(f'Total Relabeled:{totalRelabelCount}')
+    print(
+        f'Total Relabeled:{totalRelabelCount}, Correctly Relabeled:{totalCorrectRelabelCount}, Incorrectly Relabeled: {totalIncorrectRelabelCount}')
     train_acc1 = float(train_correct)/float(train_total)
-    return train_acc1
+    return train_acc1, noise_or_not
 
 # def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembleOptimizers, epochs, train_len, batch_size):
 #     train_total = 0

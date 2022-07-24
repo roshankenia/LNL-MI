@@ -177,7 +177,7 @@ for epoch in range(1, args.n_epoch):
           args.n_epoch, len(train_dataset), batch_size, epochLabels, noise_or_not)
 
     # evaluate model
-    acc1 = evaluate(test_loader, fullModel)
+    acc1, noise_or_not = evaluate(test_loader, fullModel)
 
     print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %%' %
           (epoch+1, args.n_epoch, len(test_dataset), acc1))
