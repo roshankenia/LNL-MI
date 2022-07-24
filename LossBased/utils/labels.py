@@ -19,13 +19,14 @@ else:
 
 class LowLossLabels():
 
-    def __init__(self, num_samples, true_train_labels):
+    def __init__(self, num_samples, true_train_labels, noise_or_not):
         # intialize our data arrays
         self.labels = torch.Tensor([-1 for i in range(num_samples)]).long()
         self.losses = torch.Tensor([-1 for i in range(num_samples)])
         self.true_train_labels = [i[0] for i in true_train_labels]
+        self.noise_or_not = noise_or_not
 
-    def update(self, indices, losses, preds, noise_or_not):
+    def update(self, indices, losses, preds):
         relabelCount = 0
         correctRelabelCount = 0
         incorrectRelabelCount = 0
@@ -46,10 +47,10 @@ class LowLossLabels():
                         # check if relabel will be correct or not
                         if label == self.true_train_labels[index]:
                             correctRelabelCount += 1
-                            noise_or_not[index] = 0
+                            self.noise_or_not[index] = 0
                         else:
                             incorrectRelabelCount += 1
-                            noise_or_not[index] = 1
+                            self.noise_or_not[index] = 1
                 self.labels[index] = label
                 self.losses[index] = loss
-        return (relabelCount, correctRelabelCount, incorrectRelabelCount), noise_or_not
+        return (relabelCount, correctRelabelCount, incorrectRelabelCount)

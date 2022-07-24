@@ -25,7 +25,7 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size, epochLabels, noise_or_not):
+def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batch_size, epochLabels):
     train_total = 0
     train_correct = 0
     totalRelabelCount = 0
@@ -56,8 +56,8 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
             fullLoss = cross_entropy_loss_update(
                 logits1, labels, epochLabels, ind)
         else:
-            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount, noise_or_not = low_loss_over_epochs_labels(
-                logits1, labels, epochLabels, ind, noise_or_not)
+            fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = low_loss_over_epochs_labels(
+                logits1, labels, epochLabels, ind)
             totalRelabelCount += relabelCount[0]
             totalCorrectRelabelCount += relabelCount[1]
             totalIncorrectRelabelCount += relabelCount[2]
@@ -86,8 +86,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
     print(
         f'Total Relabeled:{totalRelabelCount}, Correctly Relabeled:{totalCorrectRelabelCount}, Incorrectly Relabeled: {totalIncorrectRelabelCount}')
     train_acc1 = float(train_correct)/float(train_total)
-    return train_acc1, noise_or_not
-
+    return train_acc1
 # def train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels, ensembleOptimizers, epochs, train_len, batch_size):
 #     train_total = 0
 #     train_correct = 0

@@ -163,7 +163,8 @@ fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
 noise_or_not = train_dataset.noise_or_not
 true_train_labels = train_dataset.train_labels
 # create our low loss labels class
-epochLabels = LowLossLabels(len(train_dataset), true_train_labels)
+epochLabels = LowLossLabels(
+    len(train_dataset), true_train_labels, noise_or_not)
 # epochLabels = EpochLabels()
 for epoch in range(1, args.n_epoch):
     fullModel.train()
@@ -174,10 +175,10 @@ for epoch in range(1, args.n_epoch):
     #       ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
 
     train(train_loader, epoch, fullModel, fullOptimizer,
-          args.n_epoch, len(train_dataset), batch_size, epochLabels, noise_or_not)
+          args.n_epoch, len(train_dataset), batch_size, epochLabels)
 
     # evaluate model
-    acc1, noise_or_not = evaluate(test_loader, fullModel)
+    acc1 = evaluate(test_loader, fullModel)
 
     print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %%' %
           (epoch+1, args.n_epoch, len(test_dataset), acc1))
