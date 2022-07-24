@@ -31,7 +31,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     sort_index_loss = torch.argsort(fullLoss.data)
 
     # find number of samples to use
-    num_use = torch.nonzero(fullLoss < 0.1*fullLoss.mean()).shape[0]
+    num_use = torch.nonzero(fullLoss < 0.25*fullLoss.mean()).shape[0]
 
     # use indexes underneath this threshold and the rest are noisy
     clean_index = sort_index_loss[:num_use]
