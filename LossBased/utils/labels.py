@@ -40,7 +40,7 @@ class LowLossLabels():
                 self.losses[index] = loss
             else:
                 # update labels if losses are smaller
-                if loss < self.losses[index]:
+                if loss < 0.5 * self.losses[index]:
                     # check if relabeling
                     if self.labels[index] != label:
                         relabelCount += 1
