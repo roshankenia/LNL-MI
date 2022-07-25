@@ -23,6 +23,13 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     # calculate loss for full
     entropyLoss = F.cross_entropy(y_1, t, reduction='none')
 
+    # calculate peak value
+    peakValues = []
+    for i in range(len(y_1)):
+        predictions = torch.sort(y_1[i].clone().detach())
+        peakValues.append(predictions[0]/torch.sum(predictions[1:]))
+    print(peakValues)
+
     # update our lowest losses
     relabelCount = lowest_loss.update(
         indices, entropyLoss.data.cpu(), y_1.data.cpu())
