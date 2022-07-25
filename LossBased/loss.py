@@ -40,7 +40,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
         # make plot of entropy and peak value
         print('Making plot')
         result_df = pd.DataFrame(
-            {'Entropy': entropyLoss.data.cpu(), 'Peak Value': peakValues, 'label': lowest_loss.noise_or_not[indices].cpu()})
+            {'Entropy': entropyLoss.data, 'Peak Value': peakValues, 'label': lowest_loss.noise_or_not[indices]})
         fig, ax = plt.subplots(figsize=(10, 10))
         sns.scatterplot(x='Entropy', y='Peak Value',
                         hue='label', data=result_df, ax=ax, s=10)
