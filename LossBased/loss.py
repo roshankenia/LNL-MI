@@ -52,13 +52,17 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
 
     # update our lowest losses
     relabelCount = lowest_loss.update(
-        indices, entropyLoss.data.cpu(), y_1.data.cpu())
+        indices, entropyLoss.data.cpu(), y_1.data.cpu(), epoch)
 
     # find indexes to sort loss
     sort_index_loss = torch.argsort(entropyLoss.data)
 
+    num_use = None
     # find number of samples to use
-    num_use = torch.nonzero(entropyLoss < entropyLoss.median()).shape[0]
+    if epoch < 20:
+        num_use = torch.nonzero(entropyLoss < entropyLoss.median()).shape[0]
+    else:
+        num_use = torch.nonzero(entropyLoss < entropyLoss.mean()).shape[0]
 
     # use indexes underneath this threshold and the rest are noisy
     clean_index = sort_index_loss[:num_use]
@@ -121,13 +125,13 @@ def cross_entropy_loss(logits, labels):
     return ce_loss/len(labels)
 
 
-def cross_entropy_loss_update(logits, labels, lowest_loss, indices):
+def cross_entropy_loss_update(logits, labels, lowest_loss, indices, epoch):
     # calculate cross entropy loss
     ce_loss = F.cross_entropy(logits, labels)
 
     # update our lowest losses
     relabelCount = lowest_loss.update(indices, F.cross_entropy(
-        logits, labels, reduction='none').data.cpu(), logits.data.cpu())
+        logits, labels, reduction='none').data.cpu(), logits.data.cpu(), epoch)
 
     return ce_loss/len(labels), relabelCount
 

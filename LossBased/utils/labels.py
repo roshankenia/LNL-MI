@@ -26,7 +26,16 @@ class LowLossLabels():
         self.true_train_labels = [i[0] for i in true_train_labels]
         self.noise_or_not = noise_or_not
 
-    def update(self, indices, losses, preds):
+    def update(self, indices, losses, preds, epoch):
+        # threshold of how much of previous loss is needed to be relabeled
+        threshold = 0.5
+        if epoch > 30 and epoch < 50:
+            threshold = 0.25
+        elif epoch >= 50 and epoch < 100:
+            threshold = 0.1
+        elif epoch >= 100:
+            threshold = 0.05
+
         relabelCount = 0
         correctRelabelCount = 0
         incorrectRelabelCount = 0
@@ -40,7 +49,7 @@ class LowLossLabels():
                 self.losses[index] = loss
             else:
                 # update labels if losses are smaller
-                if loss < 0.5 * self.losses[index]:
+                if loss < threshold * self.losses[index]:
                     # check if relabeling
                     if self.labels[index] != label:
                         relabelCount += 1
