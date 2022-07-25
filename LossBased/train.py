@@ -53,7 +53,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
         # calculate loss
         fullLoss = None
         relabelCount = None
-        if epoch < 5:
+        if epoch < 10:
             fullLoss, relabelCount = cross_entropy_loss_update(
                 logits1, labels, epochLabels, ind)
         else:
