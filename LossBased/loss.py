@@ -26,11 +26,11 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     # calculate peak value
     peakValues = []
     for i in range(len(y_1)):
-        predictions = torch.sort(y_1[i].clone().detach())
+        predictions = torch.sort(y_1[i].clone().detach()).values
+        # obtain probabilities for each class
+        predictions = torch.sigmoid(predictions)
         print(predictions)
-        print('slice:', predictions.values[1:])
-        peakValues.append(
-            predictions.values[0]/torch.sum(predictions.values[1:]))
+        peakValues.append((predictions[0]/torch.sum(predictions[1:])).item())
     print(peakValues)
 
     # update our lowest losses
