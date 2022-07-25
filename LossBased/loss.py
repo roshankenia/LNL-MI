@@ -6,6 +6,9 @@ import numpy as np
 import os
 import sys
 from utils.labels import LowLossLabels
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -19,19 +22,33 @@ else:
 # Loss functions
 
 
-def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
+def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
     # calculate loss for full
     entropyLoss = F.cross_entropy(y_1, t, reduction='none')
 
     # calculate peak value
     peakValues = []
     for i in range(len(y_1)):
-        predictions = torch.sort(y_1[i].clone().detach()).values
+        predictions = torch.sort(y_1[i].clone().detach().cpu()).values
         # obtain probabilities for each class
         predictions = torch.sigmoid(predictions)
         predictions = torch.flip(predictions, dims=(0,))
         peakValues.append((predictions[0]/predictions[1]).item())
-    print(peakValues)
+
+    if epoch % 5 == 0 and ite == 0:
+        # create graph
+        # make plot of entropy and peak value
+        print('Making plot')
+        result_df = pd.DataFrame(
+            {'Entropy': entropyLoss.data.cpu(), 'Peak Value': peakValues, 'label': lowest_loss.noise_or_not[indices].cpu()})
+        fig, ax = plt.subplots(figsize=(10, 10))
+        sns.scatterplot(x='Entropy', y='Peak Value',
+                        hue='label', data=result_df, ax=ax, s=10)
+        plt.title('Entropy vs Peak Value')
+        ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
+        picName = 'ent-vs-peak-'+str(epoch)+'.png'
+        plt.savefig(picName)
+        plt.close()
 
     # update our lowest losses
     relabelCount = lowest_loss.update(
@@ -40,7 +57,6 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
     # find indexes to sort loss
     sort_index_loss = torch.argsort(entropyLoss.data)
 
-    print(entropyLoss[sort_index_loss])
     # find number of samples to use
     num_use = torch.nonzero(entropyLoss < entropyLoss.mean()).shape[0]
 

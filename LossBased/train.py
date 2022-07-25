@@ -58,7 +58,7 @@ def train(train_loader, epoch, fullModel, fullOptimizer, epochs, train_len, batc
                 logits1, labels, epochLabels, ind)
         else:
             fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = low_loss_over_epochs_labels(
-                logits1, labels, epochLabels, ind)
+                logits1, labels, epochLabels, ind, epoch, i)
             # fullLoss, purity_ratio_clean, purity_ratio_noisy, num_clean, num_noisy, relabelCount = no_split(
             #     logits1, labels, epochLabels, ind)
 
