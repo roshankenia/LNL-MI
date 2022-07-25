@@ -57,12 +57,8 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
     # find indexes to sort loss
     sort_index_loss = torch.argsort(entropyLoss.data)
 
-    num_use = None
     # find number of samples to use
-    if epoch < 20:
-        num_use = torch.nonzero(entropyLoss < entropyLoss.median()).shape[0]
-    else:
-        num_use = torch.nonzero(entropyLoss < entropyLoss.mean()).shape[0]
+    num_use = torch.nonzero(entropyLoss < 0.5*entropyLoss.mean()).shape[0]
 
     # use indexes underneath this threshold and the rest are noisy
     clean_index = sort_index_loss[:num_use]

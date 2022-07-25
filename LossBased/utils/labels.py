@@ -29,9 +29,9 @@ class LowLossLabels():
     def update(self, indices, losses, preds, epoch):
         # threshold of how much of previous loss is needed to be relabeled
         threshold = 0.5
-        if epoch > 30 and epoch < 50:
+        if epoch > 40 and epoch < 75:
             threshold = 0.25
-        elif epoch >= 50 and epoch < 100:
+        elif epoch >= 75 and epoch < 100:
             threshold = 0.1
         elif epoch >= 100:
             threshold = 0.05
