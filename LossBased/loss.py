@@ -58,7 +58,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
     sort_index_loss = torch.argsort(entropyLoss.data)
 
     # find number of samples to use
-    num_use = torch.nonzero(entropyLoss < 0.5*entropyLoss.mean()).shape[0]
+    num_use = torch.nonzero(entropyLoss < entropyLoss.median()).shape[0]
 
     # use indexes underneath this threshold and the rest are noisy
     clean_index = sort_index_loss[:num_use]
@@ -81,7 +81,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
     labels_final = torch.cat((clean_labels, noisy_labels), dim=0)
 
     # total loss calculation
-    totalLoss = F.cross_entropy(clean_logits, clean_labels)
+    totalLoss = F.cross_entropy(logits_final, labels_final)
 
     # calculate how much noise in each
     purity_ratio_clean = np.sum(
