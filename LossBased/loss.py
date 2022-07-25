@@ -35,7 +35,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
         predictions = torch.flip(predictions, dims=(0,))
         peakValues.append((predictions[0]/predictions[1]).item())
 
-    if epoch % 5 == 0 and ite % 100 == 0:
+    if epoch % 5 == 0 and ite % 250 == 0:
         # create graph
         # make plot of entropy and peak value
         print('Making plot')
@@ -58,7 +58,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
     sort_index_loss = torch.argsort(entropyLoss.data)
 
     # find number of samples to use
-    num_use = torch.nonzero(entropyLoss < 2).shape[0]
+    num_use = torch.nonzero(entropyLoss < entropyLoss.median()).shape[0]
 
     # use indexes underneath this threshold and the rest are noisy
     clean_index = sort_index_loss[:num_use]
