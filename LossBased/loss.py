@@ -29,7 +29,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices):
         predictions = torch.sort(y_1[i].clone().detach()).values
         # obtain probabilities for each class
         predictions = torch.sigmoid(predictions)
-        predictions = torch.flip(predictions)
+        predictions = torch.flip(predictions, dims=(0,))
         peakValues.append((predictions[0]/predictions[1]).item())
     print(peakValues)
 
