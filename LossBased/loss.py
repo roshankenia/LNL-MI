@@ -62,7 +62,7 @@ def low_loss_over_epochs_labels(y_1, t, lowest_loss, indices, epoch, ite):
         if ent < 2:
             numUnder2 += 1
     print('Number under 2:', numUnder2)
-    print(torch.nonzero(entropyLoss < 2))
+    print(torch.nonzero(entropyLoss < 2).shape[0])
 
     # find number of samples to use
     num_use = torch.nonzero(entropyLoss < 2).shape[0]
