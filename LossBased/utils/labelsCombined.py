@@ -29,9 +29,6 @@ class CombinedLabels():
         self.history = history
         self.num_classes = num_classes
 
-        print(self.labels)
-        print(self.losses)
-
     def update(self, logits, combinedLoss, indices):
         # we will keep track of the indices to use
         for i in range(len(indices)):

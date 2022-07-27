@@ -13,7 +13,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
-from train import train
+from combinedTrain import train
 from utils.labelsCombined import CombinedLabels
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -167,7 +167,7 @@ noise_or_not = train_dataset.noise_or_not
 true_train_labels = train_dataset.train_labels
 noisy_train_labels = train_dataset.train_noisy_labels
 # create our low loss labels class
-epochLabels = CombinedLabels(
+combinedLabels = CombinedLabels(
     len(train_dataset), noisy_train_labels, true_train_labels, noise_or_not, 5, num_classes)
 
 for epoch in range(1, args.n_epoch):
@@ -178,14 +178,14 @@ for epoch in range(1, args.n_epoch):
     adjust_learning_rate(optimizer_2, epoch)
     # train models
 
-    train(train_loader, epoch, fullModel, fullOptimizer,
-          args.n_epoch, len(train_dataset), batch_size, epochLabels)
+    train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2,
+          args.n_epoch, len(train_dataset), batch_size, combinedLabels)
 
     # evaluate model
-    acc1 = evaluate(test_loader, fullModel)
+    acc = evaluate(test_loader, model_1, model_2)
 
-    print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %%' %
-          (epoch+1, args.n_epoch, len(test_dataset), acc1))
+    print('Epoch [%d/%d] Test Accuracy on the %s test images: Combined Logits %.4f %%' %
+          (epoch+1, args.n_epoch, len(test_dataset), acc))
 
 
 # store end time
