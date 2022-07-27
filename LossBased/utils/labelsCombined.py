@@ -88,8 +88,11 @@ class CombinedLabels():
 
         combinedLossMean = combinedLoss.mean()
         lowLossCount = 0
+        lowLossClean = 0
         consistentCount = 0
+        consistentClean = 0
         unusedCount = 0
+        unusedClean = 0
         count = 0
         for i in range(len(indices)):
             index = indices[i]
@@ -103,6 +106,8 @@ class CombinedLabels():
             if combinedLoss[i] < combinedLossMean:
                 count += 1
                 lowLossCount += 1
+                if label == self.true_train_labels[index]:
+                    lowLossClean += 1
                 if count % 2 == 1:
                     useLabels_1.append(label)
                     useIndices_1.append(i)
@@ -115,6 +120,8 @@ class CombinedLabels():
             elif label == torch.argmax(y_1[i]) and label == torch.argmax(y_2[i]):
                 count += 1
                 consistentCount += 1
+                if label == self.true_train_labels[index]:
+                    consistentClean += 1
                 if count % 2 == 1:
                     useLabels_1.append(label)
                     useIndices_1.append(i)
@@ -125,6 +132,8 @@ class CombinedLabels():
                     useActualIndices_2.append(index)
             # if a label has a high combined loss and is inconsistent we don't use it
             else:
+                if label == self.true_train_labels[index]:
+                    unusedClean += 1
                 unusedCount += 1
 
         useLabels_1 = torch.Tensor([useLabels_1[i]
@@ -132,6 +141,4 @@ class CombinedLabels():
         useLabels_2 = torch.Tensor([useLabels_2[i]
                                     for i in range(len(useLabels_2))]).long()
 
-        print(
-            f'Total Low Loss:{lowLossCount}, Total Consistent:{consistentCount}, Total Unused: {unusedCount}')
-        return useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2
+        return useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean

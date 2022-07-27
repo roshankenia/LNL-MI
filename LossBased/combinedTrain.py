@@ -28,6 +28,12 @@ else:
 def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epochs, train_len, batch_size, combinedLabels, cur_time):
     train_total = 0
     train_correct = 0
+    totalLowLoss = 0
+    totalConsistent = 0
+    totalUnused = 0
+    totalLowLossClean = 0
+    totalConsistentClean = 0
+    totalUnusedClean = 0
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
         # if i > args.num_iter_per_epoch:
@@ -45,8 +51,16 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         train_correct += prec
 
         # calculate loss
-        loss_1, loss_2 = combined_relabel(
+        loss_1, loss_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combined_relabel(
             logits_1, logits_2, labels, ind, combinedLabels, cur_time)
+
+        totalLowLoss += lowLossCount
+        totalConsistent += consistentCount
+        totalUnused += unusedCount
+
+        totalLowLossClean += lowLossClean
+        totalConsistentClean += consistentClean
+        totalUnusedClean += unusedClean
 
         optimizer_1.zero_grad()
         loss_1.backward()
@@ -56,12 +70,15 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         loss_2.backward()
         optimizer_2.step()
 
-        if (i+1) % 100 == 0:
+        if (i+1) % 50 == 0:
             print('Epoch [%d/%d], Iter [%d/%d]'
                   % (epoch+1, epochs, i+1, train_len//batch_size))
             print(
                 f'\tCombined Accuracy:{prec.data.item()}, loss_1:{loss_1.data.item()}, loss_2:{loss_2.data.item()}')
-
+    print(
+        f'Total Low Loss:{totalLowLoss}, Total Consistent:{totalConsistent}, Total Unused: {totalUnused}')
+    print(
+        f'Total Low Loss Clean:{totalLowLossClean}, Total Consistent Clean:{totalConsistentClean}, Total Unused Clean: {totalUnusedClean}')
     train_acc1 = float(train_correct)/float(train_total)
     return train_acc1
 
