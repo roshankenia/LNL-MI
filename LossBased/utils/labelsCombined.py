@@ -16,11 +16,18 @@ else:
     print('GPU is being properly used')
 
 
-class EpochLabels():
+class CombinedLabels():
 
-    def __init__(self):
+    def __init__(self, num_samples, train_labels, true_train_labels, noise_or_not):
         # intialize our data arrays
-        self.preds = []
+        self.labels = torch.Tensor([[train_labels[i]]
+                                   for i in range(num_samples)]).long()
+        self.losses = torch.Tensor([[3.32]for i in range(num_samples)])
+        self.true_train_labels = [i[0] for i in true_train_labels]
+        self.noise_or_not = noise_or_not
+
+        print(self.labels)
+        print(self.losses)
 
     def update(self, preds):
         # initial update
