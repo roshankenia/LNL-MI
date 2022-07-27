@@ -98,7 +98,7 @@ class CombinedLabels():
             for j in range(len(self.losses[index])):
                 if self.labels[index][j] != -1:
                     logitsSum[self.labels[index][j]] += self.losses[index][j]
-            label = torch.argmax(logitsSum)
+            label = torch.argmax(logitsSum).to(y_1.device)
             # if a label has a low combined loss we use it
             if combinedLoss[i] < combinedLossMean:
                 count += 1
