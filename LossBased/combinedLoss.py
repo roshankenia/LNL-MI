@@ -22,7 +22,7 @@ else:
 # Loss functions
 
 
-def combined_relabel(y_1, y_2, indices, combinedLabels):
+def combined_relabel(y_1, y_2, indices, combinedLabels, cur_time):
 
     # calculate combined logits
     combined_logits = (y_1 + y_2)/2
@@ -38,7 +38,7 @@ def combined_relabel(y_1, y_2, indices, combinedLabels):
 
     # update our labels
     combinedLabels.update(
-        combined_logits, combined_cross_entropy_loss, indices)
+        combined_logits, combined_cross_entropy_loss, indices, cur_time)
 
     # obtain clean labels
     useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2 = combinedLabels.getLabels(

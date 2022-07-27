@@ -25,7 +25,7 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epochs, train_len, batch_size, combinedLabels):
+def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epochs, train_len, batch_size, combinedLabels, cur_time):
     train_total = 0
     train_correct = 0
     for i, (images, labels, indexes) in enumerate(train_loader):
@@ -46,7 +46,7 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
 
         # calculate loss
         loss_1, loss_2 = combined_relabel(
-            logits_1, logits_2, ind, combinedLabels)
+            logits_1, logits_2, ind, combinedLabels, cur_time)
 
         optimizer_1.zero_grad()
         loss_1.backward()

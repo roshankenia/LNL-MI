@@ -20,16 +20,17 @@ class CombinedLabels():
 
     def __init__(self, num_samples, train_labels, true_train_labels, noise_or_not, history, num_classes):
         # intialize our data arrays
-        self.labels = torch.Tensor([[train_labels[i]]
+        self.labels = torch.Tensor([[train_labels[i], -1, -1, -1, -1]
                                    for i in range(num_samples)]).long()
-        self.losses = torch.Tensor([[3.32]for i in range(num_samples)])
+        self.losses = torch.Tensor([[3.32, -1, -1, -1, -1]
+                                   for i in range(num_samples)])
         self.true_train_labels = [i[0] for i in true_train_labels]
         self.noise_or_not = noise_or_not
 
         self.history = history
         self.num_classes = num_classes
 
-    def update(self, logits, combinedLoss, indices):
+    def update(self, logits, combinedLoss, indices, cur_time):
         # we will keep track of the indices to use
         for i in range(len(indices)):
             index = indices[i]
@@ -41,11 +42,9 @@ class CombinedLabels():
             currentLosses = self.losses[index]
 
             # if we do not have a long enough history yet just add data to arrays
-            if len(currentLabels) < self.history:
-                currentLabels = torch.cat(
-                    (currentLabels, torch.Tensor([pred])))
-                currentLosses = torch.cat(
-                    (currentLosses, torch.Tensor([loss])))
+            if cur_time < self.history:
+                currentLabels[cur_time] = pred
+                currentLosses[cur_time] = loss
 
                 self.labels[index] = currentLabels
                 self.losses[index] = currentLosses
@@ -69,7 +68,8 @@ class CombinedLabels():
             # first find label
             logitsSum = torch.zeros(self.num_classes)
             for j in range(len(self.losses[index])):
-                logitsSum[self.labels[index][j]] += self.losses[index][j]
+                if self.labels[index][j] != -1:
+                    logitsSum[self.labels[index][j]] += self.losses[index][j]
             label = torch.argmax(logitsSum)
             useLabels.append(label)
         # make labels into tensor
@@ -96,7 +96,8 @@ class CombinedLabels():
             # first find label
             logitsSum = torch.zeros(self.num_classes)
             for j in range(len(self.losses[index])):
-                logitsSum[self.labels[index][j]] += self.losses[index][j]
+                if self.labels[index][j] != -1:
+                    logitsSum[self.labels[index][j]] += self.losses[index][j]
             label = torch.argmax(logitsSum)
             # if a label has a low combined loss we use it
             if combinedLoss[i] < combinedLossMean:
