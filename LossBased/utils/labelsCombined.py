@@ -117,7 +117,7 @@ class CombinedLabels():
                     useIndices_2.append(i)
                     useActualIndices_2.append(index)
             # if a label has a high combined loss but is consistent we use it
-            elif label == torch.argmax(y_1[i]) and label == torch.argmax(y_2[i]):
+            elif label == torch.argmax(y_1[i]) or label == torch.argmax(y_2[i]):
                 count += 1
                 consistentCount += 1
                 if label == self.true_train_labels[index]:
