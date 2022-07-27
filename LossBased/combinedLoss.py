@@ -29,9 +29,6 @@ def combined_relabel(y_1, y_2, indices, combinedLabels, cur_time):
 
     current_target = combinedLabels.getLabelsOnly(indices)
 
-    print(combined_logits)
-    print('t:', current_target)
-
     # calculate cross-entropy loss using combined logits
     combined_cross_entropy_loss = F.cross_entropy(
         combined_logits, current_target.to(y_1.device), reduction='none')
