@@ -71,7 +71,7 @@ class CombinedLabels():
             label = torch.argmax(logitsSum)
             useLabels.append(label)
         # make labels into tensor
-        useLabels = torch.Tensor([[useLabels[i]]
+        useLabels = torch.Tensor([useLabels[i]
                                  for i in range(len(useLabels))]).long()
         return useLabels
 
@@ -124,8 +124,8 @@ class CombinedLabels():
             else:
                 unusedCount += 1
 
-        useLabels_1 = torch.Tensor([[useLabels_1[i]]
+        useLabels_1 = torch.Tensor([useLabels_1[i]
                                     for i in range(len(useLabels_1))]).long()
-        useLabels_2 = torch.Tensor([[useLabels_2[i]]
+        useLabels_2 = torch.Tensor([useLabels_2[i]
                                     for i in range(len(useLabels_2))]).long()
         return useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2
