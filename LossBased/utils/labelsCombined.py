@@ -72,7 +72,7 @@ class CombinedLabels():
             useLabels.append(label)
         # make labels into tensor
         useLabels = torch.Tensor([[useLabels[i]]
-                                 for i in range(len(useLabels))])
+                                 for i in range(len(useLabels))]).long()
         return useLabels
 
     def getLabels(self, y_1, y_2, combinedLoss, indices):
@@ -125,7 +125,7 @@ class CombinedLabels():
                 unusedCount += 1
 
         useLabels_1 = torch.Tensor([[useLabels_1[i]]
-                                    for i in range(len(useLabels_1))])
+                                    for i in range(len(useLabels_1))]).long()
         useLabels_2 = torch.Tensor([[useLabels_2[i]]
-                                    for i in range(len(useLabels_2))])
+                                    for i in range(len(useLabels_2))]).long()
         return useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2
