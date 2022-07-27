@@ -130,6 +130,19 @@ class CombinedLabels():
                     useLabels_2.append(label)
                     useIndices_2.append(i)
                     useActualIndices_2.append(index)
+            elif torch.argmax(y_1[i]) == torch.argmax(y_2[i]):
+                count += 1
+                consistentCount += 1
+                if torch.argmax(y_1[i]) == self.true_train_labels[index]:
+                    consistentClean += 1
+                if count % 2 == 1:
+                    useLabels_1.append(torch.argmax(y_1[i]))
+                    useIndices_1.append(i)
+                    useActualIndices_1.append(index)
+                else:
+                    useLabels_2.append(torch.argmax(y_1[i]))
+                    useIndices_2.append(i)
+                    useActualIndices_2.append(index)
             # if a label has a high combined loss and is inconsistent we don't use it
             else:
                 if label == self.true_train_labels[index]:
