@@ -42,8 +42,8 @@ class CombinedLabels():
 
             # if we do not have a long enough history yet just add data to arrays
             if len(currentLabels) < self.history:
-                currentLabels.append(pred)
-                currentLosses.append(loss)
+                currentLabels = torch.cat((currentLabels, pred))
+                currentLosses = torch.cat((currentLosses, loss))
 
                 self.labels[index] = currentLabels
                 self.losses[index] = currentLosses
