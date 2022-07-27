@@ -46,7 +46,7 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
 
         # calculate loss
         loss_1, loss_2 = combined_relabel(
-            logits_1, logits_2, ind, combinedLabels, cur_time)
+            logits_1, logits_2, labels, ind, combinedLabels, cur_time)
 
         optimizer_1.zero_grad()
         loss_1.backward()

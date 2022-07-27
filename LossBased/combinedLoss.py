@@ -23,7 +23,7 @@ else:
 # Loss functions
 
 
-def combined_relabel(y_1, y_2, indices, combinedLabels, cur_time):
+def combined_relabel(y_1, y_2, t, indices, combinedLabels, cur_time):
 
     # calculate combined logits
     combined_logits = (y_1 + y_2)/2
@@ -34,22 +34,22 @@ def combined_relabel(y_1, y_2, indices, combinedLabels, cur_time):
 
     # calculate cross-entropy loss using combined logits
     combined_cross_entropy_loss = F.cross_entropy(
-        combined_logits, current_target.to(y_1.device), reduction='none')
+        combined_logits, current_target.to(t.device), reduction='none')
 
     # update our labels
     begin = time.time()
     combinedLabels.update(
-        combined_logits, combined_cross_entropy_loss, indices, cur_time)
+        combined_logits, combined_cross_entropy_loss.cpu(), indices, cur_time)
     end = time.time()
     print('combinedLabels:', (end-begin))
     # obtain clean labels
     begin = time.time()
     useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2 = combinedLabels.getLabels(
-        y_1, y_2, combined_cross_entropy_loss, indices)
+        y_1.cpu(), y_2.cpu(), combined_cross_entropy_loss.cpu(), indices)
     end = time.time()
     print('clean labels:', (end-begin))
     # use half labels to update model 1 while other half to update model 2
-    loss_1 = F.cross_entropy(y_1[useIndices_1], useLabels_1.to(y_1.device))
-    loss_2 = F.cross_entropy(y_2[useIndices_2], useLabels_2.to(y_1.device))
+    loss_1 = F.cross_entropy(y_1[useIndices_1], useLabels_1.to(t.device))
+    loss_2 = F.cross_entropy(y_2[useIndices_2], useLabels_2.to(t.device))
 
     return loss_1/len(useActualIndices_1), loss_2/len(useActualIndices_2)
