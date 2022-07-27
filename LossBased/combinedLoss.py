@@ -31,7 +31,7 @@ def combined_relabel(y_1, y_2, indices, combinedLabels):
 
     # calculate cross-entropy loss using combined logits
     combined_cross_entropy_loss = F.cross_entropy(
-        combined_logits, current_target, reduction='none')
+        combined_logits, current_target.to(y_1.device), reduction='none')
 
     # update our labels
     combinedLabels.update(
@@ -42,7 +42,7 @@ def combined_relabel(y_1, y_2, indices, combinedLabels):
         y_1, y_2, combined_cross_entropy_loss, indices)
 
     # use half labels to update model 1 while other half to update model 2
-    loss_1 = F.cross_entropy(y_1[useIndices_1], useLabels_1)
-    loss_2 = F.cross_entropy(y_2[useIndices_2], useLabels_2)
+    loss_1 = F.cross_entropy(y_1[useIndices_1], useLabels_1.to(y_1.device))
+    loss_2 = F.cross_entropy(y_2[useIndices_2], useLabels_2.to(y_1.device))
 
     return loss_1/len(useActualIndices_1), loss_2/len(useActualIndices_2)
