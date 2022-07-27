@@ -59,7 +59,7 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 # Hyper Parameters
-batch_size = 128
+batch_size = 256
 learning_rate = args.lr
 
 
@@ -117,45 +117,49 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['betas'] = (beta1_plan[epoch], 0.999)  # Only change beta1
 
 
-def evaluate(test_loader, model):
-    model.eval()    # Change model to 'eval' mode.
-    correct1 = 0
-    total1 = 0
+# def evaluate(test_loader, model):
+#     model.eval()    # Change model to 'eval' mode.
+#     correct1 = 0
+#     total1 = 0
+#     for images, labels, _ in test_loader:
+#         images = Variable(images).cuda()
+#         logits1 = model(images)
+#         outputs1 = F.softmax(logits1, dim=1)
+#         _, pred1 = torch.max(outputs1.data, 1)
+#         total1 += labels.size(0)
+#         correct1 += (pred1.cpu() == labels).sum()
+
+#     acc1 = 100*float(correct1)/float(total1)
+#     return acc1
+def evaluate(test_loader, model_1, model_2):
+    model_1.eval()    # Change model to 'eval' mode.
+    model_2.eval()
+    correct = 0
+    total = 0
     for images, labels, _ in test_loader:
         images = Variable(images).cuda()
-        logits1 = model(images)
-        outputs1 = F.softmax(logits1, dim=1)
-        _, pred1 = torch.max(outputs1.data, 1)
-        total1 += labels.size(0)
-        correct1 += (pred1.cpu() == labels).sum()
+        logits1 = model_1(images)
+        logits2 = model_2(images)
+        logits = (logits1 + logits2)/2
+        outputs = F.softmax(logits, dim=1)
+        _, pred = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (pred.cpu() == labels).sum()
 
-    acc1 = 100*float(correct1)/float(total1)
+    acc1 = 100*float(correct)/float(total)
     return acc1
 
 
 # Define models
-print('building model...')
+print('building models...')
 # create our full model
-fullModel = torchvision.models.resnet34(pretrained=False, num_classes=10)
-fullModel.cuda()
+model_1 = torchvision.models.resnet34(pretrained=False, num_classes=10)
+model_1.cuda()
+optimizer_1 = torch.optim.Adam(model_1.parameters(), lr=learning_rate)
 
-# fullModel = CNN(input_channel=3, n_outputs=10)
-# fullModel.cuda()
-fullOptimizer = torch.optim.Adam(fullModel.parameters(), lr=learning_rate)
-
-# ensembleModels = []
-# ensembleOptimizers = []
-# for k in range(8):
-#     # create ensemble model
-#     ensembleModel = torchvision.models.resnet34(
-#         pretrained=False, num_classes=10)
-#     ensembleModel.cuda()
-#     # create optimizer
-#     ensembleOptimizer = torch.optim.Adam(
-#         ensembleModel.parameters(), lr=learning_rate)
-#     # add to arrays
-#     ensembleModels.append(ensembleModel)
-#     ensembleOptimizers.append(ensembleOptimizer)
+model_2 = torchvision.models.resnet34(pretrained=False, num_classes=10)
+model_2.cuda()
+optimizer_2 = torch.optim.Adam(model_2.parameters(), lr=learning_rate)
 
 
 # training
@@ -164,28 +168,28 @@ true_train_labels = train_dataset.train_labels
 noisy_train_labels = train_dataset.train_noisy_labels
 # create our low loss labels class
 epochLabels = CombinedLabels(
-    len(train_dataset), noisy_train_labels, true_train_labels, noise_or_not)
+    len(train_dataset), noisy_train_labels, true_train_labels, noise_or_not, 5, num_classes)
 
-# for epoch in range(1, args.n_epoch):
-#     fullModel.train()
-#     # adjust learning rate
-#     adjust_learning_rate(fullOptimizer, epoch)
-#     # train models
-#     # train(train_loader, epoch, fullModel, fullOptimizer, ensembleModels,
-#     #       ensembleOptimizers, args.n_epoch, len(train_dataset), batch_size)
+for epoch in range(1, args.n_epoch):
+    model_1.train()
+    model_2.train()
+    # adjust learning rate
+    adjust_learning_rate(optimizer_1, epoch)
+    adjust_learning_rate(optimizer_2, epoch)
+    # train models
 
-#     train(train_loader, epoch, fullModel, fullOptimizer,
-#           args.n_epoch, len(train_dataset), batch_size, epochLabels)
+    train(train_loader, epoch, fullModel, fullOptimizer,
+          args.n_epoch, len(train_dataset), batch_size, epochLabels)
 
-#     # evaluate model
-#     acc1 = evaluate(test_loader, fullModel)
+    # evaluate model
+    acc1 = evaluate(test_loader, fullModel)
 
-#     print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %%' %
-#           (epoch+1, args.n_epoch, len(test_dataset), acc1))
+    print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %%' %
+          (epoch+1, args.n_epoch, len(test_dataset), acc1))
 
 
-# # store end time
-# end = time.time()
-# timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
-# # total time taken
-# print(f"Total runtime of the program is {timeTaken}")
+# store end time
+end = time.time()
+timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
+# total time taken
+print(f"Total runtime of the program is {timeTaken}")
