@@ -131,4 +131,7 @@ class CombinedLabels():
                                     for i in range(len(useLabels_1))]).long()
         useLabels_2 = torch.Tensor([useLabels_2[i]
                                     for i in range(len(useLabels_2))]).long()
+
+        print(
+            f'Total Low Loss:{lowLossCount}, Total Consistent:{consistentCount}, Total Unused: {unusedCount}')
         return useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2
