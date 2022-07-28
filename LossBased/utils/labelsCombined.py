@@ -22,7 +22,7 @@ class CombinedLabels():
         # intialize our data arrays
         self.labels = torch.Tensor([[train_labels[i], -1, -1, -1, -1]
                                    for i in range(num_samples)]).long()
-        self.losses = torch.Tensor([[3.32, -1, -1, -1, -1]
+        self.losses = torch.Tensor([[[3.32, -1, -1, -1, -1]]
                                    for i in range(num_samples)])
         self.counts = torch.zeros(num_samples, num_classes)
 
@@ -46,14 +46,14 @@ class CombinedLabels():
             if cur_time < self.history:
                 self.counts[index][pred] += 1
                 self.labels[index][cur_time] = pred
-                self.losses[index][cur_time] = loss
+                self.losses[index][0][cur_time] = loss
 
                 # print(self.counts[index],
                 #       self.labels[index], self.losses[index])
             else:
                 # first find max loss we have
-                print(self.losses[index])
-                maxLoss, maxIndex = torch.max(self.losses[index])
+                # print(self.losses[index][0])
+                maxLoss, maxIndex = torch.max(self.losses[index][0])
 
                 # check if we have a better loss prediction
                 if loss < maxLoss:
@@ -63,7 +63,7 @@ class CombinedLabels():
                     self.counts[index][pred] += 1
                     # set new data
                     self.labels[index][maxIndex] = pred
-                    self.losses[index][maxIndex] = loss
+                    self.losses[index][0][maxIndex] = loss
 
     def getLabelsOnly(self, indices):
         useLabels = []
