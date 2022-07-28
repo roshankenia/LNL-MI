@@ -48,8 +48,8 @@ class CombinedLabels():
                 self.labels[index][cur_time] = pred
                 self.losses[index][cur_time] = loss
 
-                print(self.counts[index],
-                      self.labels[index], self.losses[index])
+                # print(self.counts[index],
+                #       self.labels[index], self.losses[index])
             else:
                 # first find max loss we have
                 maxLoss, maxIndex = torch.max(self.losses[index])
