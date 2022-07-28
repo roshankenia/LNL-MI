@@ -20,9 +20,9 @@ class CombinedLabels():
 
     def __init__(self, num_samples, train_labels, true_train_labels, noise_or_not, history, num_classes):
         # intialize our data arrays
-        self.labels = torch.Tensor([[train_labels[i], -1, -1, -1, -1]
+        self.labels = torch.Tensor([[train_labels[i], -1, -1, -1, -1, -1, -1, -1, -1, -1]
                                    for i in range(num_samples)]).long()
-        self.losses = torch.Tensor([[3.32, -1, -1, -1, -1]
+        self.losses = torch.Tensor([[3.32, -1, -1, -1, -1, -1, -1, -1, -1, -1]
                                    for i in range(num_samples)])
         self.counts = torch.zeros(num_samples, num_classes)
 
@@ -64,6 +64,52 @@ class CombinedLabels():
                     # set new data
                     self.labels[index][maxIndex] = pred
                     self.losses[index][maxIndex] = loss
+
+    def getBasedOnCount(self, indices):
+        useIndices_1 = []
+        useLabels_1 = []
+        useActualIndices_1 = []
+
+        useIndices_2 = []
+        useLabels_2 = []
+        useActualIndices_2 = []
+
+        lowLossCount = 0
+        lowLossClean = 0
+        consistentCount = 0
+        consistentClean = 0
+        unusedCount = 0
+        unusedClean = 0
+
+        count = 0
+        for i in range(len(indices)):
+            index = indices[i]
+            # first find label
+            maxLabel, label = torch.max(self.counts[index], dim=0)
+            # only use label if it has majority
+            if maxLabel > (self.history/2):
+                count += 1
+                lowLossCount += 1
+                if label == self.true_train_labels[index]:
+                    lowLossClean += 1
+                if count % 2 == 1:
+                    useLabels_1.append(label)
+                    useIndices_1.append(i)
+                    useActualIndices_1.append(index)
+                else:
+                    useLabels_2.append(label)
+                    useIndices_2.append(i)
+                    useActualIndices_2.append(index)
+            else:
+                if label == self.true_train_labels[index]:
+                    unusedClean += 1
+                unusedCount += 1
+        # make labels into tensor
+        useLabels_1 = torch.Tensor([useLabels_1[i]
+                                    for i in range(len(useLabels_1))]).long()
+        useLabels_2 = torch.Tensor([useLabels_2[i]
+                                    for i in range(len(useLabels_2))]).long()
+        return useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean
 
     def getLabelsOnly(self, indices):
         useLabels = []

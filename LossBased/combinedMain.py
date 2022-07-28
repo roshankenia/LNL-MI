@@ -168,7 +168,7 @@ true_train_labels = train_dataset.train_labels
 noisy_train_labels = train_dataset.train_noisy_labels
 # create our low loss labels class
 combinedLabels = CombinedLabels(
-    len(train_dataset), noisy_train_labels, true_train_labels, noise_or_not, 5, num_classes)
+    len(train_dataset), noisy_train_labels, true_train_labels, noise_or_not, 10, num_classes)
 cur_time = 1
 for epoch in range(1, args.n_epoch):
     model_1.train()
