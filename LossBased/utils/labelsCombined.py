@@ -24,8 +24,8 @@ class CombinedLabels():
                                    for i in range(num_samples)]).long()
         self.losses = torch.Tensor([[3.32, -1, -1, -1, -1]
                                    for i in range(num_samples)])
-        self.counts = torch.Tensor([torch.zeros(num_classes)
-                                   for i in range(num_samples)])
+        self.counts = torch.zeros(num_samples, num_classes)
+
         # update first label
         for i in range(num_samples):
             self.counts[i][train_labels[i]] += 1
