@@ -27,10 +27,10 @@ def combined_relabel(y_1, y_2, t, indices, combinedLabels, cur_time):
 
     # calculate combined logits
     combined_logits = (y_1 + y_2)/2
-    for i in range(len(combined_logits)):
-        print('1', y_1[i], y_2[i], combined_logits[i])
-        print('2', torch.argmax(y_1[i]), torch.argmax(y_2[i]),
-              torch.argmax(combined_logits[i]))
+    # for i in range(len(combined_logits)):
+    #     print('1', y_1[i], y_2[i], combined_logits[i])
+    #     print('2', torch.argmax(y_1[i]), torch.argmax(y_2[i]),
+    #           torch.argmax(combined_logits[i]))
     # begin = time.time()
     current_target = combinedLabels.getLabelsOnly(indices)
     # end = time.time()
