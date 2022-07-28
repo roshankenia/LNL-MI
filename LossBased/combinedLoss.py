@@ -83,4 +83,4 @@ def cross_entropy_with_update(y_1, y_2, t, indices, combinedLabels, cur_time):
     loss_1 = F.cross_entropy(y_1, t)
     loss_2 = F.cross_entropy(y_2, t)
 
-    return loss_1/len(t), loss_2/len(t), 0, 0, 0, 0, 0, 0
+    return loss_1/len(t), loss_2/len(t)
