@@ -86,7 +86,7 @@ class CombinedLabels():
         useLabels_2 = []
         useActualIndices_2 = []
 
-        combinedLossMean = combinedLoss.mean()
+        combinedLossMean = 0.5*combinedLoss.mean()
         lowLossCount = 0
         lowLossClean = 0
         consistentCount = 0
