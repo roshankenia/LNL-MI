@@ -24,6 +24,11 @@ class CombinedLabels():
                                    for i in range(num_samples)]).long()
         self.losses = torch.Tensor([[3.32, -1, -1, -1, -1]
                                    for i in range(num_samples)])
+        self.counts = torch.Tensor([torch.zeros(num_classes)
+                                   for i in range(num_samples)])
+        # update first label
+        for i in range(num_samples):
+            self.counts[i][train_labels[i]] += 1
         self.true_train_labels = [i[0] for i in true_train_labels]
         self.noise_or_not = noise_or_not
 
@@ -37,40 +42,31 @@ class CombinedLabels():
             pred = torch.argmax(logits[i])
             loss = combinedLoss[i]
 
-            # obtain current labels and losses
-            currentLabels = self.labels[index]
-            currentLosses = self.losses[index]
-
             # if we do not have a long enough history yet just add data to arrays
             if cur_time < self.history:
-                currentLabels[cur_time] = pred
-                currentLosses[cur_time] = loss
-
-                self.labels[index] = currentLabels
-                self.losses[index] = currentLosses
+                self.counts[index][pred] += 1
+                self.labels[index][cur_time] = pred
+                self.losses[index][cur_time] = loss
             else:
-                # first sort the losses
-                currentLosses, sortIndices = torch.sort(currentLosses)
-                currentLabels = currentLabels[sortIndices]
+                # first find max loss we have
+                maxLoss, maxIndex = torch.max(self.losses[index])
 
                 # check if we have a better loss prediction
-                if loss < currentLosses[self.history-1]:
-                    currentLosses[self.history-1] = loss
-                    currentLabels[self.history-1] = pred
-
-                self.labels[index] = currentLabels
-                self.losses[index] = currentLosses
+                if loss < maxLoss:
+                    # remove max count from counts
+                    self.counts[index][self.labels[index][maxIndex]] -= 1
+                    # add new count
+                    self.counts[index][pred] += 1
+                    # set new data
+                    self.labels[index][maxIndex] = pred
+                    self.losses[index][maxIndex] = loss
 
     def getLabelsOnly(self, indices):
         useLabels = []
         for i in range(len(indices)):
             index = indices[i]
             # first find label
-            logitsSum = torch.zeros(self.num_classes)
-            for j in range(len(self.losses[index])):
-                if self.labels[index][j] != -1:
-                    logitsSum[self.labels[index][j]] += self.losses[index][j]
-            label = torch.argmax(logitsSum)
+            label = torch.argmax(self.counts[index])
             useLabels.append(label)
         # make labels into tensor
         useLabels = torch.Tensor([useLabels[i]
@@ -97,11 +93,7 @@ class CombinedLabels():
         for i in range(len(indices)):
             index = indices[i]
             # first find label
-            logitsSum = torch.zeros(self.num_classes)
-            for j in range(len(self.losses[index])):
-                if self.labels[index][j] != -1:
-                    logitsSum[self.labels[index][j]] += self.losses[index][j]
-            label = torch.argmax(logitsSum)
+            label = torch.argmax(self.counts[index])
             # if a label has a low combined loss we use it
             if combinedLoss[i] < combinedLossMean:
                 count += 1
@@ -128,19 +120,6 @@ class CombinedLabels():
                     useActualIndices_1.append(index)
                 else:
                     useLabels_2.append(label)
-                    useIndices_2.append(i)
-                    useActualIndices_2.append(index)
-            elif torch.argmax(y_1[i]) == torch.argmax(y_2[i]):
-                count += 1
-                consistentCount += 1
-                if torch.argmax(y_1[i]) == self.true_train_labels[index]:
-                    consistentClean += 1
-                if count % 2 == 1:
-                    useLabels_1.append(torch.argmax(y_1[i]))
-                    useIndices_1.append(i)
-                    useActualIndices_1.append(index)
-                else:
-                    useLabels_2.append(torch.argmax(y_1[i]))
                     useIndices_2.append(i)
                     useActualIndices_2.append(index)
             # if a label has a high combined loss and is inconsistent we don't use it
