@@ -52,6 +52,7 @@ class CombinedLabels():
                 #       self.labels[index], self.losses[index])
             else:
                 # first find max loss we have
+                print(self.losses[index])
                 maxLoss, maxIndex = torch.max(self.losses[index])
 
                 # check if we have a better loss prediction
