@@ -53,9 +53,7 @@ class CombinedLabels():
             else:
                 # first find max loss we have
                 # print(self.losses[index][0])
-                curLoss = self.losses[index]
-                print(curLoss)
-                maxLoss, maxIndex = torch.max(curLoss)
+                maxLoss, maxIndex = torch.max(self.losses[index], dim=0)
 
                 # check if we have a better loss prediction
                 if loss < maxLoss:
