@@ -86,8 +86,6 @@ class CombinedLabels():
             index = indices[i]
             # first find label
             maxLabel, label = torch.max(self.counts[index], dim=0)
-            if i == 64:
-                print(self.counts[index], maxLabel)
             # only use label if it has majority
             if maxLabel > 9:
                 count += 1

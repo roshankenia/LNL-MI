@@ -53,20 +53,22 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         # calculate loss
         loss_1 = None
         loss_2 = None
-        if epoch < 10:
-            loss_1, loss_2 = cross_entropy_with_update(
-                logits_1, logits_2, labels, ind, combinedLabels, cur_time)
-        else:
-            loss_1, loss_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combined_relabel(
-                logits_1, logits_2, labels, ind, combinedLabels, cur_time)
+        loss_1, loss_2 = cross_entropy_with_update(
+            logits_1, logits_2, labels, ind, combinedLabels, cur_time)
+        # if epoch < 10:
+        #     loss_1, loss_2 = cross_entropy_with_update(
+        #         logits_1, logits_2, labels, ind, combinedLabels, cur_time)
+        # else:
+        #     loss_1, loss_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combined_relabel(
+        #         logits_1, logits_2, labels, ind, combinedLabels, cur_time)
 
-            totalLowLoss += lowLossCount
-            totalConsistent += consistentCount
-            totalUnused += unusedCount
+        #     totalLowLoss += lowLossCount
+        #     totalConsistent += consistentCount
+        #     totalUnused += unusedCount
 
-            totalLowLossClean += lowLossClean
-            totalConsistentClean += consistentClean
-            totalUnusedClean += unusedClean
+        #     totalLowLossClean += lowLossClean
+        #     totalConsistentClean += consistentClean
+        #     totalUnusedClean += unusedClean
 
         optimizer_1.zero_grad()
         loss_1.backward()
