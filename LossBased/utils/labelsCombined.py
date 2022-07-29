@@ -87,7 +87,7 @@ class CombinedLabels():
             # first find label
             maxLabel, label = torch.max(self.counts[index], dim=0)
             # only use label if it has majority
-            if maxLabel > 7:
+            if maxLabel > 9:
                 count += 1
                 lowLossCount += 1
                 if label == self.true_train_labels[index]:
