@@ -43,7 +43,6 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
 
         cur_labels, noise_or_not = combinedLabels.getLabelsOnly(
             indexes)
-        cur_labels = cur_labels.to(labels.device)
 
         images = Variable(images).cuda()
         cur_labels = Variable(cur_labels).cuda()
