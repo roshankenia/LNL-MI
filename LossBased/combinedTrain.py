@@ -63,7 +63,7 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         pure_ratio_1 = None
         pure_ratio_2 = None
 
-        if epoch < 10:
+        if epoch < 20:
             loss_1, loss_2, pure_ratio_1, pure_ratio_2 = loss_coteaching_with_no_relabeling(
                 logits_1, logits_2, labels, ind, combinedLabels, cur_time)
         else:
