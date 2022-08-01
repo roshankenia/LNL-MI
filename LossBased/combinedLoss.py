@@ -25,8 +25,8 @@ else:
 
 def loss_coteaching_with_relabeling(y_1, y_2, t, indices, combinedLabels, cur_time):
 
-    current_target, noise_or_not = combinedLabels.getLabelsOnly(
-        indices).to(t.device)
+    current_target, noise_or_not = combinedLabels.getLabelsOnly(indices)
+    current_target = current_target.to(t.device)
     combined_logits = (y_1 + y_2)/2
     # calculate cross-entropy loss using combined logits
     combined_cross_entropy_loss = F.cross_entropy(
@@ -36,8 +36,8 @@ def loss_coteaching_with_relabeling(y_1, y_2, t, indices, combinedLabels, cur_ti
         combined_logits, combined_cross_entropy_loss.cpu(), indices, cur_time)
 
     # get new target
-    current_target, noise_or_not = combinedLabels.getLabelsOnly(
-        indices).to(t.device)
+    current_target, noise_or_not = combinedLabels.getLabelsOnly(indices)
+    current_target = current_target.to(t.device)
 
     loss_1 = F.cross_entropy(y_1, current_target, reduce=False)
     ind_1_sorted = np.argsort(loss_1.data.cpu())
