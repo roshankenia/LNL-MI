@@ -73,6 +73,7 @@ def loss_coteaching_with_no_relabeling(y_1, y_2, t, indices, combinedLabels, cur
 
     current_target, noise_or_not = combinedLabels.getLabelsOnly(indices)
     current_target = current_target.to(y_1.device)
+    t = t.to(y_1.device)
     combined_logits = (y_1 + y_2)/2
     # calculate cross-entropy loss using combined logits
     combined_cross_entropy_loss = F.cross_entropy(
