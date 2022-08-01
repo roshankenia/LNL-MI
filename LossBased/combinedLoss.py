@@ -52,9 +52,9 @@ def loss_coteaching_with_relabeling(y_1, y_2, t, indices, combinedLabels, cur_ti
                             combined_cross_entropy_loss.mean()).shape[0]
 
     pure_ratio_1 = np.sum(
-        noise_or_not[ind_1_sorted[:num_use].to(dtype=torch.long)])/float(num_use)
+        noise_or_not[ind_1_sorted[:num_use]])/float(num_use)
     pure_ratio_2 = np.sum(
-        noise_or_not[ind_2_sorted[:num_use].to(dtype=torch.long)])/float(num_use)
+        noise_or_not[ind_2_sorted[:num_use]])/float(num_use)
 
     ind_1_update = ind_1_sorted[:num_use]
     ind_2_update = ind_2_sorted[:num_use]
