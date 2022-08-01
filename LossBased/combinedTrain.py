@@ -13,7 +13,7 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
-from combinedLoss import combined_relabel, cross_entropy_with_update, loss_coteaching_with_relabeling
+from combinedLoss import combined_relabel, cross_entropy_with_update, loss_coteaching_with_relabeling, loss_coteaching_with_no_relabeling
 
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -60,9 +60,15 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         # calculate loss
         loss_1 = None
         loss_2 = None
+        pure_ratio_1 = None
+        pure_ratio_2 = None
 
-        loss_1, loss_2, pure_ratio_1, pure_ratio_2 = loss_coteaching_with_relabeling(
-            logits_1, logits_2, labels, ind, combinedLabels, cur_time)
+        if epoch < 10:
+            loss_1, loss_2, pure_ratio_1, pure_ratio_2 = loss_coteaching_with_no_relabeling(
+                logits_1, logits_2, labels, ind, combinedLabels, cur_time)
+        else:
+            loss_1, loss_2, pure_ratio_1, pure_ratio_2 = loss_coteaching_with_relabeling(
+                logits_1, logits_2, labels, ind, combinedLabels, cur_time)
 
         pure_ratio_1_list.append(100*pure_ratio_1)
         pure_ratio_2_list.append(100*pure_ratio_2)
