@@ -41,14 +41,19 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         # if i > args.num_iter_per_epoch:
         #     break
 
+        cur_labels, noise_or_not = combinedLabels.getLabelsOnly(
+            indexes).to(labels.device)
+
         images = Variable(images).cuda()
-        labels = Variable(labels).cuda()
+        cur_labels = Variable(cur_labels).cuda()
 
         # Forward + Backward + Optimize
         logits_1 = model_1(images)
         logits_2 = model_2(images)
         combinedLogits = (logits_1+logits_2)/2
-        prec, _ = accuracy(combinedLogits, labels, topk=(1, 5))
+        prec, _ = accuracy(combinedLogits, cur_labels, topk=(1, 5))
+        prec1, _ = accuracy(logits_1, cur_labels, topk=(1, 5))
+        prec2, _ = accuracy(logits_2, cur_labels, topk=(1, 5))
         train_total += 1
         train_correct += prec
 
@@ -86,10 +91,12 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         optimizer_2.step()
 
         if (i+1) % 50 == 0:
-            print('Epoch [%d/%d], Iter [%d/%d]'
-                  % (epoch+1, epochs, i+1, train_len//batch_size))
-            print(
-                f'\tCombined Accuracy:{prec.data.item()}, loss_1:{loss_1.data.item()}, loss_2:{loss_2.data.item()}')
+            # print('Epoch [%d/%d], Iter [%d/%d]'
+            #       % (epoch+1, epochs, i+1, train_len//batch_size))
+            # print(
+            #     f'\tCombined Accuracy:{prec.data.item()}, loss_1:{loss_1.data.item()}, loss_2:{loss_2.data.item()}')
+            print('Epoch [%d/%d], Iter [%d/%d], Combined Accuracy: %.4F, Training Accuracy1: %.4F, Loss1: %.4f, Loss2: %.4f, Pure Ratio1: %.4f, Pure Ratio2 %.4f'
+                  % (epoch+1, epochs, i+1, train_len//batch_size, prec.data.item(), prec1, prec2, loss_1.data.item(), loss_2.data.item(), np.sum(pure_ratio_1_list)/len(pure_ratio_1_list), np.sum(pure_ratio_2_list)/len(pure_ratio_2_list)))
     # print(
     #     f'Total Low Loss:{totalLowLoss}, Total Consistent:{totalConsistent}, Total Unused: {totalUnused}')
     # print(
