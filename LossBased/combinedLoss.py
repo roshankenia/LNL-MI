@@ -48,11 +48,11 @@ def combined_relabel(y_1, y_2, t, indices, combinedLabels, cur_time):
     # print('combinedLabels:', (end-begin))
     # obtain clean labels
     # begin = time.time()
-    # useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combinedLabels.getLabels(
-    #     y_1.cpu(), y_2.cpu(), combined_cross_entropy_loss.cpu(), indices)
+    useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combinedLabels.getLabels(
+        y_1.cpu(), y_2.cpu(), combined_cross_entropy_loss.cpu(), indices)
 
-    useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combinedLabels.getBasedOnCount(
-        indices)
+    # useIndices_1, useLabels_1, useActualIndices_1, useIndices_2, useLabels_2, useActualIndices_2, lowLossCount, consistentCount, unusedCount, lowLossClean, consistentClean, unusedClean = combinedLabels.getBasedOnCount(
+    #     indices)
     # end = time.time()
     # print('clean labels:', (end-begin))
     # use half labels to update model 1 while other half to update model 2

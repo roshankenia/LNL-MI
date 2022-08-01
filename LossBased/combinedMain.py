@@ -59,7 +59,7 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 # Hyper Parameters
-batch_size = 256
+batch_size = 512
 learning_rate = args.lr
 
 
