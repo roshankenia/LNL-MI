@@ -113,15 +113,21 @@ class CombinedLabels():
 
     def getLabelsOnly(self, indices):
         useLabels = []
+        noise_or_not = []
         for i in range(len(indices)):
             index = indices[i]
             # first find label
             label = torch.argmax(self.counts[index])
+            # check if noisy or not
+            if label == self.true_train_labels[index]:
+                noise_or_not.append(1)
+            else:
+                noise_or_not.append(0)
             useLabels.append(label)
         # make labels into tensor
         useLabels = torch.Tensor([useLabels[i]
                                  for i in range(len(useLabels))]).long()
-        return useLabels
+        return useLabels, noise_or_not
 
     def getLabels(self, y_1, y_2, combinedLoss, indices):
         useIndices_1 = []

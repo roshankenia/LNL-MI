@@ -23,6 +23,52 @@ else:
 # Loss functions
 
 
+def loss_coteaching_with_relabeling(y_1, y_2, t, indices, combinedLabels, cur_time):
+
+    current_target, noise_or_not = combinedLabels.getLabelsOnly(
+        indices).to(t.device)
+    combined_logits = (y_1 + y_2)/2
+    # calculate cross-entropy loss using combined logits
+    combined_cross_entropy_loss = F.cross_entropy(
+        combined_logits, current_target, reduction='none')
+    # update our labels
+    combinedLabels.update(
+        combined_logits, combined_cross_entropy_loss.cpu(), indices, cur_time)
+
+    # get new target
+    current_target, noise_or_not = combinedLabels.getLabelsOnly(
+        indices).to(t.device)
+
+    loss_1 = F.cross_entropy(y_1, current_target, reduce=False)
+    ind_1_sorted = np.argsort(loss_1.data.cpu())
+    loss_1_sorted = loss_1[ind_1_sorted]
+
+    loss_2 = F.cross_entropy(y_2, current_target, reduce=False)
+    ind_2_sorted = np.argsort(loss_2.data.cpu())
+    loss_2_sorted = loss_2[ind_2_sorted]
+
+    # find number of samples to use
+    num_use = torch.nonzero(combined_cross_entropy_loss <
+                            combined_cross_entropy_loss.mean()).shape[0]
+
+    pure_ratio_1 = np.sum(
+        noise_or_not[ind_1_sorted[:num_use]])/float(num_use)
+    pure_ratio_2 = np.sum(
+        noise_or_not[ind_2_sorted[:num_use]])/float(num_use)
+
+    ind_1_update = ind_1_sorted[:num_use]
+    ind_2_update = ind_2_sorted[:num_use]
+    # exchange
+    loss_1_update = F.cross_entropy(
+        y_1[ind_2_update], current_target[ind_2_update])
+    # print('before:', loss_1_update)
+    # print('after:', torch.sum(loss_1_update)/num_remember)
+    loss_2_update = F.cross_entropy(
+        y_2[ind_1_update], current_target[ind_1_update])
+
+    return torch.sum(loss_1_update)/num_use, torch.sum(loss_2_update)/num_use, pure_ratio_1, pure_ratio_2
+
+
 def combined_relabel(y_1, y_2, t, indices, combinedLabels, cur_time):
 
     # calculate combined logits
@@ -32,7 +78,7 @@ def combined_relabel(y_1, y_2, t, indices, combinedLabels, cur_time):
     #     print('2', torch.argmax(y_1[i]), torch.argmax(y_2[i]),
     #           torch.argmax(combined_logits[i]))
     # begin = time.time()
-    current_target = combinedLabels.getLabelsOnly(indices)
+    current_target, noise_or_not = combinedLabels.getLabelsOnly(indices)
     # end = time.time()
     # print('current_target:', (end-begin))
 
@@ -67,7 +113,7 @@ def cross_entropy_with_update(y_1, y_2, t, indices, combinedLabels, cur_time):
     combined_logits = (y_1 + y_2)/2
 
     # begin = time.time()
-    current_target = combinedLabels.getLabelsOnly(indices)
+    current_target, noise_or_not = combinedLabels.getLabelsOnly(indices)
     # end = time.time()
     # print('current_target:', (end-begin))
 
