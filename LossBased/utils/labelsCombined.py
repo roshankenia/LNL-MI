@@ -20,9 +20,9 @@ class CombinedLabels():
 
     def __init__(self, num_samples, train_labels, true_train_labels, noise_or_not, history, num_classes):
         # intialize our data arrays
-        self.labels = torch.Tensor([[train_labels[i], -1, -1, -1, -1, -1, -1, -1, -1, -1]
+        self.labels = torch.Tensor([[train_labels[i], -1, -1, -1, -1]
                                    for i in range(num_samples)]).long()
-        self.losses = torch.Tensor([[3.32, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+        self.losses = torch.Tensor([[3.32, -1, -1, -1, -1]
                                    for i in range(num_samples)])
         self.counts = torch.zeros(num_samples, num_classes)
 
