@@ -95,7 +95,7 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
             #       % (epoch+1, epochs, i+1, train_len//batch_size))
             # print(
             #     f'\tCombined Accuracy:{prec.data.item()}, loss_1:{loss_1.data.item()}, loss_2:{loss_2.data.item()}')
-            print('Epoch [%d/%d], Iter [%d/%d], Combined Accuracy: %.4F, Training Accuracy1: %.4F, Loss1: %.4f, Loss2: %.4f, Pure Ratio1: %.4f, Pure Ratio2 %.4f'
+            print('Epoch [%d/%d], Iter [%d/%d], Combined Accuracy: %.4F, Training Accuracy1: %.4F, Training Accuracy2: %.4F, Loss1: %.4f, Loss2: %.4f, Pure Ratio1: %.4f, Pure Ratio2 %.4f'
                   % (epoch+1, epochs, i+1, train_len//batch_size, prec.data.item(), prec1, prec2, loss_1.data.item(), loss_2.data.item(), np.sum(pure_ratio_1_list)/len(pure_ratio_1_list), np.sum(pure_ratio_2_list)/len(pure_ratio_2_list)))
     # print(
     #     f'Total Low Loss:{totalLowLoss}, Total Consistent:{totalConsistent}, Total Unused: {totalUnused}')
