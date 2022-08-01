@@ -50,12 +50,11 @@ def loss_coteaching_with_relabeling(y_1, y_2, t, indices, combinedLabels, cur_ti
     # find number of samples to use
     num_use = torch.nonzero(combined_cross_entropy_loss <
                             combined_cross_entropy_loss.mean()).shape[0]
-    print(noise_or_not)
-    print(noise_or_not[ind_1_sorted[:num_use]].numpy())
+
     pure_ratio_1 = np.sum(
         noise_or_not[ind_1_sorted[:num_use]].numpy())/float(num_use)
     pure_ratio_2 = np.sum(
-        noise_or_not[ind_2_sorted[:num_use]])/float(num_use)
+        noise_or_not[ind_2_sorted[:num_use]].numpy())/float(num_use)
 
     ind_1_update = ind_1_sorted[:num_use]
     ind_2_update = ind_2_sorted[:num_use]
