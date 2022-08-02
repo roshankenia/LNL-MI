@@ -13,8 +13,8 @@ import sys
 import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
-from combinedTrain import train
-from utils.labelsCombined import CombinedLabels
+from batchTrain import train
+from utils.labelsBatch import BatchLabels
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
@@ -167,9 +167,9 @@ noise_or_not = train_dataset.noise_or_not
 true_train_labels = train_dataset.train_labels
 noisy_train_labels = train_dataset.train_noisy_labels
 # create our low loss labels class
-combinedLabels = CombinedLabels(
-    len(train_dataset), noisy_train_labels, true_train_labels, noise_or_not, 5, num_classes)
-cur_time = 1
+history = 5
+batchLabels = BatchLabels(num_samples=len(train_dataset), train_labels=noisy_train_labels,
+                          true_train_labels=true_train_labels, noise_or_not=noise_or_not, history=history, num_classes=num_classes)
 for epoch in range(1, args.n_epoch):
     model_1.train()
     model_2.train()
@@ -179,7 +179,7 @@ for epoch in range(1, args.n_epoch):
     # train models
 
     train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2,
-          args.n_epoch, len(train_dataset), batch_size, combinedLabels, cur_time)
+          args.n_epoch, len(train_dataset), batch_size, batchLabels)
 
     # evaluate model
     acc = evaluate(test_loader, model_1, model_2)
@@ -187,7 +187,14 @@ for epoch in range(1, args.n_epoch):
     print('Epoch [%d/%d] Test Accuracy on the %s test images: Combined Logits %.4f %%' %
           (epoch+1, args.n_epoch, len(test_dataset), acc))
 
-    cur_time += 1
+    # every history epochs we check our labels
+    if (epoch+1) % history == 0:
+        print('Checking labels...')
+        lenientRelabelCorrect, lenientRelabelIncorrect, lenientReconfirmCorrect, lenientReconfirmIncorrect, strictRelabelCorrect, strictRelabelIncorrect, strictReconfirmCorrect, strictReconfirmIncorrect = batchLabels.reconfirmLabels()
+        print(f'lenientRelabelCorrect:{lenientRelabelCorrect}, lenientRelabelIncorrect:{lenientRelabelIncorrect}, lenientReconfirmCorrect:{lenientReconfirmCorrect}, lenientReconfirmIncorrect:{lenientReconfirmIncorrect}')
+        print(f'strictRelabelCorrect:{strictRelabelCorrect}, strictRelabelIncorrect:{strictRelabelIncorrect}, strictReconfirmCorrect:{strictReconfirmCorrect}, strictReconfirmIncorrect:{strictReconfirmIncorrect}')
+    else:
+        batchLabels.addTime()
 
 
 # store end time

@@ -34,6 +34,7 @@ class BatchLabels():
         self.noise_or_not = noise_or_not
 
         self.history = history
+        self.num_samples = num_samples
         self.num_classes = num_classes
 
         self.time = 0
@@ -113,37 +114,16 @@ class BatchLabels():
                     else:
                         strictReconfirmIncorrect += 1
 
+        # reset data arrays and current time
+        self.predictions = torch.Tensor([torch.zeros(self.history)
+                                         for i in range(self.num_samples)])
+        self.entropy = torch.Tensor([torch.zeros(self.history)
+                                    for i in range(self.num_samples)])
+        self.peak = torch.Tensor([torch.zeros(self.history)
+                                 for i in range(self.num_samples)])
+        self.time = 0
+
         return lenientRelabelCorrect, lenientRelabelIncorrect, lenientReconfirmCorrect, lenientReconfirmIncorrect, strictRelabelCorrect, strictRelabelIncorrect, strictReconfirmCorrect, strictReconfirmIncorrect
-
-    def update(self, logits, combinedLoss, indices, cur_time):
-        # we will keep track of the indices to use
-        for i in range(len(indices)):
-            index = indices[i]
-            pred = torch.argmax(logits[i])
-            loss = combinedLoss[i]
-
-            # if we do not have a long enough history yet just add data to arrays
-            if cur_time < self.history:
-                self.counts[index][pred] += 1
-                self.labels[index][cur_time] = pred
-                self.losses[index][cur_time] = loss
-
-                # print(self.counts[index],
-                #       self.labels[index], self.losses[index])
-            else:
-                # first find max loss we have
-                # print(self.losses[index][0])
-                maxLoss, maxIndex = torch.max(self.losses[index], dim=0)
-
-                # check if we have a better loss prediction
-                if loss < maxLoss:
-                    # remove max count from counts
-                    self.counts[index][self.labels[index][maxIndex]] -= 1
-                    # add new count
-                    self.counts[index][pred] += 1
-                    # set new data
-                    self.labels[index][maxIndex] = pred
-                    self.losses[index][maxIndex] = loss
 
     def getLabels(self, indices):
         useLabels = []
