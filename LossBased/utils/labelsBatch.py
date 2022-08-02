@@ -99,7 +99,7 @@ class BatchLabels():
                         lenientReconfirmIncorrect += 1
             else:
                 # must be more strict with relabeling since jumps a lot
-                if voteCounts > self.history * 3/4:
+                if voteCounts > self.history - 1:
                     self.labels[i] = mostVotedLabel
                     if self.true_train_labels[i] == mostVotedLabel:
                         strictRelabelCorrect += 1

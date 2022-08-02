@@ -33,16 +33,18 @@ def loss_coteaching(y_1, y_2, t, noise_or_not):
     loss_2_sorted = loss_2[ind_2_sorted]
 
     # find number of samples to use
-    num_use_1 = torch.nonzero(loss_1 < loss_1.mean()).shape[0]
-    num_use_2 = torch.nonzero(loss_2 < loss_2.mean()).shape[0]
+    # num_use_1 = torch.nonzero(loss_1 < loss_1.mean()).shape[0]
+    # num_use_2 = torch.nonzero(loss_2 < loss_2.mean()).shape[0]
+    remember_rate = 1 - 0.5
+    num_remember = int(remember_rate * len(loss_1_sorted))
 
     pure_ratio_1 = np.sum(
-        noise_or_not[ind_1_sorted[:num_use_1]].numpy())/float(num_use_1)
+        noise_or_not[ind_1_sorted[:num_remember]].numpy())/float(num_remember)
     pure_ratio_2 = np.sum(
-        noise_or_not[ind_2_sorted[:num_use_2]].numpy())/float(num_use_2)
+        noise_or_not[ind_2_sorted[:num_remember]].numpy())/float(num_remember)
 
-    ind_1_update = ind_1_sorted[:num_use_1]
-    ind_2_update = ind_2_sorted[:num_use_2]
+    ind_1_update = ind_1_sorted[:num_remember]
+    ind_2_update = ind_2_sorted[:num_remember]
     # exchange
     loss_1_update = F.cross_entropy(
         y_1[ind_2_update], t[ind_2_update])
@@ -51,4 +53,4 @@ def loss_coteaching(y_1, y_2, t, noise_or_not):
     loss_2_update = F.cross_entropy(
         y_2[ind_1_update], t[ind_1_update])
 
-    return torch.sum(loss_1_update)/num_use_1, torch.sum(loss_2_update)/num_use_2, pure_ratio_1, pure_ratio_2
+    return torch.sum(loss_1_update)/num_remember, torch.sum(loss_2_update)/num_remember, pure_ratio_1, pure_ratio_2
