@@ -45,7 +45,7 @@ class BatchLabels():
             samplePrediction = torch.argmax(sampleLogits)
 
             # first take softmax of our logits
-            probs = torch.sort(F.softmax(sampleLogits, dim=1)).values
+            probs = torch.sort(F.softmax(sampleLogits, dim=0)).values
             # calculate entropy
             sampleEntropy = Categorical(probs=probs).entropy()
             # calculate peak value
