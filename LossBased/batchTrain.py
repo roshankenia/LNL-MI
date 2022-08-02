@@ -50,6 +50,9 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         train_total += 1
         train_correct += prec
 
+        # add to our data history
+        batchLabels.addHistory(combinedLogits, ind)
+
         # calculate loss
         loss_1 = None
         loss_2 = None
