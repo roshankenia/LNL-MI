@@ -167,7 +167,7 @@ noise_or_not = train_dataset.noise_or_not
 true_train_labels = train_dataset.train_labels
 noisy_train_labels = train_dataset.train_noisy_labels
 # create our low loss labels class
-history = 5
+history = 10
 batchLabels = BatchLabels(num_samples=len(train_dataset), train_labels=noisy_train_labels,
                           true_train_labels=true_train_labels, noise_or_not=noise_or_not, history=history, num_classes=num_classes)
 for epoch in range(1, args.n_epoch):
