@@ -42,7 +42,7 @@ class BatchLabels():
             index = indices[i]
             sampleLogits = logits[i].clone().detach().cpu()
             # obtain prediction
-            samplePrediction = torch.argmax(sampleLogits).long()
+            samplePrediction = torch.argmax(sampleLogits)
 
             # first take softmax of our logits
             probs = torch.sort(F.softmax(sampleLogits, dim=0)).values
@@ -82,7 +82,7 @@ class BatchLabels():
             # first find highest voted label with number of votes
             votes = torch.zeros(self.num_classes)
             for pred in self.predictions[i]:
-                votes[pred] += 1
+                votes[int(pred)] += 1
             voteCounts, mostVotedLabel = torch.max(votes, dim=0)
             if entropySTDs[i] < avgEntStd and peakSTDs[i] < avgPeakStd:
                 # can be more lenient with relabeling
