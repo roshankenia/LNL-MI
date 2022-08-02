@@ -23,12 +23,9 @@ class BatchLabels():
         # intialize our data arrays
         self.labels = torch.Tensor([train_labels[i]
                                    for i in range(num_samples)]).long()
-        self.predictions = torch.Tensor([torch.zeros(history)
-                                         for i in range(num_samples)])
-        self.entropy = torch.Tensor([torch.zeros(history)
-                                    for i in range(num_samples)])
-        self.peak = torch.Tensor([torch.zeros(history)
-                                 for i in range(num_samples)])
+        self.predictions = torch.zeros(num_samples, history)
+        self.entropy = torch.zeros(num_samples, history)
+        self.peak = torch.zeros(num_samples, history)
 
         self.true_train_labels = [i[0] for i in true_train_labels]
         self.noise_or_not = noise_or_not
@@ -115,12 +112,9 @@ class BatchLabels():
                         strictReconfirmIncorrect += 1
 
         # reset data arrays and current time
-        self.predictions = torch.Tensor([torch.zeros(self.history)
-                                         for i in range(self.num_samples)])
-        self.entropy = torch.Tensor([torch.zeros(self.history)
-                                    for i in range(self.num_samples)])
-        self.peak = torch.Tensor([torch.zeros(self.history)
-                                 for i in range(self.num_samples)])
+        self.predictions = torch.zeros(self.num_samples, self.history)
+        self.entropy = torch.zeros(self.num_samples, self.history)
+        self.peak = torch.zeros(self.num_samples, self.history)
         self.time = 0
 
         return lenientRelabelCorrect, lenientRelabelIncorrect, lenientReconfirmCorrect, lenientReconfirmIncorrect, strictRelabelCorrect, strictRelabelIncorrect, strictReconfirmCorrect, strictReconfirmIncorrect
