@@ -37,7 +37,7 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         #     break
 
         images = Variable(images).cuda()
-        cur_labels = Variable(cur_labels).cuda()
+        cur_labels = Variable(labels).cuda()
 
         # Forward + Backward + Optimize
         logits_1 = model_1(images)
