@@ -5,7 +5,6 @@ from torch.autograd import Variable
 import numpy as np
 import os
 import sys
-from utils.labels import LowLossLabels
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
