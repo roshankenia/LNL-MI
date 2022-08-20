@@ -21,7 +21,7 @@ class FeatureMap():
 
     def __init__(self, num_samples, num_epochs, num_classes):
         # intialize our data arrays
-        self.features = torch.zeros(num_samples, num_epochs, num_classes)
+        self.features = torch.zeros(num_samples, 10, num_classes)
 
         self.num_samples = num_samples
         self.num_classes = num_classes
@@ -35,7 +35,8 @@ class FeatureMap():
 
             # first take softmax of our logits
             probs = torch.sort(F.softmax(sampleLogits, dim=0)).values
-            self.features[index][epoch] = probs
+            time = epoch % 10
+            self.features[index][time] = probs
 
-            if i == 0 and epoch % 5 == 0:
+            if i == 0 and epoch % 2 == 0:
                 print(self.features[index])

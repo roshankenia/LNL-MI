@@ -170,7 +170,7 @@ noisy_train_labels = train_dataset.train_noisy_labels
 features = FeatureMap(len(train_dataset.train_labels),
                       args.n_epoch, num_classes)
 # create our low loss labels class
-for epoch in range(1, args.n_epoch):
+for epoch in range(0, args.n_epoch):
     model_1.train()
     model_2.train()
     # adjust learning rate
