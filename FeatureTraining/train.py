@@ -1,3 +1,4 @@
+from math import comb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -25,7 +26,7 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epochs, train_len, batch_size, noise_or_not):
+def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epochs, train_len, batch_size, noise_or_not, features):
     train_total = 0
     train_correct = 0
     pure_ratio_1_list = []
@@ -48,6 +49,9 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         prec2, _ = accuracy(logits_2, cur_labels, topk=(1, 5))
         train_total += 1
         train_correct += prec
+
+        # add to our feature data
+        features.addData(combinedLogits, ind, epoch)
 
         # calculate loss
         loss_1 = None

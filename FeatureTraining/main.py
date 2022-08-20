@@ -14,6 +14,7 @@ import time
 import argparse
 from data.cifar import CIFAR10, CIFAR100
 from train import train
+from utils.featureMap import FeatureMap
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
@@ -165,6 +166,9 @@ optimizer_2 = torch.optim.Adam(model_2.parameters(), lr=learning_rate)
 noise_or_not = train_dataset.noise_or_not
 true_train_labels = train_dataset.train_labels
 noisy_train_labels = train_dataset.train_noisy_labels
+
+features = FeatureMap(len(train_dataset.train_labels),
+                      args.n_epoch, num_classes)
 # create our low loss labels class
 for epoch in range(1, args.n_epoch):
     model_1.train()
@@ -175,7 +179,7 @@ for epoch in range(1, args.n_epoch):
     # train models
 
     train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2,
-          args.n_epoch, len(train_dataset), batch_size, noise_or_not)
+          args.n_epoch, len(train_dataset), batch_size, noise_or_not, features)
 
     # evaluate model
     acc = evaluate(test_loader, model_1, model_2)
