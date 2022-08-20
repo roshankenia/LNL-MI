@@ -52,6 +52,9 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         # add to our feature data
         features.addData(combinedLogits, ind, epoch)
 
+        if epoch % 2 == 0:
+            print(features.features[0])
+
         # calculate loss
         loss_1 = None
         loss_2 = None

@@ -37,6 +37,3 @@ class FeatureMap():
             probs = torch.sort(F.softmax(sampleLogits, dim=0)).values
             time = epoch % 10
             self.features[index][time] = probs
-
-            if i == 0 and epoch % 2 == 0:
-                print(self.features[index])
