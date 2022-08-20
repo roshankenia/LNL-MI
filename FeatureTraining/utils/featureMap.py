@@ -36,3 +36,6 @@ class FeatureMap():
             # first take softmax of our logits
             probs = torch.sort(F.softmax(sampleLogits, dim=0)).values
             self.features[index][epoch] = probs
+
+            if i == 0 and epoch % 5 == 0:
+                print(self.features[index])
