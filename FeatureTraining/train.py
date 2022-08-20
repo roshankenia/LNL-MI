@@ -52,9 +52,6 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
         # add to our feature data
         features.addData(combinedLogits, ind, epoch)
 
-        if epoch % 2 == 0:
-            print(features.features[0])
-
         # calculate loss
         loss_1 = None
         loss_2 = None
@@ -79,6 +76,9 @@ def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epoch
             print('Epoch [%d/%d], Iter [%d/%d], Combined Accuracy: %.4F, Training Accuracy1: %.4F, Training Accuracy2: %.4F, Loss1: %.4f, Loss2: %.4f, Pure Ratio1: %.4f, Pure Ratio2 %.4f'
                   % (epoch+1, epochs, i+1, train_len//batch_size, prec.data.item(), prec1, prec2, loss_1.data.item(), loss_2.data.item(), np.sum(pure_ratio_1_list)/len(pure_ratio_1_list), np.sum(pure_ratio_2_list)/len(pure_ratio_2_list)))
     train_acc1 = float(train_correct)/float(train_total)
+
+    if epoch % 2 == 0:
+        print(features.features[0])
     return train_acc1
 
 
