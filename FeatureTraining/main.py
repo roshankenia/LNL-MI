@@ -187,14 +187,6 @@ for epoch in range(0, args.n_epoch):
     print('Epoch [%d/%d] Test Accuracy on the %s test images: Combined Logits %.4f %%' %
           (epoch+1, args.n_epoch, len(test_dataset), acc))
 
-    # every history epochs we check our labels
-    if (epoch+1) % 10 == 0:
-        print('Checking labels...')
-        lenientRelabelCorrect, lenientRelabelIncorrect, lenientReconfirmCorrect, lenientReconfirmIncorrect, strictRelabelCorrect, strictRelabelIncorrect, strictReconfirmCorrect, strictReconfirmIncorrect = batchLabels.reconfirmLabels()
-        print(f'lenientRelabelCorrect:{lenientRelabelCorrect}, lenientRelabelIncorrect:{lenientRelabelIncorrect}, lenientReconfirmCorrect:{lenientReconfirmCorrect}, lenientReconfirmIncorrect:{lenientReconfirmIncorrect}')
-        print(f'strictRelabelCorrect:{strictRelabelCorrect}, strictRelabelIncorrect:{strictRelabelIncorrect}, strictReconfirmCorrect:{strictReconfirmCorrect}, strictReconfirmIncorrect:{strictReconfirmIncorrect}')
-
-
 # store end time
 end = time.time()
 timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))
