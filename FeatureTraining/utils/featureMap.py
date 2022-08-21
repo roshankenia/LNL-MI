@@ -30,6 +30,8 @@ class FeatureMap():
         # intialize our data arrays
         self.features = torch.zeros(num_samples, 10, num_classes)
 
+        self.history = 10
+
         self.num_samples = num_samples
         self.num_classes = num_classes
         self.num_epochs = num_epochs
@@ -47,14 +49,9 @@ class FeatureMap():
 
     def makePlot(self, epoch, labels, noise):
         # reshape our features
-        print(self.num_epochs)
-        print(self.num_classes)
-        print(self.num_samples)
-        reshapeSize = self.num_epochs*self.num_classes
-        print(reshapeSize)
+        reshapeSize = self.history*self.num_classes
         reshapeFeatures = torch.reshape(
             self.features, (self.num_samples, reshapeSize))
-        print(reshapeFeatures.size)
         # We want to get TSNE embedding with 2 dimensions
         n_components = 2
         tsne = TSNE(n_components)
