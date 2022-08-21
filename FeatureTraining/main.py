@@ -187,6 +187,9 @@ for epoch in range(0, args.n_epoch):
     print('Epoch [%d/%d] Test Accuracy on the %s test images: Combined Logits %.4f %%' %
           (epoch+1, args.n_epoch, len(test_dataset), acc))
 
+    if epoch + 1 % 2 == 0:
+        features.makePlot(epoch, noisy_train_labels, noise_or_not)
+
 # store end time
 end = time.time()
 timeTaken = time.strftime("%H:%M:%S", time.gmtime(end-begin))

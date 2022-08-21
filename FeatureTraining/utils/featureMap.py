@@ -65,7 +65,7 @@ class FeatureMap():
         ax.set_ylim(lim)
         ax.set_aspect('equal')
         ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-        plot_title = 'tSNE-Labels-'+epoch+'.png'
+        plot_title = 'tSNE-Labels-'+(epoch+1)+'.png'
         plt.savefig(plot_title)
         plt.close()
 
@@ -78,6 +78,6 @@ class FeatureMap():
         ax.set_ylim(lim)
         ax.set_aspect('equal')
         ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-        plot_title = 'tSNE-Noise-'+epoch+'.png'
+        plot_title = 'tSNE-Noise-'+(epoch+1)+'.png'
         plt.savefig(plot_title)
         plt.close()
