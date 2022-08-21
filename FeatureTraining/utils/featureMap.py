@@ -46,11 +46,13 @@ class FeatureMap():
             self.features[index][time] = probs
 
     def makePlot(self, epoch, labels, noise):
+        # reshape our features
+        reshapeFeatures = torch.reshape(
+            self.features, (self.num_samples, self.num_epochs*self.num_classes))
         # We want to get TSNE embedding with 2 dimensions
         n_components = 2
-        print(self.features.shape)
         tsne = TSNE(n_components)
-        tsne_result = tsne.fit_transform(self.features)
+        tsne_result = tsne.fit_transform(reshapeFeatures)
         tsne_result.shape
         # Two dimensions for each of our images
         # Plot the result of our TSNE with the label color coded
