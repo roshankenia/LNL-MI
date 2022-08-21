@@ -48,6 +48,7 @@ class FeatureMap():
     def makePlot(self, epoch, labels, noise):
         # We want to get TSNE embedding with 2 dimensions
         n_components = 2
+        print(self.features.shape)
         tsne = TSNE(n_components)
         tsne_result = tsne.fit_transform(self.features)
         tsne_result.shape
