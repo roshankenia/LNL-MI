@@ -47,7 +47,11 @@ class FeatureMap():
 
     def makePlot(self, epoch, labels, noise):
         # reshape our features
+        print(self.num_epochs)
+        print(self.num_classes)
+        print(self.num_samples)
         reshapeSize = self.num_epochs*self.num_classes
+        print(reshapeSize)
         reshapeFeatures = torch.reshape(
             self.features, (self.num_samples, reshapeSize))
         print(reshapeFeatures.size)
