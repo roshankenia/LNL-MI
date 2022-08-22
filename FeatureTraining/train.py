@@ -25,61 +25,55 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2, epochs, train_len, batch_size, noise_or_not, features):
-    train_total = 0
-    train_correct = 0
+def train(train_loader, epoch, model1, optimizer1, model2, optimizer2, rate, noise, epochs, train_len, batch_size, features):
+    pure_ratio_list = []
     pure_ratio_1_list = []
     pure_ratio_2_list = []
+
+    train_total = 0
+    train_correct = 0
+    train_total2 = 0
+    train_correct2 = 0
+
     for i, (images, labels, indexes) in enumerate(train_loader):
         ind = indexes.cpu().numpy().transpose()
-        noise = noise_or_not[ind]
         # if i > args.num_iter_per_epoch:
         #     break
 
         images = Variable(images).cuda()
-        cur_labels = Variable(labels).cuda()
+        labels = Variable(labels).cuda()
 
         # Forward + Backward + Optimize
-        logits_1 = model_1(images)
-        logits_2 = model_2(images)
-        combinedLogits = (logits_1+logits_2)/2
-        prec, _ = accuracy(combinedLogits, cur_labels, topk=(1, 5))
-        prec1, _ = accuracy(logits_1, cur_labels, topk=(1, 5))
-        prec2, _ = accuracy(logits_2, cur_labels, topk=(1, 5))
+        logits1 = model1(images)
+        prec1, _ = accuracy(logits1, labels, topk=(1, 5))
         train_total += 1
-        train_correct += prec
+        train_correct += prec1
 
-        # add to our feature data
-        features.addData(combinedLogits, ind, epoch)
-
-        # calculate loss
-        loss_1 = None
-        loss_2 = None
-        pure_ratio_1 = None
-        pure_ratio_2 = None
-
+        logits2 = model2(images)
+        prec2, _ = accuracy(logits2, labels, topk=(1, 5))
+        train_total2 += 1
+        train_correct2 += prec2
         loss_1, loss_2, pure_ratio_1, pure_ratio_2 = loss_coteaching(
-            logits_1, logits_2, cur_labels, noise)
-
+            logits1, logits2, labels, rate, ind, noise)
         pure_ratio_1_list.append(100*pure_ratio_1)
         pure_ratio_2_list.append(100*pure_ratio_2)
 
-        optimizer_1.zero_grad()
-        loss_1.backward()
-        optimizer_1.step()
+        # # add to our feature data
+        # features.addData(combinedLogits, ind, epoch)
 
-        optimizer_2.zero_grad()
+        optimizer1.zero_grad()
+        loss_1.backward()
+        optimizer1.step()
+        optimizer2.zero_grad()
         loss_2.backward()
-        optimizer_2.step()
+        optimizer2.step()
 
         if (i+1) % 50 == 0:
-            print('Epoch [%d/%d], Iter [%d/%d], Combined Accuracy: %.4F, Training Accuracy1: %.4F, Training Accuracy2: %.4F, Loss1: %.4f, Loss2: %.4f, Pure Ratio1: %.4f, Pure Ratio2 %.4f'
-                  % (epoch+1, epochs, i+1, train_len//batch_size, prec.data.item(), prec1, prec2, loss_1.data.item(), loss_2.data.item(), np.sum(pure_ratio_1_list)/len(pure_ratio_1_list), np.sum(pure_ratio_2_list)/len(pure_ratio_2_list)))
+            print('Epoch [%d/%d], Iter [%d/%d], Training Accuracy1: %.4F, Training Accuracy2: %.4F, Loss1: %.4f, Loss2: %.4f, Pure Ratio1: %.4f, Pure Ratio2 %.4f'
+                  % (epoch+1, epochs, i+1, train_len//batch_size, prec1, prec2, loss_1.data.item(), loss_2.data.item(), np.sum(pure_ratio_1_list)/len(pure_ratio_1_list), np.sum(pure_ratio_2_list)/len(pure_ratio_2_list)))
     train_acc1 = float(train_correct)/float(train_total)
-
-    if epoch % 2 == 0:
-        print(features.features[0])
-    return train_acc1
+    train_acc2 = float(train_correct2)/float(train_total2)
+    return train_acc1, train_acc2, pure_ratio_1_list, pure_ratio_2_list
 
 
 def accuracy(logit, target, topk=(1,)):

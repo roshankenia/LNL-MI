@@ -99,6 +99,11 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                           drop_last=True,
                                           shuffle=False)
 
+if args.forget_rate is None:
+    forget_rate = args.noise_rate
+else:
+    forget_rate = args.forget_rate
+
 # Adjust learning rate and betas for Adam Optimizer
 mom1 = 0.9
 mom2 = 0.1
@@ -115,6 +120,12 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['lr'] = alpha_plan[epoch]
         print('Learning rate:', alpha_plan[epoch])
         param_group['betas'] = (beta1_plan[epoch], 0.999)  # Only change beta1
+
+
+# define drop rate schedule
+rate_schedule = np.ones(args.n_epoch)*forget_rate
+rate_schedule[:args.num_gradual] = np.linspace(
+    0, forget_rate**args.exponent, args.num_gradual)
 
 
 # def evaluate(test_loader, model):
@@ -139,55 +150,90 @@ def evaluate(test_loader, model_1, model_2):
     for images, labels, _ in test_loader:
         images = Variable(images).cuda()
         logits1 = model_1(images)
+        outputs1 = F.softmax(logits1, dim=1)
+        _, pred1 = torch.max(outputs1.data, 1)
+        total1 += labels.size(0)
+        correct1 += (pred1.cpu() == labels).sum()
+
+    model_2.eval()    # Change model to 'eval' mode
+    correct2 = 0
+    total2 = 0
+    for images, labels, _ in test_loader:
+        images = Variable(images).cuda()
         logits2 = model_2(images)
-        logits = (logits1 + logits2)/2
-        outputs = F.softmax(logits, dim=1)
-        _, pred = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (pred.cpu() == labels).sum()
+        outputs2 = F.softmax(logits2, dim=1)
+        _, pred2 = torch.max(outputs2.data, 1)
+        total2 += labels.size(0)
+        correct2 += (pred2.cpu() == labels).sum()
 
-    acc1 = 100*float(correct)/float(total)
-    return acc1
-
-
-# Define models
-print('building models...')
-# create our full model
-model_1 = torchvision.models.resnet34(pretrained=False, num_classes=10)
-model_1.cuda()
-optimizer_1 = torch.optim.Adam(model_1.parameters(), lr=learning_rate)
-
-model_2 = torchvision.models.resnet34(pretrained=False, num_classes=10)
-model_2.cuda()
-optimizer_2 = torch.optim.Adam(model_2.parameters(), lr=learning_rate)
+    acc1 = 100*float(correct1)/float(total1)
+    acc2 = 100*float(correct2)/float(total2)
+    return acc1, acc2
 
 
-# training
-noise_or_not = train_dataset.noise_or_not
-true_train_labels = train_dataset.train_labels
-noisy_train_labels = train_dataset.train_noisy_labels
+def main():
+    # Data Loader (Input Pipeline)
+    print('loading dataset...')
+    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+                                               batch_size=batch_size,
+                                               num_workers=args.num_workers,
+                                               drop_last=True,
+                                               shuffle=True)
 
-features = FeatureMap(len(train_dataset.train_labels),
-                      args.n_epoch, num_classes)
-# create our low loss labels class
-for epoch in range(0, args.n_epoch):
-    model_1.train()
-    model_2.train()
-    # adjust learning rate
-    adjust_learning_rate(optimizer_1, epoch)
-    adjust_learning_rate(optimizer_2, epoch)
-    # train models
+    test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                              batch_size=batch_size,
+                                              num_workers=args.num_workers,
+                                              drop_last=True,
+                                              shuffle=False)
+    # Define models
+    print('building model...')
+    cnn1 = torchvision.models.resnet34(pretrained=False, num_classes=10)
+    cnn1.cuda()
+    print(cnn1.parameters)
+    optimizer1 = torch.optim.Adam(cnn1.parameters(), lr=learning_rate)
 
-    train(train_loader, epoch, model_1, optimizer_1, model_2, optimizer_2,
-          args.n_epoch, len(train_dataset), batch_size, noise_or_not, features)
+    cnn2 = torchvision.models.resnet34(pretrained=False, num_classes=10)
+    cnn2.cuda()
+    print(cnn2.parameters)
+    optimizer2 = torch.optim.Adam(cnn2.parameters(), lr=learning_rate)
 
-    # evaluate model
-    acc = evaluate(test_loader, model_1, model_2)
+    mean_pure_ratio1 = 0
+    mean_pure_ratio2 = 0
 
-    print('Epoch [%d/%d] Test Accuracy on the %s test images: Combined Logits %.4f %%' %
-          (epoch+1, args.n_epoch, len(test_dataset), acc))
-    if (epoch+1) % 10 == 0:
-        features.makePlot(epoch, noisy_train_labels, noise_or_not)
+    epoch = 0
+    train_acc1 = 0
+    train_acc2 = 0
+    # evaluate models with random weights
+    test_acc1, test_acc2 = evaluate(test_loader, cnn1, cnn2)
+    print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %% Model2 %.4f %% Pure Ratio1 %.4f %% Pure Ratio2 %.4f %%' %
+          (epoch+1, args.n_epoch, len(test_dataset), test_acc1, test_acc2, mean_pure_ratio1, mean_pure_ratio2))
+
+    # training
+    noise_or_not = train_dataset.noise_or_not
+    true_train_labels = train_dataset.train_labels
+    noisy_train_labels = train_dataset.train_noisy_labels
+
+    features = FeatureMap(len(train_dataset.train_labels),
+                          args.n_epoch, num_classes)
+    for epoch in range(1, args.n_epoch):
+        # train models
+        cnn1.train()
+        adjust_learning_rate(optimizer1, epoch)
+        cnn2.train()
+        adjust_learning_rate(optimizer2, epoch)
+        train_acc1, train_acc2, pure_ratio_1_list, pure_ratio_2_list = train(
+            train_loader, epoch, cnn1, optimizer1, cnn2, optimizer2, rate_schedule[epoch], noise_or_not, args.n_epoch, len(train_dataset), batch_size, features)
+        # evaluate models
+        test_acc1, test_acc2 = evaluate(test_loader, cnn1, cnn2)
+        # save results
+        mean_pure_ratio1 = sum(pure_ratio_1_list)/len(pure_ratio_1_list)
+        mean_pure_ratio2 = sum(pure_ratio_2_list)/len(pure_ratio_2_list)
+        print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %% Model2 %.4f %%, Pure Ratio 1 %.4f %%, Pure Ratio 2 %.4f %%' %
+              (epoch+1, args.n_epoch, len(test_dataset), test_acc1, test_acc2, mean_pure_ratio1, mean_pure_ratio2))
+
+
+if __name__ == '__main__':
+    main()
 
 # store end time
 end = time.time()
