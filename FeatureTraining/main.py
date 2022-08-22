@@ -145,8 +145,8 @@ rate_schedule[:args.num_gradual] = np.linspace(
 def evaluate(test_loader, model_1, model_2):
     model_1.eval()    # Change model to 'eval' mode.
     model_2.eval()
-    correct = 0
-    total = 0
+    correct1 = 0
+    total1 = 0
     for images, labels, _ in test_loader:
         images = Variable(images).cuda()
         logits1 = model_1(images)
