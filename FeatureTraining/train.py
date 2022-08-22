@@ -25,7 +25,7 @@ else:
     print('GPU is being properly used')
 
 
-def train(train_loader, epoch, model1, optimizer1, model2, optimizer2, rate, noise, epochs, train_len, batch_size, features):
+def train(train_loader, epoch, model1, optimizer1, model2, optimizer2, rate, noise, epochs, train_len, batch_size, features1, features2):
     pure_ratio_list = []
     pure_ratio_1_list = []
     pure_ratio_2_list = []
@@ -58,8 +58,9 @@ def train(train_loader, epoch, model1, optimizer1, model2, optimizer2, rate, noi
         pure_ratio_1_list.append(100*pure_ratio_1)
         pure_ratio_2_list.append(100*pure_ratio_2)
 
-        # # add to our feature data
-        # features.addData(combinedLogits, ind, epoch)
+        # add to our feature data
+        features1.addData(logits1, ind, epoch)
+        features2.addData(logits2, ind, epoch)
 
         optimizer1.zero_grad()
         loss_1.backward()

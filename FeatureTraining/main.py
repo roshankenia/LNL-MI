@@ -213,8 +213,10 @@ def main():
     true_train_labels = train_dataset.train_labels
     noisy_train_labels = train_dataset.train_noisy_labels
 
-    features = FeatureMap(len(train_dataset.train_labels),
-                          args.n_epoch, num_classes)
+    features1 = FeatureMap(len(train_dataset.train_labels),
+                           args.n_epoch, num_classes, 'Model1', history=10)
+    features2 = FeatureMap(len(train_dataset.train_labels),
+                           args.n_epoch, num_classes, 'Model2', history=10)
     for epoch in range(1, args.n_epoch):
         # train models
         cnn1.train()
@@ -222,7 +224,7 @@ def main():
         cnn2.train()
         adjust_learning_rate(optimizer2, epoch)
         train_acc1, train_acc2, pure_ratio_1_list, pure_ratio_2_list = train(
-            train_loader, epoch, cnn1, optimizer1, cnn2, optimizer2, rate_schedule[epoch], noise_or_not, args.n_epoch, len(train_dataset), batch_size, features)
+            train_loader, epoch, cnn1, optimizer1, cnn2, optimizer2, rate_schedule[epoch], noise_or_not, args.n_epoch, len(train_dataset), batch_size, features1, features2)
         # evaluate models
         test_acc1, test_acc2 = evaluate(test_loader, cnn1, cnn2)
         # save results
@@ -230,6 +232,10 @@ def main():
         mean_pure_ratio2 = sum(pure_ratio_2_list)/len(pure_ratio_2_list)
         print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %% Model2 %.4f %%, Pure Ratio 1 %.4f %%, Pure Ratio 2 %.4f %%' %
               (epoch+1, args.n_epoch, len(test_dataset), test_acc1, test_acc2, mean_pure_ratio1, mean_pure_ratio2))
+
+        if epoch % 10 == 0:
+            features1.makePlot(epoch, noisy_train_labels, noise_or_not)
+            features2.makePlot(epoch, noisy_train_labels, noise_or_not)
 
 
 if __name__ == '__main__':

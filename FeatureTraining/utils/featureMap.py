@@ -27,12 +27,12 @@ else:
 
 class FeatureMap():
 
-    def __init__(self, num_samples, num_epochs, num_classes):
+    def __init__(self, num_samples, num_epochs, num_classes, name, history=10):
         # intialize our data arrays
-        self.features = torch.zeros(num_samples, 10, num_classes)
+        self.features = torch.zeros(num_samples, history, num_classes)
 
-        self.history = 10
-
+        self.history = history
+        self.name = name
         self.num_samples = num_samples
         self.num_classes = num_classes
         self.num_epochs = num_epochs
@@ -73,7 +73,7 @@ class FeatureMap():
         ax.set_ylim(lim)
         ax.set_aspect('equal')
         ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-        plot_title = 'tSNE-Labels-'+str(epoch+1)+'.png'
+        plot_title = self.name+'-tSNE-Labels-'+str(epoch+1)+'.png'
         plt.savefig(plot_title)
         plt.close()
 
@@ -86,7 +86,7 @@ class FeatureMap():
         ax.set_ylim(lim)
         ax.set_aspect('equal')
         ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-        plot_title = 'tSNE-Noise-'+str(epoch+1)+'.png'
+        plot_title = self.name+'-tSNE-Noise-'+str(epoch+1)+'.png'
         plt.savefig(plot_title)
         plt.close()
 
