@@ -189,12 +189,12 @@ def main():
     print('building model...')
     cnn1 = torchvision.models.resnet34(pretrained=False, num_classes=10)
     cnn1.cuda()
-    print(cnn1.parameters)
+    # print(cnn1.parameters)
     optimizer1 = torch.optim.Adam(cnn1.parameters(), lr=learning_rate)
 
     cnn2 = torchvision.models.resnet34(pretrained=False, num_classes=10)
     cnn2.cuda()
-    print(cnn2.parameters)
+    # print(cnn2.parameters)
     optimizer2 = torch.optim.Adam(cnn2.parameters(), lr=learning_rate)
 
     mean_pure_ratio1 = 0
