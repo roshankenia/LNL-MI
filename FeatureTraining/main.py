@@ -188,7 +188,7 @@ def main():
                                               shuffle=False)
     # obtain extracted features
     extract_features(train_dataset)
-    break
+    exit()
     # Define models
     print('building model...')
     cnn1 = torchvision.models.resnet34(pretrained=False, num_classes=10)
