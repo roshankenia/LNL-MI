@@ -15,6 +15,7 @@ import argparse
 from data.cifar import CIFAR10, CIFAR100
 from train import train
 from utils.featureMap import FeatureMap
+from extraction.extraction import extract_features
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
@@ -185,6 +186,9 @@ def main():
                                               num_workers=args.num_workers,
                                               drop_last=True,
                                               shuffle=False)
+    # obtain extracted features
+    extract_features(train_dataset)
+    break
     # Define models
     print('building model...')
     cnn1 = torchvision.models.resnet34(pretrained=False, num_classes=10)
