@@ -35,5 +35,7 @@ def extract_features(x_data):
 
     # input data to model
     print(x_data.train_data[0])
+    print(len(x_data.train_data))
+    print(len(x_data.train_data[0]))
     # features = model(x_data.train_data)
     # print(features)
