@@ -30,6 +30,7 @@ else:
 def extract_features(x_data):
     # define our pretrained resnet
     model = torchvision.models.resnet34(pretrained=True)
-    print(model)
+    # remove last fully connected layer from model
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
-    print(model)
+
+    print(x_data.train_data)
