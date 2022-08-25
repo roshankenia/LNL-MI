@@ -34,5 +34,5 @@ def extract_features(x_data):
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
 
     # input data to model
-    features = model(x_data.train_dataset)
+    features = model(x_data.train_data)
     print(features)
