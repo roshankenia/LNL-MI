@@ -48,7 +48,10 @@ def make_plots(features, labels, noise_or_not, num_classes):
     for label in range(num_classes):
         # find all indexes with this label
         indexes = np.where(labels == label)
+        print(indexes)
         currentFeatures = features[indexes].detach().numpy()
+        print(currentFeatures)
+        print(currentFeatures.shape)
 
         # run tSNE on the current features
         n_components = 2
