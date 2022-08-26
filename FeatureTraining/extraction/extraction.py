@@ -35,6 +35,8 @@ def extract_features(x_data):
     # remove last fully connected layer from model
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
     # input data to model
+    data = torch.from_numpy(x_data.train_data)
     print(model)
-    features = model(x_data.train_data)
+    features = model(data)
     print(features)
+    print(features.size)
