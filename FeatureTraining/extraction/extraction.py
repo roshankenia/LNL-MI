@@ -48,12 +48,12 @@ def make_plots(features, labels, noise_or_not, num_classes):
     for label in range(num_classes):
         # find all indexes with this label
         indexes = np.where(labels == label)
-        currentFeatures = features[indexes]
+        currentFeatures = features[indexes].detach.numpy()
 
         # run tSNE on the current features
         n_components = 2
         tsne = TSNE(n_components)
-        tsne_result = tsne.fit_transform(currentFeatures.detach.numpy())
+        tsne_result = tsne.fit_transform(currentFeatures)
         tsne_result.shape
 
         tsne_result_df = pd.DataFrame(
