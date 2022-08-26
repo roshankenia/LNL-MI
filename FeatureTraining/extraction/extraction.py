@@ -53,5 +53,21 @@ def make_plots(features, labels, noise_or_not, num_classes):
         # run tSNE on the current features
         n_components = 2
         tsne = TSNE(n_components)
-        tsne_result = tsne.fit_transform(currentFeatures)
+        tsne_result = tsne.fit_transform(currentFeatures.detach.numpy())
         tsne_result.shape
+
+        tsne_result_df = pd.DataFrame(
+            {'tSNE Feature 1': tsne_result[:, 0], 'tSNE Feature 2': tsne_result[:, 1], 'noise': noise_or_not[indexes]})
+
+        fig, ax = plt.subplots(figsize=(10, 10))
+        sns.scatterplot(x='tSNE Feature 1', y='tSNE Feature 2',
+                        hue='noise', data=tsne_result_df, ax=ax, s=10)
+        lim = (tsne_result.min()-5, tsne_result.max()+5)
+        plt.title('tSNE for Features')
+        ax.set_xlim(lim)
+        ax.set_ylim(lim)
+        ax.set_aspect('equal')
+        ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
+        plot_title = 'tSNE-Features-'+str(label)+'.png'
+        plt.savefig(plot_title)
+        plt.close()
