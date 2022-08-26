@@ -38,7 +38,7 @@ def extract_features(x_data):
     data = torch.from_numpy(x_data.train_data)
     print(x_data.train_data.shape)
     print(data.shape)
-    print(np.moveaxis(x_data.train_data, -1, 0).shape)
+    print(np.moveaxis(x_data.train_data, -1, 1).shape)
     # print(model)
     features = model(data)
     print(features)
