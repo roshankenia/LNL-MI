@@ -29,7 +29,9 @@ else:
 
 def extract_features(x_data):
     # define our pretrained resnet
-    model = torchvision.models.resnet34(pretrained=True, num_classes=10)
+    model = torchvision.models.resnet34(pretrained=True)
+    num_ftrs = model.fc.in_features
+    model.fc = nn.Linear(num_ftrs, 10)
     # remove last fully connected layer from model
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
     # reshape our data so it can be inputted to our model
