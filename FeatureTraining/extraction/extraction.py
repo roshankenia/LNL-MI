@@ -32,6 +32,7 @@ def extract_features(x_data):
     model = torchvision.models.resnet34(pretrained=True, num_classes=10)
     # remove last fully connected layer from model
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
+    # reshape our data so it can be inputted to our model
 
     # input data to model
     print(x_data.train_data[0])
