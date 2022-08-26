@@ -1,20 +1,20 @@
 import torch
+import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision
-import torchvision.transforms as transforms
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
 from torch.autograd import Variable
+from torch.distributions import Categorical
+import numpy as np
 import os
 import sys
-import time
-import argparse
-from data.cifar import CIFAR10, CIFAR100
-from train import train
-from utils.featureMap import FeatureMap
+import seaborn as sns
+import pandas as pd
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+import os
 # ensure we are running on the correct gpu
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"  # (xxxx is your specific GPU ID)
@@ -40,5 +40,18 @@ def extract_features(x_data):
     # print(model)
     features = model(data)
     features = torch.squeeze(features)
-    print(features)
-    print(features.shape)
+
+    return features
+
+
+def make_plots(features, labels, noise_or_not, num_classes):
+    for label in range(num_classes):
+        # find all indexes with this label
+        indexes = (labels == label).nonzero()[:, 1]
+        currentFeatures = features[indexes]
+
+        # run tSNE on the current features
+        n_components = 2
+        tsne = TSNE(n_components)
+        tsne_result = tsne.fit_transform(currentFeatures)
+        tsne_result.shape
