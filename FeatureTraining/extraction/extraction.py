@@ -47,7 +47,7 @@ def extract_features(x_data):
 def make_plots(features, labels, noise_or_not, num_classes):
     for label in range(num_classes):
         # find all indexes with this label
-        indexes = (labels == label).nonzero()[:, 1]
+        indexes = np.where(labels == label)
         currentFeatures = features[indexes]
 
         # run tSNE on the current features
