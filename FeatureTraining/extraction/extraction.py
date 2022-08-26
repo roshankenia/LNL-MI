@@ -34,11 +34,7 @@ def extract_features(x_data):
     model.fc = nn.Linear(num_ftrs, 10)
     # remove last fully connected layer from model
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
-    # reshape our data so it can be inputted to our model
-
     # input data to model
-    print(x_data.train_data[0])
-    print(len(x_data.train_data))
-    print(len(x_data.train_data[0]))
-    # features = model(x_data.train_data)
-    # print(features)
+    print(model)
+    features = model(x_data.train_data)
+    print(features)
