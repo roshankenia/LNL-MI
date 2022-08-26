@@ -39,5 +39,6 @@ def extract_features(x_data):
     data = torch.from_numpy(data).float()
     # print(model)
     features = model(data)
+    features = torch.squeeze(features)
     print(features)
     print(features.shape)
