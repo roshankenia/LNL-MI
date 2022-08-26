@@ -36,8 +36,9 @@ def extract_features(x_data):
     model = torch.nn.Sequential(*(list(model.children())[:-1]))
     # input data to model
     data = torch.from_numpy(x_data.train_data)
+    print(x_data.train_data.shape)
     print(data.shape)
-    print(model)
+    # print(model)
     features = model(data)
     print(features)
     print(features.shape)
