@@ -48,7 +48,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
     for label in range(num_classes):
         # find all indexes with this label
         print(label)
-        indexes = np.where(labels == label)
+        indexes = np.where(labels == label, labels)
         print(indexes)
         currentFeatures = features[indexes].detach().numpy()
         print(currentFeatures)
