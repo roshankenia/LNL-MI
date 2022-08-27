@@ -85,7 +85,6 @@ def make_plots(features, labels, noise_or_not, num_classes):
         ax.set_xlim(lim)
         ax.set_ylim(lim)
         ax.set_zlim(lim)
-        ax.set_aspect('equal')
         ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
         plot_title = 'tSNE-Features-3D-'+str(label)+'.png'
         plt.savefig(plot_title)
