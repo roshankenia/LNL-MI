@@ -215,9 +215,9 @@ def main():
     noisy_train_labels = train_dataset.train_noisy_labels
 
     # obtain extracted features
-    features = extract_features(train_dataset)
-    make_plots(features, noisy_train_labels, noise_or_not, num_classes)
-    exit()
+    # features = extract_features(train_dataset)
+    # make_plots(features, noisy_train_labels, noise_or_not, num_classes)
+    # exit()
 
     features1 = FeatureMap(len(train_dataset.train_labels),
                            args.n_epoch, num_classes, 'Model1', history=10)
@@ -239,6 +239,10 @@ def main():
         print('Epoch [%d/%d] Test Accuracy on the %s test images: Model1 %.4f %% Model2 %.4f %%, Pure Ratio 1 %.4f %%, Pure Ratio 2 %.4f %%' %
               (epoch+1, args.n_epoch, len(test_dataset), test_acc1, test_acc2, mean_pure_ratio1, mean_pure_ratio2))
 
+        # add time to our feature maps
+        features1.addTime()
+        features2.addTime()
+        # make plots every 10 epochs
         if (epoch+1) % 10 == 0:
             features1.makePlot(epoch, noisy_train_labels, noise_or_not)
             features2.makePlot(epoch, noisy_train_labels, noise_or_not)
