@@ -163,7 +163,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
     ax.set_ylim(lim)
     ax.set_aspect('equal')
     ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-    plot_title = 'tSNE-Features-All-'+str(label)+'.png'
+    plot_title = 'tSNE-Features-All-2D.png'
     plt.savefig(plot_title)
     plt.close()
 
@@ -186,7 +186,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
     ax.set_ylim(lim)
     ax.set_zlim(lim)
     ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-    plot_title = 'tSNE-Features-3D-All-'+str(label)+'.png'
+    plot_title = 'tSNE-Features-All-3D.png'
     plt.savefig(plot_title)
     plt.close()
 
@@ -207,7 +207,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
     ax.set_ylim(lim)
     ax.set_aspect('equal')
     ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-    plot_title = 'PCA-Features-All-'+str(label)+'.png'
+    plot_title = 'PCA-Features-All-2D.png'
     plt.savefig(plot_title)
     plt.close()
 
@@ -230,7 +230,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
     ax.set_ylim(lim)
     ax.set_zlim(lim)
     ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-    plot_title = 'PCA-Features-3D-All-'+str(label)+'.png'
+    plot_title = 'PCA-Features-All-3D.png'
     plt.savefig(plot_title)
     plt.close()
 
