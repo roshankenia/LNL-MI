@@ -110,7 +110,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
             {'PCA Feature 1': pca_result[:, 0], 'PCA Feature 2': pca_result[:, 1], 'noise': noise_or_not[indexes]})
         fig, ax = plt.subplots(figsize=(10, 10))
         sns.scatterplot(x='PCA Feature 1', y='PCA Feature 2',
-                        hue='label', data=pca_result_df, ax=ax, s=10)
+                        hue='noise', data=pca_result_df, ax=ax, s=10)
         lim = (pca_result.min()-5, pca_result.max()+5)
         plt.title('2D PCA for Features')
         ax.set_xlim(lim)
