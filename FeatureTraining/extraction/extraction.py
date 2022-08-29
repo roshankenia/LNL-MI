@@ -107,7 +107,7 @@ def make_plots(features, labels, noise_or_not, num_classes):
         # Two dimensions for each of our images
         # Plot the result of our PCA with the label color coded
         pca_result_df = pd.DataFrame(
-            {'PCA Feature 1': pca_result[:, 0], 'PCA Feature 2': pca_result[:, 1], 'label': labels, 'noise': noise_or_not[indexes]})
+            {'PCA Feature 1': pca_result[:, 0], 'PCA Feature 2': pca_result[:, 1], 'noise': noise_or_not[indexes]})
         fig, ax = plt.subplots(figsize=(10, 10))
         sns.scatterplot(x='PCA Feature 1', y='PCA Feature 2',
                         hue='label', data=pca_result_df, ax=ax, s=10)
@@ -232,9 +232,6 @@ def make_plots(features, labels, noise_or_not, num_classes):
     plot_title = 'PCA-Features-3D-All-'+str(label)+'.png'
     plt.savefig(plot_title)
     plt.close()
-
-
-
 
     # fig, ax = plt.subplots(figsize=(10, 10))
     # sns.scatterplot(x='PCA Feature 1', y='PCA Feature 2',
