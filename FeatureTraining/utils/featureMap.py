@@ -10,6 +10,7 @@ import seaborn as sns
 import pandas as pd
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 import numpy as np
 import random
 import matplotlib.pyplot as plt
@@ -50,6 +51,85 @@ class FeatureMap():
             # first take softmax of our logits
             probs = torch.sort(F.softmax(sampleLogits, dim=0)).values
             self.features[index][self.time] = probs
+
+    def clusterData(self, labels, noise, num_components=2, num_clusters=2):
+        # we will run our dimension reduction and then run our clustering method on it
+
+        # first reduce dimensions
+
+        # reshape our features
+        usedFeatures = self.features[:, self.time-self.history:self.history, :]
+        print(usedFeatures.shape)
+        reshapeSize = self.history*self.num_classes
+        reshapeFeatures = torch.reshape(
+            usedFeatures, (self.num_samples, reshapeSize))
+
+        for label in range(10):
+            # find all indexes with this label
+            indexes = np.where(np.array(labels) == label)
+            print(indexes)
+            currentFeatures = reshapeFeatures[indexes]
+            print(currentFeatures)
+            print(currentFeatures.shape)
+
+            # run tSNE on the current features
+            tsne = TSNE(num_components)
+            tsne_result = tsne.fit_transform(currentFeatures)
+
+            # now run our dimensionality reduction
+            kmeans = KMeans(n_clusters=num_clusters)
+            kmeans.fit(tsne_result)
+
+            # calculate how accurate clustering was
+            oneAsCleanCorrect = 0
+            oneAsCleanIncorrect = 0
+            zeroAsNoisyCorrect = 0
+            zeroAsNoisyIncorrect = 0
+
+            oneAsNoisyCorrect = 0
+            oneAsNoisyIncorrect = 0
+            zeroAsCleanCorrect = 0
+            zeroAsCleanIncorrect = 0
+
+            for i in range(len(kmeans.labels_)):
+                clusterLabel = kmeans.labels_[i]
+                clean = noise[i]
+                # when clean = 1 it means it is clean, when clean = 0 it means it is noisy
+                if clean == 1:
+                    if clusterLabel == 1:
+                        oneAsCleanCorrect += 1
+                        oneAsNoisyIncorrect += 1
+                    elif clusterLabel == 0:
+                        zeroAsCleanCorrect += 1
+                        zeroAsNoisyIncorrect += 1
+                elif clean == 0:
+                    if clusterLabel == 1:
+                        oneAsNoisyCorrect += 1
+                        oneAsCleanIncorrect += 1
+                    elif clusterLabel == 0:
+                        zeroAsNoisyCorrect += 1
+                        zeroAsCleanIncorrect += 1
+
+            oneAsCleanTotal = oneAsCleanCorrect + oneAsCleanIncorrect
+            oneAsClean = oneAsCleanCorrect/oneAsCleanTotal
+            zeroAsNoisyTotal = zeroAsNoisyCorrect + zeroAsNoisyIncorrect
+            zeroAsNoisy = zeroAsNoisyCorrect/zeroAsNoisyTotal
+            oneAsNoisyTotal = oneAsNoisyCorrect + oneAsNoisyIncorrect
+            oneAsNoisy = oneAsNoisyCorrect/oneAsNoisyTotal
+            zeroAsCleanTotal = zeroAsCleanCorrect + zeroAsCleanIncorrect
+            zeroAsClean = zeroAsCleanCorrect/zeroAsCleanTotal
+
+            # print accuracies
+            print('\tLabel: ', label, ' Number Components: ', num_components)
+            print('\t\tOne as clean accuracy: %.4f %%, total correct: %d, total incorrect: %d' %
+                  (oneAsClean, oneAsCleanCorrect, oneAsCleanIncorrect))
+            print('\t\tZero as noisy accuracy: %.4f %%, total correct: %d, total incorrect: %d' %
+                  (zeroAsNoisy, zeroAsNoisyCorrect, zeroAsNoisyIncorrect))
+            print('\n\n')
+            print('\t\tOne as noisy accuracy: %.4f %%, total correct: %d, total incorrect: %d' %
+                  (oneAsNoisy, oneAsNoisyCorrect, oneAsNoisyIncorrect))
+            print('\t\tZero as clean accuracy: %.4f %%, total correct: %d, total incorrect: %d' %
+                  (zeroAsClean, zeroAsCleanCorrect, zeroAsCleanIncorrect))
 
     def makePlot(self, epoch, labels, noise):
         print('Making plots')

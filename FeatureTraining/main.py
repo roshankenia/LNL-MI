@@ -244,8 +244,13 @@ def main():
         features2.addTime()
         # make plots every 10 epochs
         if (epoch+1) % 10 == 0:
-            features1.makePlot(epoch, noisy_train_labels, noise_or_not)
-            features2.makePlot(epoch, noisy_train_labels, noise_or_not)
+            # features1.makePlot(epoch, noisy_train_labels, noise_or_not)
+            # features2.makePlot(epoch, noisy_train_labels, noise_or_not)
+            for num_c in range(2, 6):
+                features1.clusterData(
+                    noisy_train_labels, noise_or_not, num_components=num_c, num_clusters=2)
+                features2.clusterData(
+                    noisy_train_labels, noise_or_not, num_components=num_c, num_clusters=2)
 
 
 if __name__ == '__main__':
