@@ -73,7 +73,7 @@ class FeatureMap():
             print(currentFeatures.shape)
 
             # run tSNE on the current features
-            tsne = TSNE(num_components)
+            tsne = TSNE(num_components, method='exact')
             tsne_result = tsne.fit_transform(currentFeatures)
 
             # now run our dimensionality reduction
